@@ -1,0 +1,14 @@
+services:
+  backend:
+    container_name: blitzrechnung-api    # custom name
+    build: ./backend
+    ports:
+      - "8000:8000"
+  
+  frontend:
+    container_name: blitzrechnung-web    # custom name
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
