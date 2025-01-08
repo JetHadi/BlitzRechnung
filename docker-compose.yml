@@ -1,14 +1,27 @@
 services:
   backend:
-    container_name: blitzrechnung-api    # custom name
+    container_name: blitzrechnung-api
     build: ./backend
     ports:
       - "8000:8000"
-  
+    volumes:
+      - ./backend:/app
+
   frontend:
-    container_name: blitzrechnung-web    # custom name
-    build: ./frontend
+    container_name: blitzrechnung-web
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
     depends_on:
       - backend
+
+volumes:
+  frontend_node_modules:

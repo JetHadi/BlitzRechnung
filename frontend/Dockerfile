@@ -1,17 +1,20 @@
-# Stage 1: Build the application
-FROM --platform=linux/arm64/v8 node:23 AS build
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
+FROM --platform=linux/arm64/v8 node:23-alpine
 
-# Stage 2: Serve the application
-FROM --platform=linux/arm64/v8 node:23
 WORKDIR /app
-COPY --from=build /app/build /app
-COPY --from=build /app/package*.json /app/
-COPY --from=build /app/static /app/static
-RUN npm install --omit=dev
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies including Vite
+RUN npm ci
+
+# Copy source files
+COPY . .
+
+# Ensure vite is available in PATH
+ENV PATH /app/node_modules/.bin:$PATH
+
 EXPOSE 3000
-CMD ["node", "/app/index.js"]
+
+# Run dev server
+CMD ["npm", "run", "dev"]
