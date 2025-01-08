@@ -13,6 +13,7 @@ const config = {
 		// See https://svelte.dev/docs/kit/adapters for more information about adapters.
 		adapter: adapter()
 	}
+	// Add this to enable Svelte 5 runes
 };
 
 export default config;
