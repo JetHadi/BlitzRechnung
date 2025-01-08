@@ -4,21 +4,27 @@
 	import { defaultRechnungsSender } from '$lib/types/rechnungsSender';
 
 	let {
+		isInteractive = true,
 		absender_firma = defaultRechnungsSender.absender_firma,
 		absender_strasse = defaultRechnungsSender.absender_strasse,
 		absender_ort = defaultRechnungsSender.absender_ort,
 		absender_plz = defaultRechnungsSender.absender_plz,
 		absender_telefon = defaultRechnungsSender.absender_telefon,
 		absender_email = defaultRechnungsSender.absender_email
-	}: RechnungsSender = $props();
+	} = $props();
 </script>
 
 <div
-	class="container mx-auto cursor-pointer rounded-lg border border-transparent p-4 transition-all duration-200 hover:border-gray-200 hover:bg-gray-50"
+	class="container mx-auto rounded-lg border border-transparent p-4"
+	class:cursor-pointer={isInteractive}
+	class:transition-all={isInteractive}
+	class:duration-200={isInteractive}
+	class:hover:border-gray-200={isInteractive}
+	class:hover:bg-gray-50={isInteractive}
 >
 	<div class="flex items-start justify-between">
 		<div class="w-1/4">
-			<Logo></Logo>
+			<Logo {isInteractive}></Logo>
 		</div>
 
 		<div class="w-2/4 text-center">
