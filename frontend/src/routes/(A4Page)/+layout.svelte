@@ -1,9 +1,22 @@
 <script lang="ts">
+	import * as Carousel from '$lib/components/ui/carousel';
+
 	let { children } = $props();
 </script>
 
-<div class="print-container mx-auto w-full max-w-[210mm] aspect-[1/1.4142] bg-white shadow-lg print:shadow-none">
-	<div class="flex flex-col w-full h-full p-12 box-border">
+<!-- <Carousel.Root>
+	<Carousel.Content>
+		<Carousel.Item>...</Carousel.Item>
+		<Carousel.Item>...</Carousel.Item>
+		<Carousel.Item>...</Carousel.Item>
+	</Carousel.Content>
+	<Carousel.Previous />
+	<Carousel.Next />
+</Carousel.Root> -->
+<div
+	class="mx-auto aspect-[1/1.4142] w-full max-w-[210mm] bg-white shadow-lg print:shadow-none"
+>
+	<div class="print-container box-border flex h-full w-full flex-col p-12">
 		{@render children()}
 	</div>
 </div>
@@ -19,7 +32,7 @@
 			visibility: hidden;
 		}
 
-		.print-container, 
+		.print-container,
 		.print-container * {
 			visibility: visible;
 		}
