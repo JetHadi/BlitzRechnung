@@ -1,6 +1,7 @@
+import type { RechnungsAbsender } from '$lib/schema/rechnungsAbsender';
 import type { PageLoad } from './$types';
 
-let localRechnungsAbsender = {
+let localRechnungsAbsender: RechnungsAbsender = {
     name: '',
     strasse: '',
     plz: '',

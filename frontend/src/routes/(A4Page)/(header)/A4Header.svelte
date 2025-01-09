@@ -3,18 +3,23 @@
 	import { defaultRechnungsSender } from '$lib/types/rechnungsSender';
 
 	let {
-		data,
-		isInteractive = true
+		localHeaderObject = $bindable(),
+		isInteractive = true,
+		propaGateFrom
 	} = $props();
 
 	const headerProps = $derived({
-		firma: data.firma,
-		strasse: data.strasse,
-		ort: data.ort,
-		plz: data.plz,
-		telefon: data.telefon,
-		email: data.email,
+		firma: localHeaderObject.firma,
+		strasse: localHeaderObject.strasse,
+		ort: localHeaderObject.ort,
+		plz: localHeaderObject.plz,
+		telefon: localHeaderObject.telefon,
+		email: localHeaderObject.email,
 		isInteractive: false
+	});
+
+	$effect(() => {
+		console.log('coming from', {propaGateFrom}, '-A4Header: ',localHeaderObject);
 	});
 </script>
 

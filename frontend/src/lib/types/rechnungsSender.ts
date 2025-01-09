@@ -6,5 +6,6 @@ export const defaultRechnungsSender: RechnungsAbsender = {
     ort: 'City',
     plz: '12345',
     telefon: '+49 (0)123 456789',
-    email: 'contact@example.com'
+    email: 'contact@example.com',
+    name: ""
 };

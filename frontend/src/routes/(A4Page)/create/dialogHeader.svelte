@@ -9,19 +9,18 @@
 	import { z } from 'zod';
 
 	// for local client storage
-	let { data } = $props();
-
-	let localRechnungsAbsender = $state<z.infer<typeof RechnungsAbsenderSchema>>(
-		data.localRechnungsAbsender
-	);
+	let { localHeaderObject = $bindable() } = $props();
 
 	const form = superForm(defaults(defaultRechnungsSender, zod(RechnungsAbsenderSchema)), {
 		validators: zodClient(RechnungsAbsenderSchema),
 		SPA: true,
+		invalidateAll: false, // Prevents full page reload
+		resetForm: false, // Optional: prevents form reset
+		dataType: 'json', // Ensures JSON response handling
 		onUpdate({ form }) {
 			if (form.valid) {
-				data.localRechnungsAbsender = { ...headerProps };
-				console.log(data);
+				localHeaderObject = { ...headerProps };
+				console.log('from DialogHeader onUpdate: ', localHeaderObject);
 			}
 		}
 	});
@@ -38,12 +37,12 @@
 		isInteractive: false
 	});
 
-	/* 	$effect(() => {
-		console.log(data);
-	}); */
+	$effect(() => {
+		console.log('from DialogHeader: ', localHeaderObject);
+	});
 </script>
 
-<A4Header data={headerProps} isInteractive={false} />
+<A4Header localHeaderObject={headerProps} isInteractive={false} propaGateFrom={'DialogHeader'} />
 <form method="POST" use:enhance>
 	<Form.Field {form} name="firma">
 		<Form.Control>

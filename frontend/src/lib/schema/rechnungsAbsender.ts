@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { AdresseSchema } from './adresse';
 
 export const RechnungsAbsenderSchema = AdresseSchema.extend({
-    firma: z.string().max(200).optional(),
+    firma: z.string().max(20).optional(),
     email: z.string().email().optional(),
     telefon: z.string().max(20).optional(),
     steuernummer: z.string().max(20).optional(),
