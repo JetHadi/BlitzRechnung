@@ -50,7 +50,7 @@
 		</ScrollArea>
 	</Dialog.Content>
 </Dialog.Root>
-<form method="POST" use:enhance>
+<form method="POST" use:enhance class="hidden">
 	<div class="m-auto">
 		<button type="submit">Submit</button>
 	</div>
