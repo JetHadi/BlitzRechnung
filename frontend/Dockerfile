@@ -14,9 +14,6 @@ COPY . .
 # Ensure vite is available in PATH
 ENV PATH /app/node_modules/.bin:$PATH
 
-# Modify Vite configuration to work in Docker
-RUN npm install -D vite @sveltejs/kit
-
 EXPOSE 3000
 
 # Run dev server with host configuration
