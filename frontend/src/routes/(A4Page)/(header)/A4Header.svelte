@@ -19,7 +19,7 @@
 	});
 
 	$effect(() => {
-		console.log('coming from', {propaGateFrom}, '-A4Header: ',localHeaderObject);
+		// console.log('coming from', {propaGateFrom}, '-A4Header: ',localHeaderObject);
 	});
 </script>
 

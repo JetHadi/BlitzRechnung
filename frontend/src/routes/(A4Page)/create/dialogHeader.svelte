@@ -16,7 +16,6 @@
 		SPA: true,
 		invalidateAll: false, // Prevents full page reload
 		resetForm: false, // Optional: prevents form reset
-		dataType: 'json', // Ensures JSON response handling
 		onUpdate({ form }) {
 			if (form.valid) {
 				localHeaderObject = { ...headerProps };
@@ -38,7 +37,7 @@
 	});
 
 	$effect(() => {
-		console.log('from DialogHeader: ', localHeaderObject);
+		// console.log('from DialogHeader: ', localHeaderObject);
 	});
 </script>
 

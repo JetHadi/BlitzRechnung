@@ -7,15 +7,13 @@
 
 <div class="grid min-h-screen bg-gray-100" style="grid-template-rows: auto 1fr auto;">
 	<div class="no-print m-auto w-full">
-	<Header />
+		<Header />
 	</div>
-	<main class="container m-auto px-4 py-6">
-	<div class="container mx-auto px-4 py-8">
-	{@render children()}
-	</div>
+	<main class="container m-auto px-8 py-14">
+		{@render children()}
 	</main>
 	<div class="no-print m-auto w-full">
-	<Footer />
+		<Footer />
 	</div>
 </div>
 
