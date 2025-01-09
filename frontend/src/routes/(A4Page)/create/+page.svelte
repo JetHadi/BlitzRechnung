@@ -8,6 +8,7 @@
 	import DialogHeader from './dialogHeader.svelte';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { RechnungsAbsenderSchema } from '$lib/schema/rechnungsAbsender';
+	import { SquareArrowRight } from 'lucide-svelte';
 
 	let { data } = $props();
 
@@ -45,13 +46,22 @@
 				<Dialog.Description>Passe die Einträge an</Dialog.Description>
 			</Dialog.Header>
 			<div class="p-4">
-				<DialogHeader bind:openDialog={openDialog} bind:localHeaderObject={localRechnungsAbsender} />
+				<DialogHeader bind:openDialog bind:localHeaderObject={localRechnungsAbsender} />
 			</div>
 		</ScrollArea>
 	</Dialog.Content>
 </Dialog.Root>
-<form method="POST" use:enhance class="hidden">
-	<div class="m-auto">
-		<button type="submit">Submit</button>
-	</div>
+<form method="POST" use:enhance class="absolute bottom-10 right-10 z-50">
+	<button
+		type="submit"
+		class="group transition-all duration-300 ease-in-out"
+	>
+		<SquareArrowRight
+			size={130}
+			class="group-hover:text-primary scale-125 
+                   text-gray-500 opacity-40 
+                   transition-all duration-300 
+                   ease-in-out group-hover:scale-150 group-hover:opacity-100"
+		/>
+	</button>
 </form>
