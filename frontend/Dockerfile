@@ -1,4 +1,4 @@
-FROM --platform=linux/arm64/v8 node:23-alpine
+FROM node:23-alpine
 
 WORKDIR /app
 
@@ -14,7 +14,10 @@ COPY . .
 # Ensure vite is available in PATH
 ENV PATH /app/node_modules/.bin:$PATH
 
+# Modify Vite configuration to work in Docker
+RUN npm install -D vite @sveltejs/kit
+
 EXPOSE 3000
 
-# Run dev server
-CMD ["npm", "run", "dev"]
+# Run dev server with host configuration
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
