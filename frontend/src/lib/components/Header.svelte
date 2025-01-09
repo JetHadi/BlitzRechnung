@@ -6,7 +6,7 @@
 </script>
 
 <header class="flex items-center justify-between border-b bg-white p-3 shadow-lg">
-	<Logo></Logo>
+	<a href="/create" ><Logo></Logo></a>
 	<nav class="absolute left-1/2 flex -translate-x-1/2 transform space-x-4">
 		{#each navigationItems as { label, href }}
 			<a

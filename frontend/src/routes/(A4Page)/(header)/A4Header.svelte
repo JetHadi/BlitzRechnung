@@ -24,7 +24,7 @@
 >
 	<div class="flex items-start justify-between">
 		<div class="w-1/4">
-			<Logo {isInteractive}></Logo>
+			<Logo />
 		</div>
 
 		<div class="w-2/4 text-center">

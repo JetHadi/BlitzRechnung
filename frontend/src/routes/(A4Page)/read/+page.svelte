@@ -1,2 +1,5 @@
-Hallo<h1>Welcome to Read</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script>
+	import A4Header from "../(header)/A4Header.svelte";
+
+</script>
+<A4Header isInteractive={false}/>
