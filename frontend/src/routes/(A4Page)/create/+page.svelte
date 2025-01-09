@@ -12,6 +12,7 @@
 	let { data } = $props();
 
 	let localRechnungsAbsender = $state(data.localRechnungsAbsender);
+	let openDialog = $state(false);
 
 	const superFormObject = superForm(data.localRechnungsAbsender, {
 		onSubmit({ formData }) {
@@ -29,7 +30,7 @@
 	});
 </script>
 
-<Dialog.Root>
+<Dialog.Root bind:open={openDialog}>
 	<Dialog.Trigger
 		><A4Header
 			bind:localHeaderObject={localRechnungsAbsender}
@@ -44,7 +45,7 @@
 				<Dialog.Description>Passe die Einträge an</Dialog.Description>
 			</Dialog.Header>
 			<div class="p-4">
-				<DialogHeader bind:localHeaderObject={localRechnungsAbsender} />
+				<DialogHeader bind:openDialog={openDialog} bind:localHeaderObject={localRechnungsAbsender} />
 			</div>
 		</ScrollArea>
 	</Dialog.Content>

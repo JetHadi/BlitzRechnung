@@ -9,7 +9,7 @@
 	import { z } from 'zod';
 
 	// for local client storage
-	let { localHeaderObject = $bindable() } = $props();
+	let { localHeaderObject = $bindable(), openDialog = $bindable() } = $props();
 
 	const form = superForm(defaults(defaultRechnungsSender, zod(RechnungsAbsenderSchema)), {
 		validators: zodClient(RechnungsAbsenderSchema),
@@ -20,6 +20,7 @@
 			if (form.valid) {
 				localHeaderObject = { ...headerProps };
 				console.log('from DialogHeader onUpdate: ', localHeaderObject);
+				openDialog = false;
 			}
 		}
 	});
