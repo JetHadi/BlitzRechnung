@@ -2,45 +2,42 @@
 	let { children } = $props();
 </script>
 
-<div class="mx-auto h-[297mm] w-[210mm] bg-white shadow-lg flex">
-	<div class="flex h-full w-full flex-col p-12">
-	{@render children()}
+<div class="print-container mx-auto w-full max-w-[210mm] aspect-[1/1.4142] bg-white shadow-lg print:shadow-none">
+	<div class="flex flex-col w-full h-full p-12 box-border">
+		{@render children()}
 	</div>
 </div>
 
 <style lang="postcss">
-	@page {
-		size: A4;
-		margin: 0;
-	}
-
 	@media print {
-		body {
-			background-color: white !important;
+		@page {
+			size: A4;
+			margin: 0;
 		}
-		nav,
-		footer,
-		.messages {
-			display: none !important;
+
+		body * {
+			visibility: hidden;
 		}
-		.print-wrapper {
+
+		.print-container, 
+		.print-container * {
+			visibility: visible;
+		}
+
+		.print-container {
+			position: absolute;
+			left: 0;
+			top: 0;
 			width: 210mm;
 			height: 297mm;
-			margin: 0 !important;
-			padding: 0 !important;
+			margin: 0;
+			padding: 0;
 		}
-		.container {
-			max-width: none !important;
-			padding: 0 !important;
+
+		nav,
+		footer,
+		.non-print {
+			display: none !important;
 		}
-	}
-
-	:global(.container) {
-		max-width: none !important;
-		padding: 0 !important;
-	}
-
-	.print-wrapper {
-		@apply mx-auto h-[297mm] w-[210mm];
 	}
 </style>

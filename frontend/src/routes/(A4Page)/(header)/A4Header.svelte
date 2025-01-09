@@ -1,17 +1,21 @@
 <script lang="ts">
 	import Logo from '$lib/components/Logo.svelte';
-	import type { RechnungsSender } from '$lib/types/rechnungsSender';
 	import { defaultRechnungsSender } from '$lib/types/rechnungsSender';
 
 	let {
-		isInteractive = true,
-		absender_firma = defaultRechnungsSender.absender_firma,
-		absender_strasse = defaultRechnungsSender.absender_strasse,
-		absender_ort = defaultRechnungsSender.absender_ort,
-		absender_plz = defaultRechnungsSender.absender_plz,
-		absender_telefon = defaultRechnungsSender.absender_telefon,
-		absender_email = defaultRechnungsSender.absender_email
+		data,
+		isInteractive = true
 	} = $props();
+
+	const headerProps = $derived({
+		firma: data.firma,
+		strasse: data.strasse,
+		ort: data.ort,
+		plz: data.plz,
+		telefon: data.telefon,
+		email: data.email,
+		isInteractive: false
+	});
 </script>
 
 <div
@@ -32,12 +36,12 @@
 		</div>
 
 		<div class="w-1/4 text-left text-sm">
-			{absender_firma}<br />
-			{absender_strasse}<br />
-			{absender_plz}
-			{absender_ort}<br />
-			{absender_telefon}<br />
-			{absender_email}
+			{headerProps.firma}<br />
+			{headerProps.strasse}<br />
+			{headerProps.plz}
+			{headerProps.ort}<br />
+			{headerProps.telefon}<br />
+			{headerProps.email}
 		</div>
 	</div>
 </div>
