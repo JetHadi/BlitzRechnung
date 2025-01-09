@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Dialog from '$lib/components/ui/dialog';
 	import A4Header from '../(header)/A4Header.svelte';
-	import DialogHeader from '../(header)/dialogHeader.svelte';
+	import DialogHeader from './dialogHeader.svelte';
 </script>
 
 <Dialog.Root>
