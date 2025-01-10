@@ -7,19 +7,31 @@
 	import { firstSectionSchema } from '$lib/schema/firstSectionHeader';
 
 	let { localHeaderObject = $bindable(), openDialog = $bindable() } = $props();
-	localHeaderObject.rechnungsdatum = localHeaderObject.rechnungsdatum.toISOString().split('T')[0];
+
+	let defaultValues = {...localHeaderObject}
+
+	defaultValues.rechnungsdatum = transform2String(defaultValues.rechnungsdatum)
+
+	function transform2String(dateObject) {
+		try {
+			return dateObject.toISOString().split('T')[0];
+		} catch (error) {
+			console.error('Invalid date object:', error);
+			return null;
+		}
+	}
 
 	let dateString = $state('');
-// function createState() {
-//     return {
-//         value: $state(''), // Reactive input value
-//         handleInput(e: Event & { currentTarget: EventTarget & HTMLInputElement }) {
-//             this.value = e.currentTarget.value;
-//             console.log('handleInput ', this.value);
-//         }
-//     };
-// }
-	const form = superForm(defaults(localHeaderObject, zod(firstSectionSchema)), {
+	// function createState() {
+	//     return {
+	//         value: $state(''), // Reactive input value
+	//         handleInput(e: Event & { currentTarget: EventTarget & HTMLInputElement }) {
+	//             this.value = e.currentTarget.value;
+	//             console.log('handleInput ', this.value);
+	//         }
+	//     };
+	// }
+	const form = superForm(defaults(defaultValues, zod(firstSectionSchema)), {
 		validators: zodClient(firstSectionSchema),
 		SPA: true,
 		invalidateAll: false,
@@ -45,7 +57,7 @@
 	});
 
 	$effect(() => {
-		console.log(localHeaderObject.rechnungsdatum)
+		console.log('localHeaderObject.rechnungsdatuml ', localHeaderObject.rechnungsdatum);
 		console.log($formData.rechnungsdatum);
 		// Create a computed value for the date string
 		// dateString = $formData.rechnungsdatum;

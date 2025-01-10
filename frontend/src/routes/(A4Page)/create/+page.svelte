@@ -45,7 +45,7 @@
 		/></Dialog.Trigger
 	>
 
-	<Dialog.Content class="h-screen w-full sm:max-w-[800px]">
+	<Dialog.Content class="w-full sm:max-w-[800px]">
 		<ScrollArea>
 			<Dialog.Header>
 				<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
@@ -69,7 +69,7 @@
 		/></Dialog.Trigger
 	>
 
-	<Dialog.Content class="h-screen w-full sm:max-w-[800px]">
+	<Dialog.Content class="w-full sm:max-w-[800px]">
 		<ScrollArea>
 			<Dialog.Header>
 				<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
