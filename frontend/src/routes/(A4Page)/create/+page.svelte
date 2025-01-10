@@ -5,10 +5,11 @@
 	import { defaultRechnungsSender } from '$lib/types/rechnungsSender';
 	import { superForm } from 'sveltekit-superforms';
 	import A4Header from '../(header)/A4Header.svelte';
-	import DialogHeader from './dialogHeader.svelte';
 	import { zod } from 'sveltekit-superforms/adapters';
 	import { RechnungsAbsenderSchema } from '$lib/schema/rechnungsAbsender';
 	import { SquareArrowRight } from 'lucide-svelte';
+	import DialogHeader from '../(header)/dialogHeader.svelte';
+	import A4FirstSection from '../(firstSection)/A4FirstSection.svelte';
 
 	let { data } = $props();
 
@@ -51,6 +52,28 @@
 		</ScrollArea>
 	</Dialog.Content>
 </Dialog.Root>
+
+<Dialog.Root bind:open={openDialog}>
+	<Dialog.Trigger
+		><A4FirstSection
+			bind:localHeaderObject={localRechnungsAbsender}
+			propaGateFrom={'page.svelte'}
+		/></Dialog.Trigger
+	>
+
+	<Dialog.Content class="h-screen w-full sm:max-w-[800px]">
+		<ScrollArea>
+			<Dialog.Header>
+				<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
+				<Dialog.Description>Passe die Einträge an</Dialog.Description>
+			</Dialog.Header>
+			<div class="p-4">
+				<DialogHeader bind:openDialog bind:localHeaderObject={localRechnungsAbsender} />
+			</div>
+		</ScrollArea>
+	</Dialog.Content>
+</Dialog.Root>
+
 <form
 	method="POST"
 	use:enhance

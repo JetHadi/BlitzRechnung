@@ -1,5 +1,5 @@
 <script lang="ts">
-	import A4Header from '../(header)/A4Header.svelte';
+	import A4Header from './A4Header.svelte';
 	import { type SuperValidated, type Infer, superForm, defaults } from 'sveltekit-superforms';
 	import { zod, zodClient } from 'sveltekit-superforms/adapters';
 	import * as Form from '$lib/components/ui/form/';
