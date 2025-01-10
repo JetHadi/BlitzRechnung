@@ -51,17 +51,29 @@
 		</ScrollArea>
 	</Dialog.Content>
 </Dialog.Root>
-<form method="POST" use:enhance class="absolute bottom-10 right-10 z-50">
+<form
+	method="POST"
+	use:enhance
+	class="group fixed bottom-28 right-4 z-10 mx-auto h-[calc(100vh-13rem)] cursor-pointer rounded-lg border border-transparent
+	transition-all
+	duration-200
+	hover:border-gray-200
+	hover:bg-gray-50/50
+	p-8"
+>
 	<button
 		type="submit"
-		class="group transition-all duration-300 ease-in-out"
+		class="flex h-full w-full items-center justify-center transition-all duration-300 ease-in-out"
 	>
 		<SquareArrowRight
 			size={130}
-			class="group-hover:text-primary scale-125 
-                   text-gray-500 opacity-40 
-                   transition-all duration-300 
-                   ease-in-out group-hover:scale-150 group-hover:opacity-100"
+			strokeWidth={1.5}
+			class="group-hover:text-primary text-gray-400 
+				   opacity-40 transition-all 
+				   duration-300 
+				   ease-in-out 
+				   group-hover:scale-150 
+				   group-hover:opacity-100"
 		/>
 	</button>
 </form>
