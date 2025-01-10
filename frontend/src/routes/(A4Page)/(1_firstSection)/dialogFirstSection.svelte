@@ -8,11 +8,12 @@
 
 	let { localHeaderObject = $bindable(), openDialog = $bindable() } = $props();
 
-	let defaultValues = {...localHeaderObject}
+	let defaultValues = {
+		...localHeaderObject,
+		rechnungsdatum: transform2String(localHeaderObject.rechnungsdatum)
+	};
 
-	defaultValues.rechnungsdatum = transform2String(defaultValues.rechnungsdatum)
-
-	function transform2String(dateObject) {
+	function transform2String(dateObject: Date) {
 		try {
 			return dateObject.toISOString().split('T')[0];
 		} catch (error) {
