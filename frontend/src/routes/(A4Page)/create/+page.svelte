@@ -8,6 +8,7 @@
 	import A4FirstSection from '../(1_firstSection)/A4FirstSection.svelte';
 	import DialogHeader from '../(0_header)/dialogHeader.svelte';
 	import DialogFirstSection from '../(1_firstSection)/dialogFirstSection.svelte';
+	import { SquareArrowRight } from 'lucide-svelte';
 
 	let { data } = $props();
 
@@ -85,15 +86,16 @@
 	</Dialog.Content>
 </Dialog.Root>
 
-<!-- <form
+<form
 	method="POST"
 	use:enhance
-	class="group fixed bottom-28 right-4 z-10 mx-auto h-[calc(100vh-13rem)] cursor-pointer rounded-lg border border-transparent
+	class="non-print group fixed bottom-28 right-4 z-10 mx-auto h-[calc(100vh-13rem)] cursor-pointer rounded-lg border
+	border-transparent
+	p-8
 	transition-all
 	duration-200
 	hover:border-gray-200
-	hover:bg-gray-50/50
-	p-8"
+	hover:bg-gray-50/50"
 >
 	<button
 		type="submit"
@@ -110,4 +112,12 @@
 				   group-hover:opacity-100"
 		/>
 	</button>
-</form> -->
+</form>
+
+<style lang="postcss">
+	@media print {
+		.non-print {
+			display: none !important;
+		}
+	}
+</style>
