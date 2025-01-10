@@ -7,7 +7,18 @@
 	import { firstSectionSchema } from '$lib/schema/firstSectionHeader';
 
 	let { localHeaderObject = $bindable(), openDialog = $bindable() } = $props();
+	localHeaderObject.rechnungsdatum = localHeaderObject.rechnungsdatum.toISOString().split('T')[0];
 
+	let dateString = $state('');
+// function createState() {
+//     return {
+//         value: $state(''), // Reactive input value
+//         handleInput(e: Event & { currentTarget: EventTarget & HTMLInputElement }) {
+//             this.value = e.currentTarget.value;
+//             console.log('handleInput ', this.value);
+//         }
+//     };
+// }
 	const form = superForm(defaults(localHeaderObject, zod(firstSectionSchema)), {
 		validators: zodClient(firstSectionSchema),
 		SPA: true,
@@ -31,6 +42,14 @@
 		rechnungsnummer: $formData.rechnungsnummer,
 		rechnungsdatum: $formData.rechnungsdatum,
 		isInteractive: false
+	});
+
+	$effect(() => {
+		console.log(localHeaderObject.rechnungsdatum)
+		console.log($formData.rechnungsdatum);
+		// Create a computed value for the date string
+		// dateString = $formData.rechnungsdatum;
+		// console.log(dateString);
 	});
 </script>
 
