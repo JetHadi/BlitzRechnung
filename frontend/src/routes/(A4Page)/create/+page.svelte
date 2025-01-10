@@ -4,18 +4,23 @@
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import { defaultRechnungsSender } from '$lib/types/rechnungsSender';
 	import { superForm } from 'sveltekit-superforms';
-	import A4Header from '../(header)/A4Header.svelte';
-	import { zod } from 'sveltekit-superforms/adapters';
-	import { RechnungsAbsenderSchema } from '$lib/schema/rechnungsAbsender';
-	import { SquareArrowRight } from 'lucide-svelte';
-	import DialogHeader from '../(header)/dialogHeader.svelte';
-	import A4FirstSection from '../(firstSection)/A4FirstSection.svelte';
+	import A4Header from '../(0_header)/A4Header.svelte';
+	import A4FirstSection from '../(1_firstSection)/A4FirstSection.svelte';
+	import DialogHeader from '../(0_header)/dialogHeader.svelte';
+	import DialogFirstSection from '../(1_firstSection)/dialogFirstSection.svelte';
 
 	let { data } = $props();
 
 	let localRechnungsAbsender = $state(data.localRechnungsAbsender);
-	let openDialog = $state(false);
+	let localRechnungsEmpfaenger = $state(data.localRechnungsEmpfaenger);
+	let localRechnungsDaten = $state(data.localRechnungsDaten);
+	let openHeaderDialog = $state(false);
+	let openFirstSectionDialog = $state(false);
 
+	let firstSectionObject = $state({
+		...localRechnungsEmpfaenger,
+		...localRechnungsDaten
+	});
 	const superFormObject = superForm(data.localRechnungsAbsender, {
 		onSubmit({ formData }) {
 			console.log('Exe onSubmit');
@@ -32,7 +37,7 @@
 	});
 </script>
 
-<Dialog.Root bind:open={openDialog}>
+<Dialog.Root bind:open={openHeaderDialog}>
 	<Dialog.Trigger
 		><A4Header
 			bind:localHeaderObject={localRechnungsAbsender}
@@ -47,16 +52,19 @@
 				<Dialog.Description>Passe die Einträge an</Dialog.Description>
 			</Dialog.Header>
 			<div class="p-4">
-				<DialogHeader bind:openDialog bind:localHeaderObject={localRechnungsAbsender} />
+				<DialogHeader
+					bind:openDialog={openHeaderDialog}
+					bind:localHeaderObject={localRechnungsAbsender}
+				/>
 			</div>
 		</ScrollArea>
 	</Dialog.Content>
 </Dialog.Root>
 
-<Dialog.Root bind:open={openDialog}>
+<Dialog.Root bind:open={openFirstSectionDialog}>
 	<Dialog.Trigger
 		><A4FirstSection
-			bind:localHeaderObject={localRechnungsAbsender}
+			bind:localHeaderObject={firstSectionObject}
 			propaGateFrom={'page.svelte'}
 		/></Dialog.Trigger
 	>
@@ -68,13 +76,16 @@
 				<Dialog.Description>Passe die Einträge an</Dialog.Description>
 			</Dialog.Header>
 			<div class="p-4">
-				<DialogHeader bind:openDialog bind:localHeaderObject={localRechnungsAbsender} />
+				<DialogFirstSection
+					bind:openDialog={openFirstSectionDialog}
+					bind:localHeaderObject={firstSectionObject}
+				/>
 			</div>
 		</ScrollArea>
 	</Dialog.Content>
 </Dialog.Root>
 
-<form
+<!-- <form
 	method="POST"
 	use:enhance
 	class="group fixed bottom-28 right-4 z-10 mx-auto h-[calc(100vh-13rem)] cursor-pointer rounded-lg border border-transparent
@@ -99,4 +110,4 @@
 				   group-hover:opacity-100"
 		/>
 	</button>
-</form>
+</form> -->

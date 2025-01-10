@@ -1,3 +1,4 @@
+<!-- frontend\src\routes\(A4Page)\(0_header)\dialogHeader.svelte -->
 <script lang="ts">
 	import A4Header from './A4Header.svelte';
 	import { type SuperValidated, type Infer, superForm, defaults } from 'sveltekit-superforms';

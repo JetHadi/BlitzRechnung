@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const RechnungSchema = z.object({
     rechnungsnummer: z.string().trim(),
     rechnungsdatum: z.coerce.date(),
-    leistungsdatum: z.coerce.date(),
+    leistungsdatum: z.coerce.date().optional(),
     faelligkeitsdatum: z.coerce.date().optional()
 }).superRefine((data, ctx) => {
     // Only perform validation if faelligkeitsdatum is present
@@ -19,4 +19,4 @@ export const RechnungSchema = z.object({
 });
 
 // Type inference for TypeScript
-export type RechnungFormData = z.infer<typeof RechnungSchema>;
+export type RechnungsDaten = z.infer<typeof RechnungSchema>;
