@@ -34,10 +34,8 @@
 			position: absolute;
 			left: 0;
 			top: 0;
-			width: 210mm;
-			height: 297mm;
 			margin: 0;
-			padding: 0;
+			padding: 10;
 		}
 
 		nav,

@@ -61,3 +61,6 @@ vite.config.ts.timestamp-*
 
 # SvelteKit specific
 .svelte-kit/
+
+# ignore generated pdfs
+frontend/static/pdfs/*
