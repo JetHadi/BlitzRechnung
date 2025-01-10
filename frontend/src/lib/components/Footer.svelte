@@ -1,3 +1,4 @@
+<!-- frontend\src\lib\components\Footer.svelte -->
 <script lang="ts">
     import { navigationItems } from '$lib/types/navigation';
 </script>
