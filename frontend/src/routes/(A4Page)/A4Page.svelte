@@ -63,6 +63,6 @@
 		</Dialog.Content>
 	</Dialog.Root> -->
 {:else}
-	<!-- <HeaderContainer bind:localHeaderObject={headerData.headerFormObject} />
-	<FirstSectionContainer bind:localHeaderObject={firstSectionData.firstSectionObject} /> -->
+	<HeaderContainer bind:headerData isInteractive={reactive}/>
+	<!-- <FirstSectionContainer bind:localHeaderObject={firstSectionData.firstSectionObject} /> -->
 {/if}
