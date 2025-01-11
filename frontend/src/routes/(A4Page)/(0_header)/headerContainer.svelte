@@ -5,24 +5,24 @@
 	import { cn } from '$lib/utils';
 
 	let {
-		localHeaderObject = $bindable(),
+		headerData = $bindable(),
 		isInteractive = true,
-		propaGateFrom
+		propaGateFrom = ""
 	} = $props();
 
-	const headerProps = $derived({
-		firma: localHeaderObject.firma,
-		strasse: localHeaderObject.strasse,
-		ort: localHeaderObject.ort,
-		plz: localHeaderObject.plz,
-		telefon: localHeaderObject.telefon,
-		email: localHeaderObject.email,
-		isInteractive: false
-	});
+	// const headerProps = $derived({
+	// 	firma: localHeaderObject.firma,
+	// 	strasse: localHeaderObject.strasse,
+	// 	ort: localHeaderObject.ort,
+	// 	plz: localHeaderObject.plz,
+	// 	telefon: localHeaderObject.telefon,
+	// 	email: localHeaderObject.email,
+	// 	isInteractive: false
+	// });
 
-	$effect(() => {
-		// console.log('coming from', {propaGateFrom}, '-A4Header: ',localHeaderObject);
-	});
+	// $effect(() => {
+	// 	console.log('coming from', {propaGateFrom}, '-Data: ',headerData);
+	// });
 </script>
 
 
@@ -42,14 +42,14 @@
     </div>
 
     <div class="w-1/4 text-left text-sm">
-      {headerProps.firma}<br />
-      {headerProps.strasse}<br />
-      {headerProps.plz} {headerProps.ort}<br />
-      {#if headerProps.telefon}
-        {headerProps.telefon}<br />
+      {headerData.firma}<br />
+      {headerData.strasse}<br />
+      {headerData.plz} {headerData.ort}<br />
+      {#if headerData.telefon}
+        {headerData.telefon}<br />
       {/if}
-      {#if headerProps.email}
-        {headerProps.email}
+      {#if headerData.email}
+        {headerData.email}
       {/if}
     </div>
   </div>

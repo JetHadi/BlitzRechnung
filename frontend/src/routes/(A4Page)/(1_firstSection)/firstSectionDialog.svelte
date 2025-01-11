@@ -1,10 +1,11 @@
 <script lang="ts">
-	import A4FirstSection from './A4FirstSection.svelte';
+	
 	import { type SuperValidated, type Infer, superForm, defaults } from 'sveltekit-superforms';
 	import { zod, zodClient } from 'sveltekit-superforms/adapters';
 	import * as Form from '$lib/components/ui/form/';
 	import { Input } from '$lib/components/ui/input/';
-	import { firstSectionSchema } from '$lib/schema/firstSectionHeader';
+	import { firstSectionSchema } from '$lib/schema/1_firstSectionContainer';
+	import FirstSectionContainer from './firstSectionContainer.svelte';
 
 	let { localHeaderObject = $bindable(), openDialog = $bindable() } = $props();
 
@@ -58,15 +59,15 @@
 	});
 
 	$effect(() => {
-		console.log('localHeaderObject.rechnungsdatuml ', localHeaderObject.rechnungsdatum);
-		console.log($formData.rechnungsdatum);
+		// console.log('localHeaderObject.rechnungsdatuml ', localHeaderObject.rechnungsdatum);
+		// console.log($formData.rechnungsdatum);
 		// Create a computed value for the date string
 		// dateString = $formData.rechnungsdatum;
 		// console.log(dateString);
 	});
 </script>
 
-<A4FirstSection
+<FirstSectionContainer
 	localHeaderObject={headerProps}
 	isInteractive={false}
 	propaGateFrom={'DialogFirstSection'}

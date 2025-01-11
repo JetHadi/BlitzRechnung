@@ -1,6 +1,5 @@
 <!-- frontend\src\routes\(A4Page)\(0_header)\dialogHeader.svelte -->
 <script lang="ts">
-	import A4Header from './A4Header.svelte';
 	import { type SuperValidated, type Infer, superForm, defaults } from 'sveltekit-superforms';
 	import { zod, zodClient } from 'sveltekit-superforms/adapters';
 	import * as Form from '$lib/components/ui/form/';
@@ -8,42 +7,46 @@
 	import { RechnungsAbsenderSchema } from '$lib/schema/rechnungsAbsender';
 	import { defaultRechnungsSender } from '$lib/types/rechnungsSender';
 	import { z } from 'zod';
+	import HeaderContainer from './headerContainer.svelte';
+	import { headerContainerSchema } from '$lib/schema/0_headerContainer';
 
 	// for local client storage
-	let { localHeaderObject = $bindable(), openDialog = $bindable() } = $props();
+	let { headerForm = $bindable(), headerData = $bindable(), openDialog = $bindable() } = $props();
 
-	const form = superForm(defaults(defaultRechnungsSender, zod(RechnungsAbsenderSchema)), {
-		validators: zodClient(RechnungsAbsenderSchema),
+	const form = superForm(headerForm, {
+		validators: zodClient(headerContainerSchema),
 		SPA: true,
 		invalidateAll: false, // Prevents full page reload
-		resetForm: false, // Optional: prevents form reset
+		onSubmit({}){
+			console.log("from DialogHeader onSubmit:",headerForm.data.firma)
+		},
 		onUpdate({ form }) {
 			if (form.valid) {
-				localHeaderObject = { ...headerProps };
-				console.log('from DialogHeader onUpdate: ', localHeaderObject);
-				openDialog = false;
+				headerData = { ...$formData };
+				console.log('from DialogHeader onUpdate: ', headerForm.data.firma);
+				openDialog = false
 			}
 		}
 	});
 
 	const { form: formData, enhance } = form;
 
-	const headerProps = $derived({
-		firma: $formData.firma,
-		strasse: $formData.strasse,
-		ort: $formData.ort,
-		plz: $formData.plz,
-		telefon: $formData.telefon,
-		email: $formData.email,
-		isInteractive: false
-	});
+	// const headerProps = $derived({
+	// 	firma: $formData.firma,
+	// 	strasse: $formData.strasse,
+	// 	ort: $formData.ort,
+	// 	plz: $formData.plz,
+	// 	telefon: $formData.telefon,
+	// 	email: $formData.email,
+	// 	isInteractive: false
+	// });
 
-	$effect(() => {
-		// console.log('from DialogHeader: ', localHeaderObject);
-	});
+	// $effect(() => {
+	// 	console.log('from DialogHeader: ', headerForm);
+	// });
 </script>
 
-<A4Header localHeaderObject={headerProps} isInteractive={false} propaGateFrom={'DialogHeader'} />
+<HeaderContainer headerData={$formData} isInteractive={false} propaGateFrom={'DialogHeader'} />
 <form method="POST" use:enhance>
 	<Form.Field {form} name="firma">
 		<Form.Control>

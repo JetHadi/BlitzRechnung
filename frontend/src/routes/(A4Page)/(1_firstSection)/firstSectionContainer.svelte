@@ -4,7 +4,7 @@
 	import { defaultRechnungsSender } from '$lib/types/rechnungsSender';
 	import { cn } from '$lib/utils';
 
-	let { localHeaderObject = $bindable(), isInteractive = true, propaGateFrom } = $props();
+	let { localHeaderObject = $bindable(), isInteractive = true, propaGateFrom="" } = $props();
 
 	const headerProps = $derived({
 		firma: localHeaderObject.firma,

@@ -1,91 +1,54 @@
 <!-- frontend/src/routes/(A4Page)/create/+page.svelte -->
 <script lang="ts">
-	import * as Dialog from '$lib/components/ui/dialog';
-	import { ScrollArea } from '$lib/components/ui/scroll-area';
-	import { defaultRechnungsSender } from '$lib/types/rechnungsSender';
+	import { LoaderCircle, SquareArrowRight } from 'lucide-svelte';
+	import A4Page from '../A4Page.svelte';
 	import { superForm } from 'sveltekit-superforms';
-	import A4Header from '../(0_header)/A4Header.svelte';
-	import A4FirstSection from '../(1_firstSection)/A4FirstSection.svelte';
-	import DialogHeader from '../(0_header)/dialogHeader.svelte';
-	import DialogFirstSection from '../(1_firstSection)/dialogFirstSection.svelte';
-	import { SquareArrowRight } from 'lucide-svelte';
 
 	let { data } = $props();
 
-	let localRechnungsAbsender = $state(data.localRechnungsAbsender);
-	let localRechnungsEmpfaenger = $state(data.localRechnungsEmpfaenger);
-	let localRechnungsDaten = $state(data.localRechnungsDaten);
-	let openHeaderDialog = $state(false);
-	let openFirstSectionDialog = $state(false);
+	const reactive = true;
 
-	let firstSectionObject = $state({
-		...localRechnungsEmpfaenger,
-		...localRechnungsDaten
+	let firstSectionData = $state({
+		hallo: 'hallo'
 	});
-	const superFormObject = superForm(data.localRechnungsAbsender, {
-		onSubmit({ formData }) {
-			console.log('Exe onSubmit');
-			Object.entries(localRechnungsAbsender).forEach(([key, value]) => {
-				formData.set(key, value);
-			});
+
+	let localFormObject = $state(data.headerForm);
+
+	const form = superForm(data.headerForm, {
+		delayMs: 500,
+		timeoutMs: 8000,
+		dataType: 'json',
+		onSubmit({ jsonData }) {
+			console.log('Main Create Page--', localFormObject.data);
+			jsonData(localFormObject.data);
 		}
 	});
 
-	let { form, enhance } = superFormObject;
+	const { form: formData, enhance, delayed } = form;
 
 	$effect(() => {
-		console.log('From +page localObject: ', localRechnungsAbsender);
+		// console.log('Main Create Page--', localFormObject);
 	});
 </script>
 
-<Dialog.Root bind:open={openHeaderDialog}>
-	<Dialog.Trigger
-		><A4Header
-			bind:localHeaderObject={localRechnungsAbsender}
-			propaGateFrom={'page.svelte'}
-		/></Dialog.Trigger
-	>
+<div class="flex items-start gap-4">
+	<div class="mx-auto aspect-[1/1.4142] w-full max-w-[210mm] bg-white shadow-lg print:shadow-none">
+		<div class="print-container box-border flex h-full w-full flex-col p-12">
+			<A4Page
+				{reactive}
+				bind:headerForm={localFormObject}
+				bind:headerData={localFormObject.data}
+				bind:firstSectionData
+			></A4Page>
+			<form method="POST" use:enhance>
+				<button type="submit">Submit</button>
+				{#if $delayed}<LoaderCircle class="animate-spin" />{/if}
+			</form>
+		</div>
+	</div>
+</div>
 
-	<Dialog.Content class="w-full sm:max-w-[800px]">
-		<ScrollArea>
-			<Dialog.Header>
-				<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
-				<Dialog.Description>Passe die Einträge an</Dialog.Description>
-			</Dialog.Header>
-			<div class="p-4">
-				<DialogHeader
-					bind:openDialog={openHeaderDialog}
-					bind:localHeaderObject={localRechnungsAbsender}
-				/>
-			</div>
-		</ScrollArea>
-	</Dialog.Content>
-</Dialog.Root>
-
-<Dialog.Root bind:open={openFirstSectionDialog}>
-	<Dialog.Trigger
-		><A4FirstSection
-			bind:localHeaderObject={firstSectionObject}
-			propaGateFrom={'page.svelte'}
-		/></Dialog.Trigger
-	>
-
-	<Dialog.Content class="w-full sm:max-w-[800px]">
-		<ScrollArea>
-			<Dialog.Header>
-				<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
-				<Dialog.Description>Passe die Einträge an</Dialog.Description>
-			</Dialog.Header>
-			<div class="p-4">
-				<DialogFirstSection
-					bind:openDialog={openFirstSectionDialog}
-					bind:localHeaderObject={firstSectionObject}
-				/>
-			</div>
-		</ScrollArea>
-	</Dialog.Content>
-</Dialog.Root>
-
+<!-- 
 <form
 	method="POST"
 	use:enhance
@@ -112,10 +75,34 @@
 				   group-hover:opacity-100"
 		/>
 	</button>
-</form>
+</form> -->
 
 <style lang="postcss">
 	@media print {
+		@page {
+			size: A4;
+			margin: 0;
+		}
+
+		body * {
+			visibility: hidden;
+		}
+
+		.print-container,
+		.print-container * {
+			visibility: visible;
+		}
+
+		.print-container {
+			position: absolute;
+			left: 0;
+			top: 0;
+			margin: 0;
+			padding: 10;
+		}
+
+		nav,
+		footer,
 		.non-print {
 			display: none !important;
 		}

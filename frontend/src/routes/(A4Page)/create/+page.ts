@@ -42,17 +42,29 @@ let localRechnungsDaten: RechnungsDaten = {
     rechnungsdatum: new Date()
 };
 
-// initialization of the form that we want to use
-export const load: PageServerLoad = async () => {
-    // Initial page load data if needed
-    const createForm = await superValidate({...defaultRechnungsSender},zod(RechnungsAbsenderSchema));
-    localRechnungsAbsender = {...defaultRechnungsSender}
-    localRechnungsEmpfaenger = { ...defaultRechnungsEmfpaenger }
-    localRechnungsDaten = { ...defaultRechnungsDaten }
-    return {
-        createForm,
-        localRechnungsAbsender,
-        localRechnungsEmpfaenger,
-        localRechnungsDaten
-    };
-  };
+let localFormObject = {
+    localRechnungsAbsender,
+    localRechnungsEmpfaenger,
+    localRechnungsDaten
+}
+
+
+
+// // initialization of the form that we want to use
+// export const load : PageLoad = async (event) => {
+//     // Initial page load data if needed
+//     // const createForm = await superValidate({ ...defaultRechnungsSender }, zod(RechnungsAbsenderSchema));
+//     localRechnungsAbsender = { ...defaultRechnungsSender }
+//     localRechnungsEmpfaenger = { ...defaultRechnungsEmfpaenger }
+//     localRechnungsDaten = { ...defaultRechnungsDaten }
+//     console.log("Is it really logging twice????")
+//     const timestamp = new Date().toLocaleString();
+//     console.log(timestamp, '', event);
+//     return {
+//         createForm,
+//         localFormObject,
+//         localRechnungsAbsender,
+//         localRechnungsEmpfaenger,
+//         localRechnungsDaten
+//     };
+// };
