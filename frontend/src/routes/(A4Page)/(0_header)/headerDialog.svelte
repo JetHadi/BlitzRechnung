@@ -30,20 +30,6 @@
 	});
 
 	const { form: formData, enhance } = form;
-
-	// const headerProps = $derived({
-	// 	firma: $formData.firma,
-	// 	strasse: $formData.strasse,
-	// 	ort: $formData.ort,
-	// 	plz: $formData.plz,
-	// 	telefon: $formData.telefon,
-	// 	email: $formData.email,
-	// 	isInteractive: false
-	// });
-
-	// $effect(() => {
-	// 	console.log('from DialogHeader: ', headerForm);
-	// });
 </script>
 
 <HeaderContainer headerData={$formData} isInteractive={false} propaGateFrom={'DialogHeader'} />

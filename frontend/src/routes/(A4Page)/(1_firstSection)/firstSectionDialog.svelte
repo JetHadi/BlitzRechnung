@@ -1,18 +1,21 @@
 <script lang="ts">
-	
 	import { type SuperValidated, type Infer, superForm, defaults } from 'sveltekit-superforms';
 	import { zod, zodClient } from 'sveltekit-superforms/adapters';
 	import * as Form from '$lib/components/ui/form/';
 	import { Input } from '$lib/components/ui/input/';
-	import { firstSectionSchema } from '$lib/schema/1_firstSectionContainer';
 	import FirstSectionContainer from './firstSectionContainer.svelte';
+	import { firstSectionContainerSchema } from '$lib/schema/1_firstSectionContainer';
 
-	let { localHeaderObject = $bindable(), openDialog = $bindable() } = $props();
+	let {
+		firstSectionForm = $bindable(),
+		firstSectionData = $bindable(),
+		openDialog = $bindable()
+	} = $props();
 
-	let defaultValues = {
-		...localHeaderObject,
-		rechnungsdatum: transform2String(localHeaderObject.rechnungsdatum)
-	};
+	// let defaultValues = {
+	// 	...localHeaderObject,
+	// 	rechnungsdatum: transform2String(localHeaderObject.rechnungsdatum)
+	// };
 
 	function transform2String(dateObject: Date) {
 		try {
@@ -23,52 +26,25 @@
 		}
 	}
 
-	let dateString = $state('');
-	// function createState() {
-	//     return {
-	//         value: $state(''), // Reactive input value
-	//         handleInput(e: Event & { currentTarget: EventTarget & HTMLInputElement }) {
-	//             this.value = e.currentTarget.value;
-	//             console.log('handleInput ', this.value);
-	//         }
-	//     };
-	// }
-	const form = superForm(defaults(defaultValues, zod(firstSectionSchema)), {
-		validators: zodClient(firstSectionSchema),
+	// for local client storage
+
+	const form = superForm(firstSectionForm, {
+		validators: zodClient(firstSectionContainerSchema),
 		SPA: true,
-		invalidateAll: false,
-		resetForm: false,
+		invalidateAll: false, // Prevents full page reload
 		onUpdate({ form }) {
 			if (form.valid) {
-				localHeaderObject = { ...headerProps };
+				firstSectionData = { ...$formData };
 				openDialog = false;
 			}
 		}
 	});
 
 	const { form: formData, enhance } = form;
-
-	const headerProps = $derived({
-		firma: $formData.firma,
-		strasse: $formData.strasse,
-		ort: $formData.ort,
-		plz: $formData.plz,
-		rechnungsnummer: $formData.rechnungsnummer,
-		rechnungsdatum: $formData.rechnungsdatum,
-		isInteractive: false
-	});
-
-	$effect(() => {
-		// console.log('localHeaderObject.rechnungsdatuml ', localHeaderObject.rechnungsdatum);
-		// console.log($formData.rechnungsdatum);
-		// Create a computed value for the date string
-		// dateString = $formData.rechnungsdatum;
-		// console.log(dateString);
-	});
 </script>
 
 <FirstSectionContainer
-	localHeaderObject={headerProps}
+	firstSectionData={$formData}
 	isInteractive={false}
 	propaGateFrom={'DialogFirstSection'}
 />

@@ -3,6 +3,6 @@ import type { z } from "zod";
 import { RechnungSchema } from "./rechnungsDaten";
 import { RechnungsEmpfaengerSchema } from "./rechnungsEmpfaenger";
 
-export const firstSectionSchema = RechnungsEmpfaengerSchema.and(RechnungSchema);
+export const firstSectionContainerSchema = RechnungsEmpfaengerSchema.and(RechnungSchema);
 
-export type FirstSectionSchema = z.infer<typeof firstSectionSchema>;
+export type FirstSectionContainerSchema = z.infer<typeof firstSectionContainerSchema>;

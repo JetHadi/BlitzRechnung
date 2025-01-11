@@ -9,17 +9,20 @@ import puppeteer from "puppeteer";
 import type { PageServerLoad } from "./$types";
 import { headerContainerSchema } from "$lib/schema/0_headerContainer";
 import { HeaderContainerDefaults } from "$lib/types/headerContainerDefaults";
+import { FirstSectionContainerDefaults } from "$lib/types/firstSectionContainerDefaults";
+import { firstSectionContainerSchema } from "$lib/schema/1_firstSectionContainer";
 
 export const load: PageServerLoad = async () => {
   const startTime = performance.now();
   console.log("🚀 Starting page load at:", new Date().toISOString());
 
   const headerForm = await superValidate(HeaderContainerDefaults, zod(headerContainerSchema));
+  const firstSectionForm = await superValidate(FirstSectionContainerDefaults, zod(firstSectionContainerSchema));
 
   const loadTime = performance.now() - startTime;
   console.log(`✨ Page load completed in ${loadTime.toFixed(2)}ms`);
 
-  return { headerForm: headerForm }
+  return { headerForm: headerForm, firstSectionForm: firstSectionForm }
 }
 
 export const actions: Actions = {
@@ -41,7 +44,7 @@ export const actions: Actions = {
       // Data Preparation
       const headerContainer = form // passing down the whole header form to the url
       const printUrl = `${event.url.origin}/read?data=${encodeURIComponent(JSON.stringify(headerContainer))}`;
-      
+
       const RechnungsDaten = { Absenderdaten: form.data };
 
       // PDF Generation
@@ -77,7 +80,7 @@ export const actions: Actions = {
         message: `Form posted and PDF generated successfully in ${totalTime.toFixed(2)}ms!`
       };
 
-    } catch (error : any) {
+    } catch (error: any) {
       const errorTime = performance.now() - actionStart;
       console.error(`❌ Error after ${errorTime.toFixed(2)}ms:`, error);
 

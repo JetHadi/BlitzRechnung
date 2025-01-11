@@ -8,13 +8,18 @@
 
 	let {
 		reactive = false,
+        
 		headerForm = $bindable(),
+        headerData = $bindable(),
+
+        firstSectionForm = $bindable(),
 		firstSectionData = $bindable(),
-		headerData = $bindable()
+
 	} = $props();
 
 	const origin = 'A4Page';
 	let openHeaderDialog = $state(false);
+	let openFirstSectionDialog = $state(false);
 
 	// let headerData = $state(headerForm.data)
 
@@ -40,10 +45,10 @@
 		</Dialog.Content>
 	</Dialog.Root>
 
-	<!--<Dialog.Root bind:open={firstSectionData.openDialog}>
+	<Dialog.Root bind:open={openFirstSectionDialog}>
 		<Dialog.Trigger
 			><FirstSectionContainer
-				bind:localHeaderObject={firstSectionData.firstSectionObject}
+				bind:firstSectionData
 			/></Dialog.Trigger
 		>
 
@@ -55,13 +60,14 @@
 				</Dialog.Header>
 				<div class="p-4">
 					<FirstSectionDialog
-						bind:openDialog={firstSectionData.openDialog}
-						bind:localHeaderObject={firstSectionData.firstSectionObject}
+						bind:openDialog={openFirstSectionDialog}
+                        bind:firstSectionForm
+						bind:firstSectionData 
 					/>
 				</div>
 			</ScrollArea>
 		</Dialog.Content>
-	</Dialog.Root> -->
+	</Dialog.Root>
 {:else}
 	<HeaderContainer bind:headerData isInteractive={reactive}/>
 	<!-- <FirstSectionContainer bind:localHeaderObject={firstSectionData.firstSectionObject} /> -->

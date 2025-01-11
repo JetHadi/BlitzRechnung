@@ -3,18 +3,19 @@
 	import { LoaderCircle, SquareArrowRight } from 'lucide-svelte';
 	import A4Page from '../A4Page.svelte';
 	import { superForm } from 'sveltekit-superforms';
+	import { date } from 'zod';
 
 	let { data } = $props();
 
 	const reactive = true;
 
-	let firstSectionData = $state({
-		hallo: 'hallo'
-	});
+	let localSubmitObject = $state(data)
+	let localHeaderFormObject = $state(data.headerForm);
 
-	let localFormObject = $state(data.headerForm);
+	let localFirstSectionFormObject = $state(data.firstSectionForm);
 
-	const form = superForm(data.headerForm, {
+
+	const headerForm = superForm(data.headerForm, {
 		delayMs: 500,
 		timeoutMs: 8000,
 		dataType: 'json',
@@ -22,18 +23,18 @@
 			const startTime = performance.now();
 			console.log(`🟦 Submit started at: ${new Date().toISOString()}`);
 
-			jsonData(localFormObject.data);
+			jsonData(localSubmitObject);
 
-			return async ({ result, update }) => {
-				const submitDuration = performance.now() - startTime;
-				console.log(`🟨 Form submission took: ${submitDuration.toFixed(2)}ms`);
+			// return async ({ result, update }) => {
+			// 	const submitDuration = performance.now() - startTime;
+			// 	console.log(`🟨 Form submission took: ${submitDuration.toFixed(2)}ms`);
 
-				if (result.type === 'success') {
-					console.log('✅ Submission successful', result.data);
-				} else {
-					console.log('❌ Submission failed', result.data);
-				}
-			};
+			// 	if (result.type === 'success') {
+			// 		console.log('✅ Submission successful', result.data);
+			// 	} else {
+			// 		console.log('❌ Submission failed', result.data);
+			// 	}
+			// };
 		},
 		onResult({}) {
 			const timestamp = new Date().toISOString();
@@ -44,9 +45,10 @@
 		}
 	});
 
-	const { form: formData, enhance, delayed } = form;
+	const { form: formData, enhance, delayed } = headerForm;
 
 	$effect(() => {
+		console.log(data)
 		// console.log('Main Create Page--', localFormObject);
 	});
 </script>
@@ -56,9 +58,10 @@
 		<div class="print-container box-border flex h-full w-full flex-col p-12">
 			<A4Page
 				{reactive}
-				bind:headerForm={localFormObject}
-				bind:headerData={localFormObject.data}
-				bind:firstSectionData
+				bind:headerForm={localHeaderFormObject}
+				bind:headerData={localHeaderFormObject.data}
+				bind:firstSectionForm={localFirstSectionFormObject}
+				bind:firstSectionData={localFirstSectionFormObject.data}
 			></A4Page>
 			<form method="POST" use:enhance>
 				<button type="submit">Submit</button>
