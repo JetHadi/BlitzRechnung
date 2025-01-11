@@ -1,3 +1,4 @@
+// frontend/src/routes/(A4Page)/create/+page.server.ts
 import { RechnungsAbsenderSchema } from "$lib/schema/rechnungsAbsender";
 import type { Actions } from "@sveltejs/kit";
 import { superValidate, fail, message } from "sveltekit-superforms";
@@ -19,28 +20,48 @@ export const load: PageServerLoad = async () => {
 export const actions: Actions = {
   default: async (event) => {
     const timestamp = new Date().toLocaleString();
-    // Detailed Form Validation Logging
     const form = await superValidate(event, zod(RechnungsAbsenderSchema));
-    console.log(timestamp, 'Submit')
-    const RechnungsDaten = {Absenderdaten: form.data}
-    console.log('Rechnungsdaten: ',RechnungsDaten)
 
-    // Enhanced Logging
-    // console.log('Form Validation Result:', {
-    //   success: form.valid,
-    //   data: form.data,
-    //   errors: form.errors
-    // });
+    if (!form.valid) {
+      return fail(400, { form });
+    }
 
-    // // Early return if form is invalid
-    // if (!form.valid) {
-    //   return fail(400, {
-    //     form,
-    //     message: 'Invalid form submission'
-    //   });
-    // }
-    console.log(timestamp, form)
-    return message(form, 'Form posted successfully!');
+    const RechnungsDaten = { Absenderdaten: form.data };
 
+    // Generate the print URL - adjust this to your actual print page URL
+    const printUrl = `${event.url.origin}/read?data=${encodeURIComponent(JSON.stringify(RechnungsDaten))}`;
+
+    try {
+      const response = await event.fetch('/api/generate-pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ printUrl })
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        return fail(500, {
+          form,
+          message: 'PDF generation failed'
+        });
+      }
+
+      return {
+        form,
+        success: true,
+        pdfPath: result.pdfPath,
+        message: 'Form posted and PDF generated successfully!'
+      };
+
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      return fail(500, {
+        form,
+        message: 'Failed to generate PDF'
+      });
+    }
   }
-}
+};

@@ -9,7 +9,7 @@
 	<div class="no-print m-auto w-full">
 		<Header />
 	</div>
-	<main class="container m-auto px-8 py-14">
+	<main class="container m-auto px-8 py-8">
 		{@render children()}
 	</main>
 	<div class="no-print m-auto w-full">
