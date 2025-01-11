@@ -18,9 +18,29 @@
 		delayMs: 500,
 		timeoutMs: 8000,
 		dataType: 'json',
-		onSubmit({ jsonData }) {
-			console.log('Main Create Page--', localFormObject.data);
+		onSubmit({ formData, cancel, jsonData }) {
+			const startTime = performance.now();
+			console.log(`🟦 Submit started at: ${new Date().toISOString()}`);
+
 			jsonData(localFormObject.data);
+
+			return async ({ result, update }) => {
+				const submitDuration = performance.now() - startTime;
+				console.log(`🟨 Form submission took: ${submitDuration.toFixed(2)}ms`);
+
+				if (result.type === 'success') {
+					console.log('✅ Submission successful', result.data);
+				} else {
+					console.log('❌ Submission failed', result.data);
+				}
+			};
+		},
+		onResult({}) {
+			const timestamp = new Date().toISOString();
+			console.log(`🔄 Form updated at: ${timestamp}`);
+		},
+		onError({ result }) {
+			console.error('🚫 Form error:', result);
 		}
 	});
 
