@@ -1,3 +1,4 @@
+// frontend/src/routes/(A4Page)/create/+page.server.ts
 import { RechnungsAbsenderSchema } from "$lib/schema/rechnungsAbsender";
 import type { Actions } from "@sveltejs/kit";
 import { superValidate, fail, message } from "sveltekit-superforms";
@@ -38,8 +39,10 @@ export const actions: Actions = {
       }
 
       // Data Preparation
+      const headerContainer = form // passing down the whole header form to the url
+      const printUrl = `${event.url.origin}/read?data=${encodeURIComponent(JSON.stringify(headerContainer))}`;
+      
       const RechnungsDaten = { Absenderdaten: form.data };
-      const printUrl = `${event.url.origin}/read?data=${encodeURIComponent(JSON.stringify(RechnungsDaten))}`;
 
       // PDF Generation
       const pdfStart = performance.now();
@@ -74,7 +77,7 @@ export const actions: Actions = {
         message: `Form posted and PDF generated successfully in ${totalTime.toFixed(2)}ms!`
       };
 
-    } catch (error) {
+    } catch (error : any) {
       const errorTime = performance.now() - actionStart;
       console.error(`❌ Error after ${errorTime.toFixed(2)}ms:`, error);
 
