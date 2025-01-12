@@ -9,32 +9,42 @@
 
 	const reactive = true;
 
-	let localSubmitObject = $state(data)
+	let localSubmitObject = $state(data);
 	let localHeaderFormObject = $state(data.headerForm);
 
 	let localFirstSectionFormObject = $state(data.firstSectionForm);
 
-
-	const headerForm = superForm(data.headerForm, {
+	const objectForm = superForm(localSubmitObject, {
 		delayMs: 500,
 		timeoutMs: 8000,
 		dataType: 'json',
 		onSubmit({ formData, cancel, jsonData }) {
 			const startTime = performance.now();
 			console.log(`🟦 Submit started at: ${new Date().toISOString()}`);
+			// localSubmitObject.headerForm = { ...localHeaderFormObject };
+			// localSubmitObject.firstSectionForm = { ...localFirstSectionFormObject };
+			// updateFormData();
+			// jsonData(localSubmitObject);
+			// console.log('onSubmit localFormObject', localSubmitObject);
+			// console.log('onSubmit formData', formData.getAll)
 
-			jsonData(localSubmitObject);
+			const submissionData = createSubmissionData();
+			console.log('onSubmit submissionData: ',submissionData)
+			// Update form data before submission
+			// formData.set('data', JSON.stringify(submissionData));
+			jsonData(submissionData);
+			console.log(submissionData)
 
-			// return async ({ result, update }) => {
-			// 	const submitDuration = performance.now() - startTime;
-			// 	console.log(`🟨 Form submission took: ${submitDuration.toFixed(2)}ms`);
+			return async ({ result, update }) => {
+				const submitDuration = performance.now() - startTime;
+				console.log(`🟨 Form submission took: ${submitDuration.toFixed(2)}ms`);
 
-			// 	if (result.type === 'success') {
-			// 		console.log('✅ Submission successful', result.data);
-			// 	} else {
-			// 		console.log('❌ Submission failed', result.data);
-			// 	}
-			// };
+				if (result.type === 'success') {
+					console.log('✅ Submission successful', result.data);
+				} else {
+					console.log('❌ Submission failed', result.data);
+				}
+			};
 		},
 		onResult({}) {
 			const timestamp = new Date().toISOString();
@@ -45,12 +55,41 @@
 		}
 	});
 
-	const { form: formData, enhance, delayed } = headerForm;
+	const { form: formData, enhance, delayed } = objectForm;
+
+	const origin = 'Main';
+	let count = $state(0);
 
 	$effect(() => {
-		console.log(data)
-		// console.log('Main Create Page--', localFormObject);
+		console.log(origin, 'header-Form', localHeaderFormObject);
+		console.log(origin, 'header-Data', localHeaderFormObject.data);
+
+		console.log(origin, 'first-Section-Form', localFirstSectionFormObject);
+		console.log(origin, 'first-Section-Data', localFirstSectionFormObject.data);
+
+		console.log(origin, 'main-Data', localSubmitObject);
+
+		console.log(origin, 'main-Data formData', formData);
 	});
+
+	function updateFormData() {
+		formData.update(
+			($formData) => {
+				$formData.headerForm = { ...localHeaderFormObject };
+				$formData.firstSectionForm = { ...localFirstSectionFormObject };
+				console.log('onSubmit', $formData);
+				return $formData;
+			},
+			{ taint: false }
+		);
+	}
+
+	function createSubmissionData() {
+		return {
+			headerForm: { ...localHeaderFormObject.data },
+			firstSectionForm: { ...localFirstSectionFormObject.data }
+		};
+	}
 </script>
 
 <div class="flex items-start gap-4">

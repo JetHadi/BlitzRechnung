@@ -11,6 +11,7 @@ import { headerContainerSchema } from "$lib/schema/0_headerContainer";
 import { HeaderContainerDefaults } from "$lib/types/headerContainerDefaults";
 import { FirstSectionContainerDefaults } from "$lib/types/firstSectionContainerDefaults";
 import { firstSectionContainerSchema } from "$lib/schema/1_firstSectionContainer";
+import { A4RechnungSchema } from "$lib/schema/rechnung";
 
 export const load: PageServerLoad = async () => {
   const startTime = performance.now();
@@ -29,23 +30,31 @@ export const actions: Actions = {
   default: async (event) => {
     const actionStart = performance.now();
     console.log(`⚡ Action started at: ${new Date().toISOString()}`);
-
+    // const formData = await event.request.formData();
+    // console.log('Printing: ',jsonData)
     try {
       // Form Validation
       const validationStart = performance.now();
-      const form = await superValidate(event, zod(RechnungsAbsenderSchema));
+
+      const A4Form = await superValidate(event, zod(A4RechnungSchema));
+      // console.log('objectForm: ', A4Form)
+
+
       console.log(`📝 Form validation took: ${(performance.now() - validationStart).toFixed(2)}ms`);
 
-      if (!form.valid) {
+      if (!A4Form.valid) {
         console.log('❌ Form validation failed');
-        return fail(400, { form });
+        return fail(400, { objectForm: A4Form });
       }
 
       // Data Preparation
-      const headerContainer = form // passing down the whole header form to the url
-      const printUrl = `${event.url.origin}/read?data=${encodeURIComponent(JSON.stringify(headerContainer))}`;
+      const A4Data = A4Form.data // passing down the whole header form to the url
+      // console.log(A4Data)
 
-      const RechnungsDaten = { Absenderdaten: form.data };
+      const printUrl = `${event.url.origin}/read?data=${encodeURIComponent(JSON.stringify(A4Data))}`;
+      console.log('PrintURL', printUrl)
+
+      // const RechnungsDaten = { Absenderdaten: form.data };
 
       // PDF Generation
       const pdfStart = performance.now();
@@ -65,7 +74,7 @@ export const actions: Actions = {
       if (!result.success) {
         console.log('❌ PDF generation failed');
         return fail(500, {
-          form,
+          A4Form,
           message: 'PDF generation failed'
         });
       }
@@ -74,7 +83,7 @@ export const actions: Actions = {
       console.log(`✅ Action completed successfully in ${totalTime.toFixed(2)}ms`);
 
       return {
-        form,
+        A4Form,
         success: true,
         pdfPath: result.pdfPath,
         message: `Form posted and PDF generated successfully in ${totalTime.toFixed(2)}ms!`

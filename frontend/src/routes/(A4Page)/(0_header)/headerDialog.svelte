@@ -22,7 +22,7 @@
 		},
 		onUpdate({ form }) {
 			if (form.valid) {
-				headerData = { ...$formData };
+				headerForm.data = { ...$formData };
 				console.log('from DialogHeader onUpdate: ', headerForm.data.firma);
 				openDialog = false
 			}

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Header from '$lib/components/Header.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { ScrollArea } from '$lib/components/ui/scroll-area';
 	import HeaderContainer from './(0_header)/headerContainer.svelte';
@@ -8,13 +9,12 @@
 
 	let {
 		reactive = false,
-        
+
 		headerForm = $bindable(),
-        headerData = $bindable(),
+		headerData = $bindable(),
 
-        firstSectionForm = $bindable(),
-		firstSectionData = $bindable(),
-
+		firstSectionForm = $bindable(),
+		firstSectionData = $bindable()
 	} = $props();
 
 	const origin = 'A4Page';
@@ -24,7 +24,11 @@
 	// let headerData = $state(headerForm.data)
 
 	$effect(() => {
-		// console.log(origin, headerForm);
+		console.log(origin, 'header-Form', headerForm);
+		console.log(origin, 'header-Data', headerData);
+
+		console.log(origin, 'first-Section-Form', firstSectionForm);
+		console.log(origin, 'first-Section-Data', firstSectionData);
 	});
 </script>
 
@@ -46,11 +50,7 @@
 	</Dialog.Root>
 
 	<Dialog.Root bind:open={openFirstSectionDialog}>
-		<Dialog.Trigger
-			><FirstSectionContainer
-				bind:firstSectionData
-			/></Dialog.Trigger
-		>
+		<Dialog.Trigger><FirstSectionContainer bind:firstSectionData /></Dialog.Trigger>
 
 		<Dialog.Content class="w-full sm:max-w-[800px]">
 			<ScrollArea>
@@ -61,14 +61,14 @@
 				<div class="p-4">
 					<FirstSectionDialog
 						bind:openDialog={openFirstSectionDialog}
-                        bind:firstSectionForm
-						bind:firstSectionData 
+						bind:firstSectionForm
+						bind:firstSectionData
 					/>
 				</div>
 			</ScrollArea>
 		</Dialog.Content>
 	</Dialog.Root>
 {:else}
-	<HeaderContainer bind:headerData isInteractive={reactive}/>
-	<!-- <FirstSectionContainer bind:localHeaderObject={firstSectionData.firstSectionObject} /> -->
+	<HeaderContainer {headerData} />
+	<FirstSectionContainer {firstSectionData} />
 {/if}

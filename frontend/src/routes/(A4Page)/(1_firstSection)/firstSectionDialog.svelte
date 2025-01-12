@@ -17,13 +17,35 @@
 	// 	rechnungsdatum: transform2String(localHeaderObject.rechnungsdatum)
 	// };
 
-	function transform2String(dateObject: Date) {
-		try {
+	function transform2String(dateObject: Date | string | null): string {
+		if (!dateObject) return '';
+
+		if (dateObject instanceof Date) {
 			return dateObject.toISOString().split('T')[0];
-		} catch (error) {
-			console.error('Invalid date object:', error);
-			return null;
 		}
+
+		// If it's already a string in YYYY-MM-DD format, return it
+		if (typeof dateObject === 'string') {
+			return dateObject;
+		}
+
+		return '';
+	}
+
+	function convertToDate(dateStr: string): Date {
+		const date = new Date(dateStr);
+
+		// Validate the date is valid
+		if (isNaN(date.getTime())) {
+			throw new Error('Invalid date format');
+		}
+
+		return date;
+	}
+
+	function handleDateChange(newValue: string) {
+		// Update the store with the new date value
+		$formData.rechnungsdatum = newValue;
 	}
 
 	// for local client storage
@@ -109,7 +131,11 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>Rechnungsdatum</Form.Label>
-				<Input type="date" {...props} bind:value={$formData.rechnungsdatum} />
+				<Input
+					type="date"
+					{...props}
+					bind:value={() => transform2String($formData.rechnungsdatum), (v) => handleDateChange(v)}
+				/>
 			{/snippet}
 		</Form.Control>
 		<Form.Description />

@@ -5,6 +5,38 @@
 	import { cn } from '$lib/utils';
 
 	let { firstSectionData = $bindable(), isInteractive = true, propaGateFrom = '' } = $props();
+
+	function formatToGermanDate(date: Date | string | null): string {
+		if (!date) return '';
+
+		try {
+			// If it's a Date object
+			if (date instanceof Date) {
+				return date.toLocaleDateString('de-DE', {
+					day: '2-digit',
+					month: '2-digit',
+					year: 'numeric'
+				});
+			}
+
+			// If it's a string in 'yyyy-mm-dd' format
+			if (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+				const [year, month, day] = date.split('-');
+				const dateObject = new Date(Number(year), Number(month) - 1, Number(day));
+
+				return dateObject.toLocaleDateString('de-DE', {
+					day: '2-digit',
+					month: '2-digit',
+					year: 'numeric'
+				});
+			}
+
+			return '';
+		} catch (error) {
+			console.error('Error formatting date:', error);
+			return '';
+		}
+	}
 </script>
 
 <div
@@ -28,11 +60,7 @@
 
 				<span>Rechnungsdatum:</span>
 				<span
-					>{firstSectionData.rechnungsdatum.toLocaleDateString('de-DE', {
-						day: '2-digit',
-						month: '2-digit',
-						year: 'numeric'
-					})}</span
+					>{formatToGermanDate(firstSectionData.rechnungsdatum)}</span
 				>
 			</div>
 		</div>
