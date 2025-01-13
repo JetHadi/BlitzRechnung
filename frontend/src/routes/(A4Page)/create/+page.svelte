@@ -15,6 +15,7 @@
 	let localFirstSectionFormObject = $state(data.firstSectionForm);
 	let localSecondSectionFormObject = $state(data.secondSectionForm);
 	let localMainSectionObject = $state(data.mainSectionForm);
+	let localFourthSectionObject = $state(data.fourthSectionForm);
 
 
 	const objectForm = superForm(localSubmitObject, {
@@ -80,24 +81,25 @@
 			headerForm: { ...localHeaderFormObject.data },
 			firstSectionForm: { ...localFirstSectionFormObject.data },
 			secondSectionForm: { ...localSecondSectionFormObject.data },
-			mainSectionForm: { ...localMainSectionObject.data }
+			mainSectionForm: { ...localMainSectionObject.data },
+			fourthSectionForm: { ...localFourthSectionObject.data }
 		};
 	}
 
 
 	$effect(() => {
-		console.log(origin, 'header-Form', localHeaderFormObject);
-		console.log(origin, 'header-Data', localHeaderFormObject.data);
+		// console.log(origin, 'header-Form', localHeaderFormObject);
+		// console.log(origin, 'header-Data', localHeaderFormObject.data);
 
-		console.log(origin, 'first-Section-Form', localFirstSectionFormObject);
-		console.log(origin, 'first-Section-Data', localFirstSectionFormObject.data);
+		// console.log(origin, 'first-Section-Form', localFirstSectionFormObject);
+		// console.log(origin, 'first-Section-Data', localFirstSectionFormObject.data);
 
-		console.log(origin, 'second-Section-Form', localSecondSectionFormObject);
-		console.log(origin, 'second-Section-Data', localSecondSectionFormObject.data);
+		// console.log(origin, 'second-Section-Form', localSecondSectionFormObject);
+		// console.log(origin, 'second-Section-Data', localSecondSectionFormObject.data);
 
-		console.log(origin, 'main-Data', localSubmitObject);
+		// console.log(origin, 'main-Data', localSubmitObject);
 
-		console.log(origin, 'main-Data formData', formData);
+		// console.log(origin, 'main-Data formData', formData);
 	});
 
 </script>
@@ -118,6 +120,9 @@
 
 				bind:mainSectionForm={localMainSectionObject}
 				bind:mainSectionData={localMainSectionObject.data}
+
+				bind:fourthSectionForm={localFourthSectionObject}
+				bind:fourthSectionData={localFourthSectionObject.data}
 			></A4Page>
 			<form method="POST" use:enhance>
 				<button type="submit">Submit</button>

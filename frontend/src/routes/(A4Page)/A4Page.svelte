@@ -10,6 +10,8 @@
 	import SecondSectionDialog from './(2_secondContainer)/secondSectionDialog.svelte';
 	import MainSectionContainer from './(3_mainContainer)/mainSectionContainer.svelte';
 	import MainSectionDialog from './(3_mainContainer)/mainSectionDialog.svelte';
+	import FourthSectionContainer from './(4_fourthSection)/fourthSectionContainer.svelte';
+	import FourthSectionDialog from './(4_fourthSection)/fourthSectionDialog.svelte';
 
 	let {
 		reactive = false,
@@ -24,7 +26,10 @@
 		secondSectionData = $bindable(),
 
 		mainSectionForm = $bindable(),
-		mainSectionData = $bindable()
+		mainSectionData = $bindable(),
+
+        fourthSectionForm = $bindable(),
+		fourthSectionData = $bindable()
     } = $props();
 
 	const origin = 'A4Page';
@@ -32,6 +37,7 @@
 	let openFirstSectionDialog = $state(false);
 	let secondSectionDialog = $state(false);
 	let mainSectionDialog = $state(false);
+	let fourthSectionDialog = $state(false);
 
 	// let headerData = $state(headerForm.data)
 
@@ -121,9 +127,32 @@
 		</Dialog.Content>
 	</Dialog.Root>
 
+    <Dialog.Root bind:open={fourthSectionDialog}>
+		<Dialog.Trigger><FourthSectionContainer bind:fourthSectionData /></Dialog.Trigger>
+
+		<Dialog.Content class="w-full sm:max-w-[800px]">
+			<ScrollArea>
+				<Dialog.Header>
+					<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
+					<Dialog.Description>Passe die Einträge an</Dialog.Description>
+				</Dialog.Header>
+				<div class="p-4">
+					<FourthSectionDialog
+						bind:openDialog={fourthSectionDialog}
+						bind:fourthSectionForm
+						bind:fourthSectionData
+					/>
+				</div>
+			</ScrollArea>
+		</Dialog.Content>
+	</Dialog.Root>
+
+
 {:else}
 	<HeaderContainer {headerData} />
 	<FirstSectionContainer {firstSectionData} />
 	<SecondSectionContainer {secondSectionData} />
 	<MainSectionContainer {mainSectionData} />
+    <FourthSectionContainer {fourthSectionData} />
+
 {/if}

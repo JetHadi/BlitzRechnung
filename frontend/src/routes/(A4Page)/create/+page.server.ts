@@ -1,21 +1,19 @@
 // frontend/src/routes/(A4Page)/create/+page.server.ts
-import { RechnungsAbsenderSchema } from "$lib/schema/rechnungsAbsender";
 import type { Actions } from "@sveltejs/kit";
 import { superValidate, fail, message } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
-import { writeFile } from 'fs/promises';
-import path from 'path';
-import puppeteer from "puppeteer";
 import type { PageServerLoad } from "./$types";
 import { headerContainerSchema } from "$lib/schema/0_headerContainer";
-import { HeaderContainerDefaults } from "$lib/types/headerContainerDefaults";
-import { FirstSectionContainerDefaults } from "$lib/types/firstSectionContainerDefaults";
+import { HeaderContainerDefaults } from "$lib/types/0_headerContainerDefaults";
+import { FirstSectionContainerDefaults } from "$lib/types/1_firstSectionContainerDefaults";
 import { firstSectionContainerSchema } from "$lib/schema/1_firstSectionContainer";
 import { A4RechnungSchema } from "$lib/schema/rechnung";
-import { SecondSectionContainerDefaults } from "$lib/types/secondSectionContainerDefaults";
+import { SecondSectionContainerDefaults } from "$lib/types/2_secondSectionContainerDefaults";
 import { secondSectionContainerSchema } from "$lib/schema/2_secondSectionContainer";
 import { mainSectionContainerSchema } from "$lib/schema/3_mainSectionContainer";
-import { MainSectionContainerDefaults } from "$lib/types/mainSectionContainerDefaults";
+import { MainSectionContainerDefaults } from "$lib/types/3_mainSectionContainerDefaults";
+import { FourthSectionContainerDefaults } from "$lib/types/4_fourthSectionContainerDefaults";
+import { fourthSectionContainerSchema } from "$lib/schema/4_fourthSectionContainer";
 
 export const load: PageServerLoad = async () => {
   const startTime = performance.now();
@@ -25,13 +23,14 @@ export const load: PageServerLoad = async () => {
   const firstSectionForm = await superValidate(FirstSectionContainerDefaults, zod(firstSectionContainerSchema));
   const secondSectionForm = await superValidate(SecondSectionContainerDefaults, zod(secondSectionContainerSchema));
   const mainSectionForm = await superValidate(MainSectionContainerDefaults, zod(mainSectionContainerSchema));
+  const fourthSectionForm = await superValidate(FourthSectionContainerDefaults, zod(fourthSectionContainerSchema));
 
   console.log('UST: ',MainSectionContainerDefaults.RechnungsPositionen[0].ust)
 
   const loadTime = performance.now() - startTime;
   console.log(`✨ Page load completed in ${loadTime.toFixed(2)}ms`);
 
-  return { headerForm: headerForm, firstSectionForm: firstSectionForm, secondSectionForm: secondSectionForm, mainSectionForm: mainSectionForm }
+  return { headerForm: headerForm, firstSectionForm: firstSectionForm, secondSectionForm: secondSectionForm, mainSectionForm: mainSectionForm, fourthSectionForm: fourthSectionForm }
 }
 
 export const actions: Actions = {
