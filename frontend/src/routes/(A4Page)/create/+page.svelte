@@ -10,9 +10,11 @@
 	const reactive = true;
 
 	let localSubmitObject = $state(data);
-	let localHeaderFormObject = $state(data.headerForm);
 
+	let localHeaderFormObject = $state(data.headerForm);
 	let localFirstSectionFormObject = $state(data.firstSectionForm);
+	let localSecondSectionFormObject = $state(data.secondSectionForm);
+
 
 	const objectForm = superForm(localSubmitObject, {
 		delayMs: 500,
@@ -60,18 +62,6 @@
 	const origin = 'Main';
 	let count = $state(0);
 
-	$effect(() => {
-		console.log(origin, 'header-Form', localHeaderFormObject);
-		console.log(origin, 'header-Data', localHeaderFormObject.data);
-
-		console.log(origin, 'first-Section-Form', localFirstSectionFormObject);
-		console.log(origin, 'first-Section-Data', localFirstSectionFormObject.data);
-
-		console.log(origin, 'main-Data', localSubmitObject);
-
-		console.log(origin, 'main-Data formData', formData);
-	});
-
 	function updateFormData() {
 		formData.update(
 			($formData) => {
@@ -87,9 +77,27 @@
 	function createSubmissionData() {
 		return {
 			headerForm: { ...localHeaderFormObject.data },
-			firstSectionForm: { ...localFirstSectionFormObject.data }
+			firstSectionForm: { ...localFirstSectionFormObject.data },
+			secondSectionForm: { ...localSecondSectionFormObject.data }
 		};
 	}
+
+
+	$effect(() => {
+		console.log(origin, 'header-Form', localHeaderFormObject);
+		console.log(origin, 'header-Data', localHeaderFormObject.data);
+
+		console.log(origin, 'first-Section-Form', localFirstSectionFormObject);
+		console.log(origin, 'first-Section-Data', localFirstSectionFormObject.data);
+
+		console.log(origin, 'second-Section-Form', localSecondSectionFormObject);
+		console.log(origin, 'second-Section-Data', localSecondSectionFormObject.data);
+
+		console.log(origin, 'main-Data', localSubmitObject);
+
+		console.log(origin, 'main-Data formData', formData);
+	});
+
 </script>
 
 <div class="flex items-start gap-4">
@@ -99,8 +107,12 @@
 				{reactive}
 				bind:headerForm={localHeaderFormObject}
 				bind:headerData={localHeaderFormObject.data}
+				
 				bind:firstSectionForm={localFirstSectionFormObject}
 				bind:firstSectionData={localFirstSectionFormObject.data}
+
+				bind:secondSectionForm={localSecondSectionFormObject}
+				bind:secondSectionData={localSecondSectionFormObject.data}
 			></A4Page>
 			<form method="POST" use:enhance>
 				<button type="submit">Submit</button>

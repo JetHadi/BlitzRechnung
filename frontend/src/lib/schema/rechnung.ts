@@ -2,10 +2,12 @@
 import { z } from "zod";
 import { firstSectionContainerSchema } from "./1_firstSectionContainer";
 import { headerContainerSchema } from "./0_headerContainer";
+import { secondSectionContainerSchema } from "./2_secondSectionContainer";
 
 export const A4RechnungSchema = z.object({
     headerForm: headerContainerSchema,
-    firstSectionForm: firstSectionContainerSchema
+    firstSectionForm: firstSectionContainerSchema,
+    secondSectionForm: secondSectionContainerSchema
   });
 
 export type A4RechnungType = z.infer<typeof A4RechnungSchema>;

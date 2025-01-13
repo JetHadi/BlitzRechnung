@@ -1,0 +1,1 @@
+export const SecondSectionContainerDefaults = {text: "Hier zusätzliche Informationen zu der Rechnung eintragen"}

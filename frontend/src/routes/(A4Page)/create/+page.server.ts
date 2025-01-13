@@ -12,6 +12,8 @@ import { HeaderContainerDefaults } from "$lib/types/headerContainerDefaults";
 import { FirstSectionContainerDefaults } from "$lib/types/firstSectionContainerDefaults";
 import { firstSectionContainerSchema } from "$lib/schema/1_firstSectionContainer";
 import { A4RechnungSchema } from "$lib/schema/rechnung";
+import { SecondSectionContainerDefaults } from "$lib/types/secondSectionContainerDefaults";
+import { secondSectionContainerSchema } from "$lib/schema/2_secondSectionContainer";
 
 export const load: PageServerLoad = async () => {
   const startTime = performance.now();
@@ -19,11 +21,12 @@ export const load: PageServerLoad = async () => {
 
   const headerForm = await superValidate(HeaderContainerDefaults, zod(headerContainerSchema));
   const firstSectionForm = await superValidate(FirstSectionContainerDefaults, zod(firstSectionContainerSchema));
+  const secondSectionForm = await superValidate(SecondSectionContainerDefaults, zod(secondSectionContainerSchema));
 
   const loadTime = performance.now() - startTime;
   console.log(`✨ Page load completed in ${loadTime.toFixed(2)}ms`);
 
-  return { headerForm: headerForm, firstSectionForm: firstSectionForm }
+  return { headerForm: headerForm, firstSectionForm: firstSectionForm, secondSectionForm: secondSectionForm }
 }
 
 export const actions: Actions = {
