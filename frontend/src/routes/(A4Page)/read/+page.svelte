@@ -12,6 +12,8 @@
 	let localSecondSectionFormObject = $state(data.secondSectionForm);
 	let localMainSectionObject = $state(data.mainSectionForm);
 	let localFourthSectionObject = $state(data.fourthSectionForm);
+	let localFooterFormObject = $state(data.footerForm);
+
 
 	$effect(() => {
 		console.log('Main-Read-Page--', localHeaderFormObject);
@@ -38,6 +40,9 @@
 
 				fourthSectionForm={localFourthSectionObject}
 				fourthSectionData={localFourthSectionObject.data}
+
+				footerForm={localFooterFormObject}
+				footerData={localFooterFormObject.data}
 				/>
 		</div>
 	</div>

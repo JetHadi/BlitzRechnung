@@ -12,6 +12,8 @@
 	import MainSectionDialog from './(3_mainContainer)/mainSectionDialog.svelte';
 	import FourthSectionContainer from './(4_fourthSection)/fourthSectionContainer.svelte';
 	import FourthSectionDialog from './(4_fourthSection)/fourthSectionDialog.svelte';
+	import FooterContainer from './(5_footer)/footerContainer.svelte';
+	import FooterDialog from './(5_footer)/footerDialog.svelte';
 
 	let {
 		reactive = false,
@@ -29,7 +31,10 @@
 		mainSectionData = $bindable(),
 
         fourthSectionForm = $bindable(),
-		fourthSectionData = $bindable()
+		fourthSectionData = $bindable(),
+
+        footerForm = $bindable(),
+		footerData = $bindable(),
     } = $props();
 
 	const origin = 'A4Page';
@@ -38,6 +43,7 @@
 	let secondSectionDialog = $state(false);
 	let mainSectionDialog = $state(false);
 	let fourthSectionDialog = $state(false);
+	let openFooterDialog = $state(false);
 
 	// let headerData = $state(headerForm.data)
 
@@ -147,6 +153,22 @@
 		</Dialog.Content>
 	</Dialog.Root>
 
+    <Dialog.Root bind:open={openFooterDialog}>
+		<Dialog.Trigger><FooterContainer bind:footerData /></Dialog.Trigger>
+
+		<Dialog.Content class="w-full sm:max-w-[800px]">
+			<ScrollArea>
+				<Dialog.Header>
+					<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
+					<Dialog.Description>Passe die Einträge an</Dialog.Description>
+				</Dialog.Header>
+				<div class="p-4">
+					<FooterDialog bind:openDialog={openFooterDialog} bind:footerForm bind:footerData />
+				</div>
+			</ScrollArea>
+		</Dialog.Content>
+	</Dialog.Root>
+
 
 {:else}
 	<HeaderContainer {headerData} />
@@ -154,5 +176,6 @@
 	<SecondSectionContainer {secondSectionData} />
 	<MainSectionContainer {mainSectionData} />
     <FourthSectionContainer {fourthSectionData} />
+    <FooterContainer {footerData} />
 
 {/if}

@@ -1,6 +1,6 @@
-import type { RechnungsAbsender } from "$lib/schema/rechnungsAbsender";
+import type { RechnungsAbsenderPaymentType, RechnungsAbsenderType } from "$lib/schema/rechnungsAbsender";
 
-export const defaultRechnungsSender: RechnungsAbsender = {
+export const defaultRechnungsSender: RechnungsAbsenderType = {
     firma: 'Your Company Name',
     strasse: 'Street Address',
     ort: 'City',
@@ -9,3 +9,11 @@ export const defaultRechnungsSender: RechnungsAbsender = {
     email: 'contact@example.com',
     name: ""
 };
+
+export const defaultRechnungsSenderPayment: RechnungsAbsenderPaymentType = {
+    iban: "DE12 1234 1234 1234 1234 77",
+    bic: 'BLITZEXXX',
+    bankname: 'GewitterBank',
+    ustId: 'DE123456789',
+    steuernummer:'1234567891012'
+}

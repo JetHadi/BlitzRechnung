@@ -5,13 +5,15 @@ import { headerContainerSchema } from "./0_headerContainer";
 import { secondSectionContainerSchema } from "./2_secondSectionContainer";
 import { mainSectionContainerSchema } from "./3_mainSectionContainer";
 import { fourthSectionContainerSchema } from "./4_fourthSectionContainer";
+import { footerContainerSchema } from "./5_footerContainer";
 
 export const A4RechnungSchema = z.object({
   headerForm: headerContainerSchema,
   firstSectionForm: firstSectionContainerSchema,
   secondSectionForm: secondSectionContainerSchema,
   mainSectionForm: mainSectionContainerSchema,
-  fourthSectionForm: fourthSectionContainerSchema
+  fourthSectionForm: fourthSectionContainerSchema,
+  footerForm: footerContainerSchema
 });
 
 export type A4RechnungType = z.infer<typeof A4RechnungSchema>;

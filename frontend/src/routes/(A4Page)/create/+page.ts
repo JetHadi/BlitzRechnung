@@ -1,5 +1,5 @@
 //frontend/src/routes/(A4Page)/create/+page.ts
-import { RechnungsAbsenderSchema, type RechnungsAbsender } from '$lib/schema/rechnungsAbsender';
+import { RechnungsAbsenderSchema, type RechnungsAbsenderType } from '$lib/schema/rechnungsAbsender';
 import type { RechnungsDaten } from '$lib/schema/rechnungsDaten';
 import type { RechnungsEmpfaenger } from '$lib/schema/rechnungsEmpfaenger';
 import { defaultRechnungsDaten } from '$lib/types/rechnungsDaten';
@@ -9,7 +9,7 @@ import type { PageLoad, PageServerLoad } from './$types';
 import { fail, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 
-let localRechnungsAbsender: RechnungsAbsender = {
+let localRechnungsAbsender: RechnungsAbsenderType = {
     name: '',
     strasse: '',
     plz: '',

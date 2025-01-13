@@ -8,6 +8,7 @@ import { firstSectionContainerSchema } from "$lib/schema/1_firstSectionContainer
 import { secondSectionContainerSchema } from "$lib/schema/2_secondSectionContainer";
 import { mainSectionContainerSchema } from "$lib/schema/3_mainSectionContainer";
 import { fourthSectionContainerSchema } from "$lib/schema/4_fourthSectionContainer";
+import { footerContainerSchema } from "$lib/schema/5_footerContainer";
 
 export const load: PageServerLoad = async ({ url }) => {
   // Get the data parameter from URL
@@ -22,7 +23,7 @@ export const load: PageServerLoad = async ({ url }) => {
     }
   }
 
-  
+
 
   console.log(A4Data)
   const headerForm = await superValidate(A4Data.headerForm, zod(headerContainerSchema));
@@ -30,11 +31,13 @@ export const load: PageServerLoad = async ({ url }) => {
   const secondSectionForm = await superValidate(A4Data.secondSectionForm, zod(secondSectionContainerSchema));
   const mainSectionForm = await superValidate(A4Data.mainSectionForm, zod(mainSectionContainerSchema));
   const fourthSectionForm = await superValidate(A4Data.fourthSectionForm, zod(fourthSectionContainerSchema));
+  const footerForm = await superValidate(A4Data.footerForm, zod(footerContainerSchema));
+
 
   console.log('Read Page - headerForm', headerForm)
   console.log('Read Page - firstSectionForm', firstSectionForm)
   console.log('Read Page - secondSectionForm', secondSectionForm)
   console.log('Read Page - mainSectionForm', mainSectionForm)
 
-  return { headerForm: headerForm, firstSectionForm: firstSectionForm, secondSectionForm: secondSectionForm, mainSectionForm: mainSectionForm, fourthSectionForm: fourthSectionForm }
+  return { headerForm: headerForm, firstSectionForm: firstSectionForm, secondSectionForm: secondSectionForm, mainSectionForm: mainSectionForm, fourthSectionForm: fourthSectionForm, footerForm: footerForm }
 }

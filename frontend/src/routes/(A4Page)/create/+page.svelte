@@ -16,6 +16,7 @@
 	let localSecondSectionFormObject = $state(data.secondSectionForm);
 	let localMainSectionObject = $state(data.mainSectionForm);
 	let localFourthSectionObject = $state(data.fourthSectionForm);
+	let localFooterFormObject = $state(data.footerForm);
 
 
 	const objectForm = superForm(localSubmitObject, {
@@ -82,7 +83,8 @@
 			firstSectionForm: { ...localFirstSectionFormObject.data },
 			secondSectionForm: { ...localSecondSectionFormObject.data },
 			mainSectionForm: { ...localMainSectionObject.data },
-			fourthSectionForm: { ...localFourthSectionObject.data }
+			fourthSectionForm: { ...localFourthSectionObject.data },
+			footerForm: { ...localFooterFormObject.data }
 		};
 	}
 
@@ -123,6 +125,9 @@
 
 				bind:fourthSectionForm={localFourthSectionObject}
 				bind:fourthSectionData={localFourthSectionObject.data}
+
+				bind:footerForm={localFooterFormObject}
+				bind:footerData={localFooterFormObject.data}
 			></A4Page>
 			<form method="POST" use:enhance>
 				<button type="submit">Submit</button>

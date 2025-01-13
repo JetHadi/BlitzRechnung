@@ -14,6 +14,8 @@ import { mainSectionContainerSchema } from "$lib/schema/3_mainSectionContainer";
 import { MainSectionContainerDefaults } from "$lib/types/3_mainSectionContainerDefaults";
 import { FourthSectionContainerDefaults } from "$lib/types/4_fourthSectionContainerDefaults";
 import { fourthSectionContainerSchema } from "$lib/schema/4_fourthSectionContainer";
+import { FooterContainerDefaults } from "$lib/types/5_footerContainerDefaults";
+import { footerContainerSchema } from "$lib/schema/5_footerContainer";
 
 export const load: PageServerLoad = async () => {
   const startTime = performance.now();
@@ -24,13 +26,14 @@ export const load: PageServerLoad = async () => {
   const secondSectionForm = await superValidate(SecondSectionContainerDefaults, zod(secondSectionContainerSchema));
   const mainSectionForm = await superValidate(MainSectionContainerDefaults, zod(mainSectionContainerSchema));
   const fourthSectionForm = await superValidate(FourthSectionContainerDefaults, zod(fourthSectionContainerSchema));
+  const footerForm = await superValidate(FooterContainerDefaults, zod(footerContainerSchema));
 
   console.log('UST: ',MainSectionContainerDefaults.RechnungsPositionen[0].ust)
 
   const loadTime = performance.now() - startTime;
   console.log(`✨ Page load completed in ${loadTime.toFixed(2)}ms`);
 
-  return { headerForm: headerForm, firstSectionForm: firstSectionForm, secondSectionForm: secondSectionForm, mainSectionForm: mainSectionForm, fourthSectionForm: fourthSectionForm }
+  return { headerForm: headerForm, firstSectionForm: firstSectionForm, secondSectionForm: secondSectionForm, mainSectionForm: mainSectionForm, fourthSectionForm: fourthSectionForm, footerForm: footerForm }
 }
 
 export const actions: Actions = {
