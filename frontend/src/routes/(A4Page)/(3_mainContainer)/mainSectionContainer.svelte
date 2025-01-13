@@ -1,6 +1,7 @@
 <!-- frontend\src\routes\(A4Page)\(3_mainContainer)\mainSectionContainer.svelte -->
 <script lang="ts">
 	import * as Table from '$lib/components/ui/table';
+	import type { RechnungsPositionType } from '$lib/schema/rechnungsPosition';
 
 	let { mainSectionData = $bindable(), isInteractive = true, propaGateFrom = '' } = $props();
 
@@ -17,8 +18,25 @@
 	});
 
 	let ust = $state((ustProzent: number, gesamt: number) => {
-		return (gesamt * (1+ustProzent/100)-gesamt);
+		return gesamt * (1 + ustProzent / 100) - gesamt;
 	});
+
+	let totalNetto = $derived(
+		mainSectionData.RechnungsPositionen.reduce(
+			(sum: number, position: RechnungsPositionType) => sum + gesamt(position.anzahl, position.einheitspreis),
+			0
+		)
+	);
+
+	let totalUst = $derived(
+		mainSectionData.RechnungsPositionen.reduce(
+			(sum: number, position: RechnungsPositionType) =>
+				sum + ust(position.ustProzent, gesamt(position.anzahl, position.einheitspreis)),
+			0
+		)
+	);
+
+	let totalRechnung = $derived(totalNetto + totalUst);
 
 	// Format number as German percentage
 	const formatPercent = (value: number) => {
@@ -51,7 +69,11 @@
 					<Table.Cell class="text-right">{position.einheit}</Table.Cell>
 					<Table.Cell class="text-right">{formatCurrency(position.einheitspreis)}</Table.Cell>
 					<Table.Cell class="text-right">{position.ustProzent}</Table.Cell>
-					<Table.Cell class="text-right">{formatCurrency(ust(position.ustProzent, gesamt(position.anzahl, position.einheitspreis)))}</Table.Cell>
+					<Table.Cell class="text-right"
+						>{formatCurrency(
+							ust(position.ustProzent, gesamt(position.anzahl, position.einheitspreis))
+						)}</Table.Cell
+					>
 					<Table.Cell class="text-right font-medium"
 						>{formatCurrency(gesamt(position.anzahl, position.einheitspreis))}</Table.Cell
 					>
@@ -59,4 +81,25 @@
 			{/each}
 		</Table.Body>
 	</Table.Root>
+
+	<!-- Summary section -->
+</div>
+<div class="mt-4 space-y-2">
+	<div class="grid grid-cols-[1fr_auto_auto] gap-4 px-4">
+		<div></div>
+		<span class="text-right text-sm font-medium">Nettobetrag</span>
+		<span class="min-w-[120px] text-right text-sm">{formatCurrency(totalNetto)}</span>
+	</div>
+	<div class="grid grid-cols-[1fr_auto_auto] gap-4 px-4">
+		<div></div>
+		<span class="text-right text-sm font-medium">Umsatzsteuer</span>
+		<span class="min-w-[120px] text-right text-sm">{formatCurrency(totalUst)}</span>
+	</div>
+	<div class="grid grid-cols-[1fr_auto_auto] gap-4 border-t px-4 pt-2">
+		<div></div>
+		<span class="text-right text-base font-semibold">Rechnungsbetrag</span>
+		<span class="min-w-[120px] text-right text-base font-semibold"
+			>{formatCurrency(totalRechnung)}</span
+		>
+	</div>
 </div>
