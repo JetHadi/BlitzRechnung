@@ -2,6 +2,7 @@
 <script lang="ts">
 	import * as Table from '$lib/components/ui/table';
 	import type { RechnungsPositionType } from '$lib/schema/rechnungsPosition';
+	import { cn } from '$lib/utils';
 
 	let { mainSectionData = $bindable(), isInteractive = true, propaGateFrom = '' } = $props();
 
@@ -23,7 +24,8 @@
 
 	let totalNetto = $derived(
 		mainSectionData.RechnungsPositionen.reduce(
-			(sum: number, position: RechnungsPositionType) => sum + gesamt(position.anzahl, position.einheitspreis),
+			(sum: number, position: RechnungsPositionType) =>
+				sum + gesamt(position.anzahl, position.einheitspreis),
 			0
 		)
 	);
@@ -48,7 +50,13 @@
 	};
 </script>
 
-<div class="rounded-md border">
+<div
+	class={cn(
+		'container mx-auto rounded-lg border border-transparent p-4',
+		isInteractive &&
+			'cursor-pointer transition-all duration-200 hover:border-gray-200 hover:bg-gray-50'
+	)}
+>
 	<Table.Root>
 		<Table.Header>
 			<Table.Row class="bg-muted/50">
@@ -83,23 +91,23 @@
 	</Table.Root>
 
 	<!-- Summary section -->
-</div>
-<div class="mt-4 space-y-2">
-	<div class="grid grid-cols-[1fr_auto_auto] gap-4 px-4">
-		<div></div>
-		<span class="text-right text-sm font-medium">Nettobetrag</span>
-		<span class="min-w-[120px] text-right text-sm">{formatCurrency(totalNetto)}</span>
-	</div>
-	<div class="grid grid-cols-[1fr_auto_auto] gap-4 px-4">
-		<div></div>
-		<span class="text-right text-sm font-medium">Umsatzsteuer</span>
-		<span class="min-w-[120px] text-right text-sm">{formatCurrency(totalUst)}</span>
-	</div>
-	<div class="grid grid-cols-[1fr_auto_auto] gap-4 border-t px-4 pt-2">
-		<div></div>
-		<span class="text-right text-base font-semibold">Rechnungsbetrag</span>
-		<span class="min-w-[120px] text-right text-base font-semibold"
-			>{formatCurrency(totalRechnung)}</span
-		>
+	<div class="mt-4 space-y-2">
+		<div class="grid grid-cols-[1fr_auto_auto] gap-4 px-4">
+			<div></div>
+			<span class="text-right text-sm font-medium">Nettobetrag</span>
+			<span class="min-w-[120px] text-right text-sm">{formatCurrency(totalNetto)}</span>
+		</div>
+		<div class="grid grid-cols-[1fr_auto_auto] gap-4 px-4">
+			<div></div>
+			<span class="text-right text-sm font-medium">Umsatzsteuer</span>
+			<span class="min-w-[120px] text-right text-sm">{formatCurrency(totalUst)}</span>
+		</div>
+		<div class="grid grid-cols-[1fr_auto_auto] gap-4 border-t px-4 pt-2">
+			<div></div>
+			<span class="text-right text-base font-semibold">Rechnungsbetrag</span>
+			<span class="min-w-[120px] text-right text-base font-semibold"
+				>{formatCurrency(totalRechnung)}</span
+			>
+		</div>
 	</div>
 </div>
