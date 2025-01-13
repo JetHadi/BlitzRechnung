@@ -129,13 +129,14 @@
 				bind:footerForm={localFooterFormObject}
 				bind:footerData={localFooterFormObject.data}
 			></A4Page>
-			<form method="POST" use:enhance>
-				<button type="submit">Submit</button>
-				{#if $delayed}<LoaderCircle class="animate-spin" />{/if}
-			</form>
+			
 		</div>
 	</div>
 </div>
+<form method="POST" use:enhance>
+	<button type="submit">Submit</button>
+	{#if $delayed}<LoaderCircle class="animate-spin" />{/if}
+</form>
 
 <!-- 
 <form
