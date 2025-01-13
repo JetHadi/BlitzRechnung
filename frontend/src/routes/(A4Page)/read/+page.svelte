@@ -10,6 +10,7 @@
 	let localHeaderFormObject = $state(data.headerForm);
 	let localFirstSectionFormObject = $state(data.firstSectionForm);
 	let localSecondSectionFormObject = $state(data.secondSectionForm);
+	let localMainSectionObject = $state(data.mainSectionForm);
 
 	$effect(() => {
 		console.log('Main-Read-Page--', localHeaderFormObject);
@@ -24,12 +25,12 @@
 				{reactive}
 				headerForm={localHeaderFormObject}
 				headerData={localHeaderFormObject.data}
-				
 				firstSectionForm={localFirstSectionFormObject}
 				firstSectionData={localFirstSectionFormObject.data}
-
 				secondSectionForm={localSecondSectionFormObject}
 				secondSectionData={localSecondSectionFormObject.data}
+				mainSectionForm={localMainSectionObject}
+				mainSectionData={localMainSectionObject.data}
 			></A4Page>
 		</div>
 	</div>

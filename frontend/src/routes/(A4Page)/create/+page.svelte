@@ -14,6 +14,7 @@
 	let localHeaderFormObject = $state(data.headerForm);
 	let localFirstSectionFormObject = $state(data.firstSectionForm);
 	let localSecondSectionFormObject = $state(data.secondSectionForm);
+	let localMainSectionObject = $state(data.mainSectionForm);
 
 
 	const objectForm = superForm(localSubmitObject, {
@@ -78,7 +79,8 @@
 		return {
 			headerForm: { ...localHeaderFormObject.data },
 			firstSectionForm: { ...localFirstSectionFormObject.data },
-			secondSectionForm: { ...localSecondSectionFormObject.data }
+			secondSectionForm: { ...localSecondSectionFormObject.data },
+			mainSectionForm: { ...localMainSectionObject.data }
 		};
 	}
 
@@ -113,6 +115,9 @@
 
 				bind:secondSectionForm={localSecondSectionFormObject}
 				bind:secondSectionData={localSecondSectionFormObject.data}
+
+				bind:mainSectionForm={localMainSectionObject}
+				bind:mainSectionData={localMainSectionObject.data}
 			></A4Page>
 			<form method="POST" use:enhance>
 				<button type="submit">Submit</button>
