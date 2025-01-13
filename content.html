@@ -1,0 +1,108 @@
+<!--- HeaderContent -->
+<div class={cn( "container mx-auto rounded-lg border border-transparent p-4" , isInteractive
+    && "cursor-pointer transition-all duration-200 hover:border-gray-200 hover:bg-gray-50" )}>
+    <div class="flex items-start justify-between">
+        <div class="w-1/4">
+            <Logo />
+        </div>
+
+        <div class="w-2/4 text-center">
+            <h1 class="text-2xl font-bold">Rechnung</h1>
+        </div>
+
+        <div class="w-1/4 text-left text-sm">
+            {headerData.firma}<br />
+            {headerData.strasse}<br />
+            {headerData.plz} {headerData.ort}<br />
+            {#if headerData.telefon}
+            {headerData.telefon}<br />
+            {/if}
+            {#if headerData.email}
+            {headerData.email}
+            {/if}
+        </div>
+    </div>
+</div>
+
+<!-- first Section -->
+<div class={cn( 'container mx-auto rounded-lg border border-transparent p-4' , isInteractive
+    && 'cursor-pointer transition-all duration-200 hover:border-gray-200 hover:bg-gray-50' )}>
+    <div class="flex items-start justify-between">
+        <div class="text-left text-sm">
+            {firstSectionData.firma}<br />
+            {firstSectionData.strasse}<br />
+            {firstSectionData.plz}
+            {firstSectionData.ort}<br />
+        </div>
+        <div class="rounded-sm bg-gray-100 p-2 text-left text-sm">
+            <div class="grid grid-cols-[120px_1fr] gap-x-4">
+                <span>Rechnungsnummer:</span>
+                <span>{firstSectionData.rechnungsnummer}</span>
+
+                <span>Rechnungsdatum:</span>
+                <span>{formatToGermanDate(firstSectionData.rechnungsdatum)}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- second Section -->
+<div class={cn( 'container mx-auto rounded-lg border border-transparent p-4' , isInteractive
+    && 'cursor-pointer transition-all duration-200 hover:border-gray-200 hover:bg-gray-50' )}>
+    <div class="flex items-start justify-between">
+        <div class="text-left text-sm">
+            {secondSectionData.text}<br />
+        </div>
+    </div>
+</div>
+
+<!-- main Section -->
+<div class="rounded-md border">
+    <Table.Root>
+        <Table.Header>
+            <Table.Row class="bg-muted/50">
+                <Table.Head class="w-[300px]">Bezeichnung</Table.Head>
+                <Table.Head class="text-right">Anzahl</Table.Head>
+                <Table.Head class="text-right">Einheit</Table.Head>
+                <Table.Head class="text-right">Einheitspreis</Table.Head>
+                <Table.Head class="text-right">USt.%</Table.Head>
+                <Table.Head class="text-right">USt.</Table.Head>
+                <Table.Head class="text-right">Gesamt</Table.Head>
+            </Table.Row>
+        </Table.Header>
+        <Table.Body>
+            {#each mainSectionData.RechnungsPositionen as position}
+            <Table.Row>
+                <Table.Cell class="font-medium">{position.bezeichnung}</Table.Cell>
+                <Table.Cell class="text-right">{position.anzahl}</Table.Cell>
+                <Table.Cell class="text-right">{position.einheit}</Table.Cell>
+                <Table.Cell class="text-right">{formatCurrency(position.einheitspreis)}</Table.Cell>
+                <Table.Cell class="text-right">{position.ustProzent}</Table.Cell>
+                <Table.Cell class="text-right">{formatCurrency(
+                    ust(position.ustProzent, gesamt(position.anzahl, position.einheitspreis))
+                    )}</Table.Cell>
+                <Table.Cell class="text-right font-medium">{formatCurrency(gesamt(position.anzahl,
+                    position.einheitspreis))}</Table.Cell>
+            </Table.Row>
+            {/each}
+        </Table.Body>
+    </Table.Root>
+
+</div>
+<div class="mt-4 space-y-2">
+    <div class="grid grid-cols-[1fr_auto_auto] gap-4 px-4">
+        <div></div>
+        <span class="text-right text-sm font-medium">Nettobetrag</span>
+        <span class="min-w-[120px] text-right text-sm">{formatCurrency(totalNetto)}</span>
+    </div>
+    <div class="grid grid-cols-[1fr_auto_auto] gap-4 px-4">
+        <div></div>
+        <span class="text-right text-sm font-medium">Umsatzsteuer</span>
+        <span class="min-w-[120px] text-right text-sm">{formatCurrency(totalUst)}</span>
+    </div>
+    <div class="grid grid-cols-[1fr_auto_auto] gap-4 border-t px-4 pt-2">
+        <div></div>
+        <span class="text-right text-base font-semibold">Rechnungsbetrag</span>
+        <span class="min-w-[120px] text-right text-base font-semibold">{formatCurrency(totalRechnung)}</span>
+    </div>
+</div>
