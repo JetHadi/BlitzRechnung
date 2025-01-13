@@ -40,16 +40,16 @@
 			jsonData(submissionData);
 			console.log(submissionData)
 
-			return async ({ result, update }) => {
-				const submitDuration = performance.now() - startTime;
-				console.log(`🟨 Form submission took: ${submitDuration.toFixed(2)}ms`);
+			// return async ({ result, update }) => {
+			// 	const submitDuration = performance.now() - startTime;
+			// 	console.log(`🟨 Form submission took: ${submitDuration.toFixed(2)}ms`);
 
-				if (result.type === 'success') {
-					console.log('✅ Submission successful', result.data);
-				} else {
-					console.log('❌ Submission failed', result.data);
-				}
-			};
+			// 	if (result.type === 'success') {
+			// 		console.log('✅ Submission successful', result.data);
+			// 	} else {
+			// 		console.log('❌ Submission failed', result.data);
+			// 	}
+			// };
 		},
 		onResult({}) {
 			const timestamp = new Date().toISOString();
