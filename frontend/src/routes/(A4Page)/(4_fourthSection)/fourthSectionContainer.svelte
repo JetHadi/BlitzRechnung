@@ -3,7 +3,6 @@
 	import { cn } from '$lib/utils';
 
 	let { fourthSectionData = $bindable(), isInteractive = true, propaGateFrom = '' } = $props();
-
 </script>
 
 <div
@@ -14,8 +13,8 @@
 	)}
 >
 	<div class="flex items-start justify-between">
-	<div class="text-left text-sm">
-			{fourthSectionData.text}<br />
+		<div class="whitespace-pre-wrap text-left text-sm">
+			{fourthSectionData.extraInvoiceInfoSecond}
 		</div>
 	</div>
 </div>

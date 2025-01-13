@@ -43,7 +43,8 @@ export const POST: RequestHandler = async ({ url, request }) => {
                     bottom: 0,
                     left: 0,
                     right: 0
-                }
+                },
+                printBackground: true
             });
 
             const timestamp = new Date();

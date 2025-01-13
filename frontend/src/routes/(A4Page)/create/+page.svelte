@@ -7,7 +7,7 @@
 
 	let { data } = $props();
 
-	const reactive = true;
+	const isInteractive = true;
 
 	let localSubmitObject = $state(data);
 
@@ -65,18 +65,6 @@
 	const origin = 'Main';
 	let count = $state(0);
 
-	function updateFormData() {
-		formData.update(
-			($formData) => {
-				$formData.headerForm = { ...localHeaderFormObject };
-				$formData.firstSectionForm = { ...localFirstSectionFormObject };
-				console.log('onSubmit', $formData);
-				return $formData;
-			},
-			{ taint: false }
-		);
-	}
-
 	function createSubmissionData() {
 		return {
 			headerForm: { ...localHeaderFormObject.data },
@@ -108,9 +96,9 @@
 
 <div class="flex items-start gap-4">
 	<div class="mx-auto aspect-[1/1.4142] w-full max-w-[210mm] bg-white shadow-lg print:shadow-none">
-		<div class="print-container box-border flex h-full w-full flex-col p-12">
+	  <div class="print-container box-border flex h-full w-full flex-col p-6">
 			<A4Page
-				{reactive}
+				{isInteractive}
 				bind:headerForm={localHeaderFormObject}
 				bind:headerData={localHeaderFormObject.data}
 				

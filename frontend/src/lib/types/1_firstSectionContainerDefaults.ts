@@ -1,7 +1,7 @@
 import { defaultRechnungsDaten } from "./rechnungsDaten";
-import { defaultRechnungsSender } from "./rechnungsSender";
+import { defaultRechnungsEmfpaenger } from "./rechnungsEmpfaenger";
 
 export const FirstSectionContainerDefaults = {
-    ...defaultRechnungsSender, ...defaultRechnungsDaten
+    ...defaultRechnungsEmfpaenger, ...defaultRechnungsDaten
 
 }

@@ -18,12 +18,12 @@
 		SPA: true,
 		invalidateAll: false, // Prevents full page reload
 		onSubmit({}){
-			console.log("from DialogHeader onSubmit:",headerForm.data.firma)
+			// console.log("from DialogHeader onSubmit:",headerForm.data.firma)
 		},
 		onUpdate({ form }) {
 			if (form.valid) {
 				headerForm.data = { ...$formData };
-				console.log('from DialogHeader onUpdate: ', headerForm.data.firma);
+				// console.log('from DialogHeader onUpdate: ', headerForm.data.firma);
 				openDialog = false
 			}
 		}
@@ -38,7 +38,7 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>Firma</Form.Label>
-				<Input {...props} bind:value={$formData.firma} />
+				<Input {...props} bind:value={$formData.absender_firma} />
 			{/snippet}
 		</Form.Control>
 		<Form.Description />
@@ -49,7 +49,7 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>Straße</Form.Label>
-				<Input {...props} bind:value={$formData.strasse} />
+				<Input {...props} bind:value={$formData.absender_strasse} />
 			{/snippet}
 		</Form.Control>
 		<Form.Description />
@@ -60,7 +60,7 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>PLZ</Form.Label>
-				<Input {...props} bind:value={$formData.plz} />
+				<Input {...props} bind:value={$formData.absender_plz} />
 			{/snippet}
 		</Form.Control>
 		<Form.Description />
@@ -71,7 +71,7 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>Ort</Form.Label>
-				<Input {...props} bind:value={$formData.ort} />
+				<Input {...props} bind:value={$formData.absender_ort} />
 			{/snippet}
 		</Form.Control>
 		<Form.Description />
@@ -82,7 +82,7 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>Telefon</Form.Label>
-				<Input {...props} bind:value={$formData.telefon} />
+				<Input {...props} bind:value={$formData.absender_telefon} />
 			{/snippet}
 		</Form.Control>
 		<Form.Description />
@@ -93,7 +93,7 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>Email</Form.Label>
-				<Input {...props} bind:value={$formData.email} />
+				<Input {...props} bind:value={$formData.absender_email} />
 			{/snippet}
 		</Form.Control>
 		<Form.Description />

@@ -76,7 +76,7 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>Firma</Form.Label>
-				<Input {...props} bind:value={$formData.firma} />
+				<Input {...props} bind:value={$formData.empfaenger_firma} />
 			{/snippet}
 		</Form.Control>
 		<Form.Description />
@@ -87,7 +87,7 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>Straße</Form.Label>
-				<Input {...props} bind:value={$formData.strasse} />
+				<Input {...props} bind:value={$formData.empfaenger_strasse} />
 			{/snippet}
 		</Form.Control>
 		<Form.Description />
@@ -98,7 +98,7 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>PLZ</Form.Label>
-				<Input {...props} bind:value={$formData.plz} />
+				<Input {...props} bind:value={$formData.empfaenger_plz} />
 			{/snippet}
 		</Form.Control>
 		<Form.Description />
@@ -109,7 +109,7 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>Ort</Form.Label>
-				<Input {...props} bind:value={$formData.ort} />
+				<Input {...props} bind:value={$formData.empfaenger_ort} />
 			{/snippet}
 		</Form.Control>
 		<Form.Description />

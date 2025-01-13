@@ -71,8 +71,8 @@
 		</Table.Header>
 		<Table.Body>
 			{#each mainSectionData.RechnungsPositionen as position}
-				<Table.Row>
-					<Table.Cell class="font-medium">{position.bezeichnung}</Table.Cell>
+				<Table.Row class="pointer-events-none">
+					<Table.Cell class="text-left font-medium">{position.bezeichnung}</Table.Cell>
 					<Table.Cell class="text-right">{position.anzahl}</Table.Cell>
 					<Table.Cell class="text-right">{position.einheit}</Table.Cell>
 					<Table.Cell class="text-right">{formatCurrency(position.einheitspreis)}</Table.Cell>

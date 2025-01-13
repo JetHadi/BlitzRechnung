@@ -1,17 +1,16 @@
 <script lang="ts">
-	import { secondSectionContainerSchema } from "$lib/schema/2_secondSectionContainer";
-	import { superForm } from "sveltekit-superforms";
-	import SecondSectionContainer from "./secondSectionContainer.svelte";
-	import { zodClient } from "sveltekit-superforms/adapters";
+	import { superForm } from 'sveltekit-superforms';
+	import { secondSectionContainerSchema } from '$lib/schema/2_secondSectionContainer';
+	import SecondSectionContainer from './secondSectionContainer.svelte';
+	import { zodClient } from 'sveltekit-superforms/adapters';
 	import * as Form from '$lib/components/ui/form/';
-	import { Input } from '$lib/components/ui/input/';
+	import { Textarea } from '$lib/components/ui/textarea';
 
 	let {
 		secondSectionForm = $bindable(),
 		secondSectionData = $bindable(),
 		openDialog = $bindable()
 	} = $props();
-
 
 	const form = superForm(secondSectionForm, {
 		validators: zodClient(secondSectionContainerSchema),
@@ -26,7 +25,6 @@
 	});
 
 	const { form: formData, enhance } = form;
-
 </script>
 
 <SecondSectionContainer
@@ -36,11 +34,11 @@
 />
 
 <form method="POST" use:enhance>
-	<Form.Field {form} name="firma">
+	<Form.Field {form} name="extraInvoiceInfoFirst">
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>Zusätzliche Informationen für den Empfänger eintragen:</Form.Label>
-				<Input {...props} bind:value={$formData.text} />
+				<Textarea {...props} bind:value={$formData.extraInvoiceInfoFirst} />
 			{/snippet}
 		</Form.Control>
 		<Form.Description />

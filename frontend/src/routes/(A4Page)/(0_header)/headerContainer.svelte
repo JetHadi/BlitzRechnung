@@ -42,14 +42,14 @@
     </div>
 
     <div class="w-1/4 text-left text-sm">
-      {headerData.firma}<br />
-      {headerData.strasse}<br />
-      {headerData.plz} {headerData.ort}<br />
-      {#if headerData.telefon}
-        {headerData.telefon}<br />
+      {headerData.absender_firma}<br />
+      {headerData.absender_strasse}<br />
+      {headerData.plz} {headerData.absender_ort}<br />
+      {#if headerData.absender_telefon}
+        {headerData.absender_telefon}<br />
       {/if}
-      {#if headerData.email}
-        {headerData.email}
+      {#if headerData.absender_email}
+        {headerData.absender_email}
       {/if}
     </div>
   </div>

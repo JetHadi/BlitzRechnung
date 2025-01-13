@@ -3,7 +3,7 @@
 	import A4Page from '../A4Page.svelte';
 	let { data } = $props();
 
-	const reactive = false;
+	const isInteractive = false;
 
 	let localFormObject = $state(data);
 
@@ -23,9 +23,9 @@
 
 <div class="flex items-start gap-4">
 	<div class="mx-auto aspect-[1/1.4142] w-full max-w-[210mm] bg-white shadow-lg print:shadow-none">
-		<div class="print-container box-border flex h-full w-full flex-col p-12">
+		<div class="print-container box-border flex h-full w-full flex-col p-6">
 			<A4Page
-				{reactive}
+				{isInteractive}
 				headerForm={localHeaderFormObject}
 				headerData={localHeaderFormObject.data}
 

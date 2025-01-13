@@ -38,7 +38,7 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>Bankname</Form.Label>
-				<Input {...props} bind:value={$formData.bankname} />
+				<Input {...props} bind:value={$formData.absender_bankname} />
 			{/snippet}
 		</Form.Control>
 		<Form.Description />
@@ -49,7 +49,7 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>IBAN</Form.Label>
-				<Input {...props} bind:value={$formData.iban} />
+				<Input {...props} bind:value={$formData.absender_iban} />
 			{/snippet}
 		</Form.Control>
 		<Form.Description />
@@ -60,7 +60,7 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>BIC</Form.Label>
-				<Input {...props} bind:value={$formData.bic} />
+				<Input {...props} bind:value={$formData.absender_bic} />
 			{/snippet}
 		</Form.Control>
 		<Form.Description />
@@ -71,7 +71,7 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>USt.-ID</Form.Label>
-				<Input {...props} bind:value={$formData.ustId} />
+				<Input {...props} bind:value={$formData.absender_ustId} />
 			{/snippet}
 		</Form.Control>
 		<Form.Description />
@@ -82,7 +82,7 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>Steuernummer</Form.Label>
-				<Input {...props} bind:value={$formData.steuernummer} />
+				<Input {...props} bind:value={$formData.absender_steuernummer} />
 			{/snippet}
 		</Form.Control>
 		<Form.Description />

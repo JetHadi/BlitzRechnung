@@ -1,17 +1,16 @@
 <script lang="ts">
-	import { superForm } from "sveltekit-superforms";
-	import FourthSectionContainer from "./fourthSectionContainer.svelte";
-	import { zodClient } from "sveltekit-superforms/adapters";
+	import { superForm } from 'sveltekit-superforms';
+	import { fourthSectionContainerSchema } from '$lib/schema/4_fourthSectionContainer';
+	import FourthSectionContainer from './fourthSectionContainer.svelte';
+	import { zodClient } from 'sveltekit-superforms/adapters';
 	import * as Form from '$lib/components/ui/form/';
-	import { Input } from '$lib/components/ui/input/';
-	import { fourthSectionContainerSchema } from "$lib/schema/4_fourthSectionContainer";
+	import { Textarea } from '$lib/components/ui/textarea';
 
 	let {
 		fourthSectionForm = $bindable(),
 		fourthSectionData = $bindable(),
 		openDialog = $bindable()
 	} = $props();
-
 
 	const form = superForm(fourthSectionForm, {
 		validators: zodClient(fourthSectionContainerSchema),
@@ -26,7 +25,6 @@
 	});
 
 	const { form: formData, enhance } = form;
-
 </script>
 
 <FourthSectionContainer
@@ -36,11 +34,11 @@
 />
 
 <form method="POST" use:enhance>
-	<Form.Field {form} name="firma">
+	<Form.Field {form} name="extraInvoiceInfoSecond">
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>Zusätzliche Informationen für den Empfänger eintragen:</Form.Label>
-				<Input {...props} bind:value={$formData.text} />
+				<Textarea {...props} bind:value={$formData.extraInvoiceInfoSecond} />
 			{/snippet}
 		</Form.Control>
 		<Form.Description />

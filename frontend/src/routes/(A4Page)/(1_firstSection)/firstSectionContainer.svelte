@@ -48,12 +48,12 @@
 >
 	<div class="flex items-start justify-between">
 		<div class="text-left text-sm">
-			{firstSectionData.firma}<br />
-			{firstSectionData.strasse}<br />
-			{firstSectionData.plz}
-			{firstSectionData.ort}<br />
+			{firstSectionData.empfaenger_firma}<br />
+			{firstSectionData.empfaenger_strasse}<br />
+			{firstSectionData.empfaenger_plz}
+			{firstSectionData.empfaenger_ort}<br />
 		</div>
-		<div class="rounded-sm bg-gray-100 p-2 text-left text-sm">
+		<div class="rounded-sm bg-brand-gray/20 p-2 text-left text-sm">
 			<div class="grid grid-cols-[120px_1fr] gap-x-4">
 				<span>Rechnungsnummer:</span>
 				<span>{firstSectionData.rechnungsnummer}</span>

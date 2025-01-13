@@ -5,7 +5,7 @@
 	import Footer from '$lib/components/Footer.svelte';
 </script>
 
-<div class="grid min-h-screen bg-gray-100" style="grid-template-rows: auto 1fr auto;">
+<div class="grid min-h-screen bg-gray-100 print:bg-white" style="grid-template-rows: auto 1fr auto;">
 	<div class="no-print m-auto w-full">
 		<Header />
 	</div>

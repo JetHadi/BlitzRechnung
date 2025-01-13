@@ -16,7 +16,7 @@
 	import FooterDialog from './(5_footer)/footerDialog.svelte';
 
 	let {
-		reactive = false,
+		isInteractive = false,
 
 		headerForm = $bindable(),
 		headerData = $bindable(),
@@ -30,12 +30,12 @@
 		mainSectionForm = $bindable(),
 		mainSectionData = $bindable(),
 
-        fourthSectionForm = $bindable(),
+		fourthSectionForm = $bindable(),
 		fourthSectionData = $bindable(),
 
-        footerForm = $bindable(),
-		footerData = $bindable(),
-    } = $props();
+		footerForm = $bindable(),
+		footerData = $bindable()
+	} = $props();
 
 	const origin = 'A4Page';
 	let openHeaderDialog = $state(false);
@@ -56,126 +56,128 @@
 	});
 </script>
 
-{#if reactive}
-	<Dialog.Root bind:open={openHeaderDialog}>
-		<Dialog.Trigger><HeaderContainer bind:headerData /></Dialog.Trigger>
+<div class="flex h-full w-full flex-col">
+	{#if isInteractive}
+		<Dialog.Root bind:open={openHeaderDialog}>
+			<Dialog.Trigger class="w-full"><HeaderContainer bind:headerData /></Dialog.Trigger>
 
-		<Dialog.Content class="w-full sm:max-w-[800px]">
-			<ScrollArea>
-				<Dialog.Header>
-					<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
-					<Dialog.Description>Passe die Einträge an</Dialog.Description>
-				</Dialog.Header>
-				<div class="p-4">
-					<HeaderDialog bind:openDialog={openHeaderDialog} bind:headerForm bind:headerData />
-				</div>
-			</ScrollArea>
-		</Dialog.Content>
-	</Dialog.Root>
+			<Dialog.Content class="w-full sm:max-w-[800px]">
+				<ScrollArea>
+					<Dialog.Header>
+						<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
+						<Dialog.Description>Passe die Einträge an</Dialog.Description>
+					</Dialog.Header>
+					<div class="p-4">
+						<HeaderDialog bind:openDialog={openHeaderDialog} bind:headerForm bind:headerData />
+					</div>
+				</ScrollArea>
+			</Dialog.Content>
+		</Dialog.Root>
 
-	<Dialog.Root bind:open={openFirstSectionDialog}>
-		<Dialog.Trigger><FirstSectionContainer bind:firstSectionData /></Dialog.Trigger>
+		<Dialog.Root bind:open={openFirstSectionDialog}>
+			<Dialog.Trigger class="w-full"><FirstSectionContainer bind:firstSectionData /></Dialog.Trigger>
 
-		<Dialog.Content class="w-full sm:max-w-[800px]">
-			<ScrollArea>
-				<Dialog.Header>
-					<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
-					<Dialog.Description>Passe die Einträge an</Dialog.Description>
-				</Dialog.Header>
-				<div class="p-4">
-					<FirstSectionDialog
-						bind:openDialog={openFirstSectionDialog}
-						bind:firstSectionForm
-						bind:firstSectionData
-					/>
-				</div>
-			</ScrollArea>
-		</Dialog.Content>
-	</Dialog.Root>
+			<Dialog.Content class="w-full sm:max-w-[800px]">
+				<ScrollArea>
+					<Dialog.Header>
+						<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
+						<Dialog.Description>Passe die Einträge an</Dialog.Description>
+					</Dialog.Header>
+					<div class="p-4">
+						<FirstSectionDialog
+							bind:openDialog={openFirstSectionDialog}
+							bind:firstSectionForm
+							bind:firstSectionData
+						/>
+					</div>
+				</ScrollArea>
+			</Dialog.Content>
+		</Dialog.Root>
 
-    <Dialog.Root bind:open={secondSectionDialog}>
-		<Dialog.Trigger><SecondSectionContainer bind:secondSectionData /></Dialog.Trigger>
+		<div class="flex-grow w-full">
+			<Dialog.Root bind:open={secondSectionDialog}>
+				<Dialog.Trigger class="w-full"><SecondSectionContainer bind:secondSectionData /></Dialog.Trigger>
 
-		<Dialog.Content class="w-full sm:max-w-[800px]">
-			<ScrollArea>
-				<Dialog.Header>
-					<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
-					<Dialog.Description>Passe die Einträge an</Dialog.Description>
-				</Dialog.Header>
-				<div class="p-4">
-					<SecondSectionDialog
-						bind:openDialog={secondSectionDialog}
-						bind:secondSectionForm
-						bind:secondSectionData
-					/>
-				</div>
-			</ScrollArea>
-		</Dialog.Content>
-	</Dialog.Root>
+				<Dialog.Content class="w-full sm:max-w-[800px]">
+					<ScrollArea>
+						<Dialog.Header>
+							<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
+							<Dialog.Description>Passe die Einträge an</Dialog.Description>
+						</Dialog.Header>
+						<div class="p-4">
+							<SecondSectionDialog
+								bind:openDialog={secondSectionDialog}
+								bind:secondSectionForm
+								bind:secondSectionData
+							/>
+						</div>
+					</ScrollArea>
+				</Dialog.Content>
+			</Dialog.Root>
 
-	<Dialog.Root bind:open={mainSectionDialog}>
-		<Dialog.Trigger><MainSectionContainer bind:mainSectionData /></Dialog.Trigger>
+			<Dialog.Root bind:open={mainSectionDialog}>
+				<Dialog.Trigger class="w-full"><MainSectionContainer bind:mainSectionData /></Dialog.Trigger>
 
-		<Dialog.Content class="w-full sm:max-w-[800px]">
-			<ScrollArea>
-				<Dialog.Header>
-					<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
-					<Dialog.Description>Passe die Einträge an</Dialog.Description>
-				</Dialog.Header>
-				<div class="p-4">
-					<MainSectionDialog
-						bind:openDialog={mainSectionDialog}
-						bind:mainSectionForm
-						bind:mainSectionData
-					/>
-				</div>
-			</ScrollArea>
-		</Dialog.Content>
-	</Dialog.Root>
+				<Dialog.Content class="w-full sm:max-w-[800px]">
+					<ScrollArea>
+						<Dialog.Header>
+							<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
+							<Dialog.Description>Passe die Einträge an</Dialog.Description>
+						</Dialog.Header>
+						<div class="p-4">
+							<MainSectionDialog
+								bind:openDialog={mainSectionDialog}
+								bind:mainSectionForm
+								bind:mainSectionData
+							/>
+						</div>
+					</ScrollArea>
+				</Dialog.Content>
+			</Dialog.Root>
 
-    <Dialog.Root bind:open={fourthSectionDialog}>
-		<Dialog.Trigger><FourthSectionContainer bind:fourthSectionData /></Dialog.Trigger>
+			<Dialog.Root bind:open={fourthSectionDialog}>
+				<Dialog.Trigger class="w-full"><FourthSectionContainer bind:fourthSectionData /></Dialog.Trigger>
 
-		<Dialog.Content class="w-full sm:max-w-[800px]">
-			<ScrollArea>
-				<Dialog.Header>
-					<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
-					<Dialog.Description>Passe die Einträge an</Dialog.Description>
-				</Dialog.Header>
-				<div class="p-4">
-					<FourthSectionDialog
-						bind:openDialog={fourthSectionDialog}
-						bind:fourthSectionForm
-						bind:fourthSectionData
-					/>
-				</div>
-			</ScrollArea>
-		</Dialog.Content>
-	</Dialog.Root>
+				<Dialog.Content class="w-full sm:max-w-[800px]">
+					<ScrollArea>
+						<Dialog.Header>
+							<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
+							<Dialog.Description>Passe die Einträge an</Dialog.Description>
+						</Dialog.Header>
+						<div class="p-4">
+							<FourthSectionDialog
+								bind:openDialog={fourthSectionDialog}
+								bind:fourthSectionForm
+								bind:fourthSectionData
+							/>
+						</div>
+					</ScrollArea>
+				</Dialog.Content>
+			</Dialog.Root>
+		</div>
+		<Dialog.Root bind:open={openFooterDialog}>
+			<Dialog.Trigger class="w-full"><FooterContainer bind:footerData /></Dialog.Trigger>
 
-    <Dialog.Root bind:open={openFooterDialog}>
-		<Dialog.Trigger><FooterContainer bind:footerData /></Dialog.Trigger>
-
-		<Dialog.Content class="w-full sm:max-w-[800px]">
-			<ScrollArea>
-				<Dialog.Header>
-					<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
-					<Dialog.Description>Passe die Einträge an</Dialog.Description>
-				</Dialog.Header>
-				<div class="p-4">
-					<FooterDialog bind:openDialog={openFooterDialog} bind:footerForm bind:footerData />
-				</div>
-			</ScrollArea>
-		</Dialog.Content>
-	</Dialog.Root>
-
-
-{:else}
-	<HeaderContainer {headerData} />
-	<FirstSectionContainer {firstSectionData} />
-	<SecondSectionContainer {secondSectionData} />
-	<MainSectionContainer {mainSectionData} />
-    <FourthSectionContainer {fourthSectionData} />
-    <FooterContainer {footerData} />
-
-{/if}
+			<Dialog.Content class="w-full sm:max-w-[800px]">
+				<ScrollArea>
+					<Dialog.Header>
+						<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
+						<Dialog.Description>Passe die Einträge an</Dialog.Description>
+					</Dialog.Header>
+					<div class="p-4">
+						<FooterDialog bind:openDialog={openFooterDialog} bind:footerForm bind:footerData />
+					</div>
+				</ScrollArea>
+			</Dialog.Content>
+		</Dialog.Root>
+	{:else}
+		<HeaderContainer {headerData} {isInteractive}/>
+		<FirstSectionContainer {firstSectionData} {isInteractive}/>
+		<div class="mt-20 flex-grow w-full">
+			<SecondSectionContainer {secondSectionData} {isInteractive}/>
+			<MainSectionContainer {mainSectionData} {isInteractive}/>
+			<FourthSectionContainer {fourthSectionData} {isInteractive}/>
+		</div>
+		<FooterContainer {footerData} {isInteractive}/>
+	{/if}
+</div>

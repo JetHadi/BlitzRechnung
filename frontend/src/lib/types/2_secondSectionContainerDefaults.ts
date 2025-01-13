@@ -1,1 +1,1 @@
-export const SecondSectionContainerDefaults = {text: "Hier zusätzliche Informationen zu der Rechnung eintragen"}
+export const SecondSectionContainerDefaults = {extraInvoiceInfoFirst: "Hier zusätzliche Informationen zu der Rechnung eintragen"}
