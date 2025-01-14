@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from lxml import etree
 
 # Define namespaces as constants
@@ -241,9 +241,25 @@ def create_facturx_xml(json_data):
         etree.SubElement(buyer_address, f"{{{NAMESPACES['ram']}}}CountryID").text = "DE"
 
         # Trade Delivery
-        # delivery = etree.SubElement(
-        #     transaction, f"{{{NAMESPACES['ram']}}}ApplicableHeaderTradeDelivery"
-        # )
+        delivery = etree.SubElement(
+            transaction, f"{{{NAMESPACES['ram']}}}ApplicableHeaderTradeDelivery"
+        )
+
+        # Add ActualDeliverySupplyChainEvent with delivery date
+        delivery_event = etree.SubElement(
+            delivery, f"{{{NAMESPACES['ram']}}}ActualDeliverySupplyChainEvent"
+        )
+        delivery_date = etree.SubElement(
+            delivery_event, f"{{{NAMESPACES['ram']}}}OccurrenceDateTime"
+        )
+        # Use the invoice date if no specific delivery date is provided
+        delivery_date_str = json_data["firstSectionForm"]["rechnungsdatum"].replace(
+            "Z", "+00:00"
+        )
+        delivery_date_obj = datetime.fromisoformat(delivery_date_str)
+        etree.SubElement(
+            delivery_date, f"{{{NAMESPACES['udt']}}}DateTimeString", format="102"
+        ).text = delivery_date_obj.strftime("%Y%m%d")
 
         # Trade Settlement
         settlement = etree.SubElement(
@@ -281,28 +297,47 @@ def create_facturx_xml(json_data):
         else:
             etree.SubElement(financial_institution, f"{{{NAMESPACES['ram']}}}BICID")
 
+        # Create SpecifiedTradePaymentTerms element
+        payment_terms = etree.SubElement(
+            settlement, f"{{{NAMESPACES['ram']}}}SpecifiedTradePaymentTerms"
+        )
+
+        # Set description based on whether payment terms are provided
         if json_data["firstSectionForm"].get("paymentTerms"):
-            payment_terms = etree.SubElement(
-                settlement, f"{{{NAMESPACES['ram']}}}SpecifiedTradePaymentTerms"
-            )
             etree.SubElement(
                 payment_terms, f"{{{NAMESPACES['ram']}}}Description"
             ).text = json_data["firstSectionForm"]["paymentTerms"]
+        else:
+            etree.SubElement(
+                payment_terms, f"{{{NAMESPACES['ram']}}}Description"
+            ).text = "Zahlbar innerhalb von 30 Tagen nach Rechnungseingang"
+
+
+            # Get invoice date as base for calculation
+        invoice_date_str = json_data["firstSectionForm"]["rechnungsdatum"].replace("Z", "+00:00")
+        invoice_date_obj = datetime.fromisoformat(invoice_date_str)
+
+        # Create DueDateDateTime element
+        due_date = etree.SubElement(
+            payment_terms, f"{{{NAMESPACES['ram']}}}DueDateDateTime"
+        )
 
         if json_data["firstSectionForm"].get("dueDate"):
-            due_date = etree.SubElement(
-                payment_terms, f"{{{NAMESPACES['ram']}}}DueDateDateTime"
-            )
+            # Use specified due date if available
             due_date_obj = datetime.fromisoformat(
                 json_data["firstSectionForm"]["dueDate"].replace("Z", "+00:00")
             )
-            etree.SubElement(
-                due_date, f"{{{NAMESPACES['udt']}}}DateTimeString", format="102"
-            ).text = due_date_obj.strftime("%Y%m%d")
+        else:
+            # Calculate due date as invoice date + 30 days
+            due_date_obj = invoice_date_obj + timedelta(days=30)
+
+        # Add the formatted date string
+        etree.SubElement(
+            due_date, f"{{{NAMESPACES['udt']}}}DateTimeString", format="102"
+        ).text = due_date_obj.strftime("%Y%m%d")
 
         # Tax details
         tax = etree.SubElement(settlement, f"{{{NAMESPACES['ram']}}}ApplicableTradeTax")
-        
         etree.SubElement(tax, f"{{{NAMESPACES['ram']}}}CalculatedAmount").text = (
             json_data["calculatedAmounts"]["taxTotalAmount"]
         )
@@ -326,9 +361,9 @@ def create_facturx_xml(json_data):
         etree.SubElement(
             summary, f"{{{NAMESPACES['ram']}}}TaxBasisTotalAmount"
         ).text = json_data["calculatedAmounts"]["taxBasisTotalAmount"]
-        etree.SubElement(summary, f"{{{NAMESPACES['ram']}}}TaxTotalAmount").text = (
-            json_data["calculatedAmounts"]["taxTotalAmount"]
-        )
+        etree.SubElement(
+            summary, f"{{{NAMESPACES['ram']}}}TaxTotalAmount", currencyID="EUR"
+        ).text = json_data["calculatedAmounts"]["taxTotalAmount"]
         etree.SubElement(summary, f"{{{NAMESPACES['ram']}}}GrandTotalAmount").text = (
             json_data["calculatedAmounts"]["grandTotalAmount"]
         )

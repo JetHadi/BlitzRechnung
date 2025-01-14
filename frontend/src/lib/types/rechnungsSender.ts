@@ -11,7 +11,7 @@ export const defaultRechnungsSender: RechnungsAbsenderType = {
 };
 
 export const defaultRechnungsSenderPayment: RechnungsAbsenderPaymentType = {
-    absender_iban: "DE12 1234 1234 1234 1234 77",
+    absender_iban: "DE38 1002 0030 3588 9126 02",
     absender_bic: 'BLITZEXXX',
     absender_bankname: 'GewitterBank',
     absender_ustId: 'DE123456789',
