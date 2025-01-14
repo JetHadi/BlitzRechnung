@@ -37,7 +37,7 @@ def create_facturx_xml(json_data):
 
         etree.SubElement(document, f"{{{NAMESPACES['ram']}}}TypeCode").text = "380"
 
-                # IssueDateTime
+        # IssueDateTime
         date = etree.SubElement(document, f"{{{NAMESPACES['ram']}}}IssueDateTime")
         issue_date = datetime.fromisoformat(
             json_data["firstSectionForm"]["rechnungsdatum"].replace("Z", "+00:00")
@@ -49,11 +49,15 @@ def create_facturx_xml(json_data):
         # Add notes
         if json_data["secondSectionForm"].get("extraInvoiceInfoFirst"):
             note1 = etree.SubElement(document, f"{{{NAMESPACES['ram']}}}IncludedNote")
-            etree.SubElement(note1, f"{{{NAMESPACES['ram']}}}Content").text = json_data["secondSectionForm"]["extraInvoiceInfoFirst"]
+            etree.SubElement(note1, f"{{{NAMESPACES['ram']}}}Content").text = json_data[
+                "secondSectionForm"
+            ]["extraInvoiceInfoFirst"]
 
         if json_data["fourthSectionForm"].get("extraInvoiceInfoSecond"):
             note2 = etree.SubElement(document, f"{{{NAMESPACES['ram']}}}IncludedNote")
-            etree.SubElement(note2, f"{{{NAMESPACES['ram']}}}Content").text = json_data["fourthSectionForm"]["extraInvoiceInfoSecond"]
+            etree.SubElement(note2, f"{{{NAMESPACES['ram']}}}Content").text = json_data[
+                "fourthSectionForm"
+            ]["extraInvoiceInfoSecond"]
 
         # SupplyChainTradeTransaction
         transaction = etree.SubElement(
@@ -135,12 +139,49 @@ def create_facturx_xml(json_data):
             transaction, f"{{{NAMESPACES['ram']}}}ApplicableHeaderTradeAgreement"
         )
 
+        # Add BuyerReference if available
+        if json_data["firstSectionForm"].get("buyerReference"):
+            etree.SubElement(
+                agreement, f"{{{NAMESPACES['ram']}}}BuyerReference"
+            ).text = json_data["firstSectionForm"]["buyerReference"]
+
         # Seller
         seller = etree.SubElement(agreement, f"{{{NAMESPACES['ram']}}}SellerTradeParty")
+
+        # Add seller ID if available
+        if json_data["headerForm"].get("absender_id"):
+            etree.SubElement(seller, f"{{{NAMESPACES['ram']}}}ID").text = json_data[
+                "headerForm"
+            ]["absender_id"]
+
         etree.SubElement(seller, f"{{{NAMESPACES['ram']}}}Name").text = json_data[
             "headerForm"
         ]["absender_firma"]
 
+        # Add seller contact information
+        contact = etree.SubElement(
+            seller, f"{{{NAMESPACES['ram']}}}DefinedTradeContact"
+        )
+        if json_data["headerForm"].get("absender_person"):
+            etree.SubElement(contact, f"{{{NAMESPACES['ram']}}}PersonName").text = (
+                json_data["headerForm"]["absender_person"]
+            )
+        if json_data["headerForm"].get("absender_telefon"):
+            phone = etree.SubElement(
+                contact, f"{{{NAMESPACES['ram']}}}TelephoneUniversalCommunication"
+            )
+            etree.SubElement(phone, f"{{{NAMESPACES['ram']}}}CompleteNumber").text = (
+                json_data["headerForm"]["absender_telefon"]
+            )
+        if json_data["headerForm"].get("absender_email"):
+            email = etree.SubElement(
+                contact, f"{{{NAMESPACES['ram']}}}EmailURIUniversalCommunication"
+            )
+            etree.SubElement(email, f"{{{NAMESPACES['ram']}}}URIID").text = json_data[
+                "headerForm"
+            ]["absender_email"]
+
+        # Add seller adress information
         seller_address = etree.SubElement(
             seller, f"{{{NAMESPACES['ram']}}}PostalTradeAddress"
         )
@@ -157,8 +198,30 @@ def create_facturx_xml(json_data):
             "DE"
         )
 
+        # Add seller tax information
+        if json_data["footerForm"]["absender_ustId"]:
+            tax_registration_vat = etree.SubElement(
+                seller, f"{{{NAMESPACES['ram']}}}SpecifiedTaxRegistration"
+            )
+            etree.SubElement(
+                tax_registration_vat, f"{{{NAMESPACES['ram']}}}ID", schemeID="VA"
+            ).text = json_data["footerForm"]["absender_ustId"]
+
+        if json_data["footerForm"]["absender_steuernummer"]:
+            tax_registration_number = etree.SubElement(
+                seller, f"{{{NAMESPACES['ram']}}}SpecifiedTaxRegistration"
+            )
+            etree.SubElement(
+                tax_registration_number, f"{{{NAMESPACES['ram']}}}ID", schemeID="FC"
+            ).text = json_data["footerForm"]["absender_steuernummer"]
+
         # Buyer
         buyer = etree.SubElement(agreement, f"{{{NAMESPACES['ram']}}}BuyerTradeParty")
+        if json_data["firstSectionForm"].get("empfaenger_id"):
+            etree.SubElement(buyer, f"{{{NAMESPACES['ram']}}}ID").text = json_data[
+                "firstSectionForm"
+            ]["empfaenger_id"]
+
         etree.SubElement(buyer, f"{{{NAMESPACES['ram']}}}Name").text = json_data[
             "firstSectionForm"
         ]["empfaenger_firma"]
@@ -189,6 +252,53 @@ def create_facturx_xml(json_data):
         etree.SubElement(
             settlement, f"{{{NAMESPACES['ram']}}}InvoiceCurrencyCode"
         ).text = json_data["calculatedAmounts"]["currency"]
+
+        payment_means = etree.SubElement(
+            settlement, f"{{{NAMESPACES['ram']}}}SpecifiedTradeSettlementPaymentMeans"
+        )
+        etree.SubElement(payment_means, f"{{{NAMESPACES['ram']}}}TypeCode").text = "30"
+
+        # Add financial account details
+        financial_account = etree.SubElement(
+            payment_means, f"{{{NAMESPACES['ram']}}}PayeePartyCreditorFinancialAccount"
+        )
+        etree.SubElement(financial_account, f"{{{NAMESPACES['ram']}}}IBANID").text = (
+            json_data["footerForm"]["absender_iban"]
+        )
+        etree.SubElement(
+            financial_account, f"{{{NAMESPACES['ram']}}}AccountName"
+        ).text = json_data["headerForm"]["absender_firma"]
+
+        # Add financial institution details
+        financial_institution = etree.SubElement(
+            payment_means,
+            f"{{{NAMESPACES['ram']}}}PayeeSpecifiedCreditorFinancialInstitution",
+        )
+        if json_data["footerForm"].get("absender_bic"):
+            etree.SubElement(
+                financial_institution, f"{{{NAMESPACES['ram']}}}BICID"
+            ).text = json_data["footerForm"]["absender_bic"]
+        else:
+            etree.SubElement(financial_institution, f"{{{NAMESPACES['ram']}}}BICID")
+
+        if json_data["firstSectionForm"].get("paymentTerms"):
+            payment_terms = etree.SubElement(
+                settlement, f"{{{NAMESPACES['ram']}}}SpecifiedTradePaymentTerms"
+            )
+            etree.SubElement(
+                payment_terms, f"{{{NAMESPACES['ram']}}}Description"
+            ).text = json_data["firstSectionForm"]["paymentTerms"]
+
+        if json_data["firstSectionForm"].get("dueDate"):
+            due_date = etree.SubElement(
+                payment_terms, f"{{{NAMESPACES['ram']}}}DueDateDateTime"
+            )
+            due_date_obj = datetime.fromisoformat(
+                json_data["firstSectionForm"]["dueDate"].replace("Z", "+00:00")
+            )
+            etree.SubElement(
+                due_date, f"{{{NAMESPACES['udt']}}}DateTimeString", format="102"
+            ).text = due_date_obj.strftime("%Y%m%d")
 
         # Tax details
         tax = etree.SubElement(settlement, f"{{{NAMESPACES['ram']}}}ApplicableTradeTax")

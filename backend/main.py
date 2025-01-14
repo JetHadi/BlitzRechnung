@@ -70,7 +70,7 @@ async def generate_facturx(
         # Validate the XML
         try:
             with open(xml_path, "rb") as xml_file:
-                xml_check_xsd(xml_file, flavor="factur-x", level="basic")
+                xml_check_xsd(xml_file, flavor="factur-x", level="en16931")
         except Exception as validation_error:
             os.remove(xml_path)  # Clean up invalid file
             return Response(

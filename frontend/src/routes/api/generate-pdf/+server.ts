@@ -8,15 +8,11 @@ import { mkdir } from 'fs/promises';
 
 export const POST: RequestHandler = async ({ url, request }) => {
     try {
-        const { printUrl } = await request.json();
+        const { printUrl, requestId } = await request.json();
 
-        if (!printUrl) {
-            throw error(400, 'Print URL is required');
+        if (!printUrl || !requestId) {
+            throw error(400, 'Print URL and requestId are required');
         }
-
-        // Ensure the PDFs directory exists
-        const pdfDir = path.join(process.cwd(), 'static', 'pdfs');
-        await mkdir(pdfDir, { recursive: true });
 
         const browser = await puppeteer.launch({
             headless: 'shell',
@@ -49,7 +45,11 @@ export const POST: RequestHandler = async ({ url, request }) => {
 
             const timestamp = new Date();
 
-            const filename = `invoice-${timestamp.getFullYear()}${String(timestamp.getMonth() + 1).padStart(2, '0')}${String(timestamp.getDate()).padStart(2, '0')}-${String(timestamp.getHours()).padStart(2, '0')}${String(timestamp.getMinutes()).padStart(2, '0')}${String(timestamp.getSeconds()).padStart(2, '0')}.pdf`;
+            // Use requestId in filename
+            const filename = `invoice-${requestId}.pdf`;
+            const pdfDir = path.join(process.cwd(), 'shared', 'pdfs');
+            await mkdir(pdfDir, { recursive: true });
+
             const savePath = path.join(pdfDir, filename);
             await writeFile(savePath, pdf);
 
