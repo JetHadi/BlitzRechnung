@@ -17,6 +17,7 @@ import { fourthSectionContainerSchema } from "$lib/schema/4_fourthSectionContain
 import { FooterContainerDefaults } from "$lib/types/5_footerContainerDefaults";
 import { footerContainerSchema } from "$lib/schema/5_footerContainer";
 import { getUnitCode } from "$lib/utils";
+import { randomUUID } from "crypto";
 
 export const load: PageServerLoad = async () => {
   const startTime = performance.now();
@@ -75,6 +76,7 @@ const calculateAmounts = (data) => {
 export const actions: Actions = {
   default: async (event) => {
     const actionStart = performance.now();
+    const requestId = randomUUID();
     console.log(`⚡ Action started at: ${new Date().toISOString()}`);
     // const formData = await event.request.formData();
     // console.log('Printing: ',jsonData)
@@ -83,59 +85,63 @@ export const actions: Actions = {
       const validationStart = performance.now();
 
       const A4Form = await superValidate(event, zod(A4RechnungSchema));
-      // console.log('objectForm: ', A4Form)
+      console.log('objectForm: ', A4Form)
 
 
-      // console.log(`📝 Form validation took: ${(performance.now() - validationStart).toFixed(2)}ms`);
+      console.log(`📝 Form validation took: ${(performance.now() - validationStart).toFixed(2)}ms`);
 
-      // if (!A4Form.valid) {
-      //   console.log('❌ Form validation failed');
-      //   return fail(400, { objectForm: A4Form });
-      // }
+      if (!A4Form.valid) {
+        console.log('❌ Form validation failed');
+        return fail(400, { objectForm: A4Form });
+      }
 
-      // // Data Preparation
-      // const A4Data = JSON.stringify(A4Form.data) // passing down the whole header form to the url
-      // // console.log(A4Data)
+      // Data Preparation
+      const A4Data = JSON.stringify(A4Form.data) // passing down the whole header form to the url
+      // console.log(A4Data)
 
-      // const printUrl = `${event.url.origin}/read?data=${encodeURIComponent(A4Data)}`;
-      // console.log('PrintURL', printUrl)
+      const printUrl = `${event.url.origin}/read?data=${encodeURIComponent(A4Data)}`;
+      console.log('PrintURL', printUrl)
 
-      // // const RechnungsDaten = { Absenderdaten: form.data };
+      // const RechnungsDaten = { Absenderdaten: form.data };
 
-      // // PDF Generation
-      // const pdfStart = performance.now();
-      // console.log('📄 Starting PDF generation request');
+      // PDF Generation
+      const pdfStart = performance.now();
+      console.log('📄 Starting PDF generation request');
 
-      // const response = await event.fetch('/api/generate-pdf', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json'
-      //   },
-      //   body: JSON.stringify({ printUrl })
-      // });
-
-      // const result = await response.json();
-      // console.log(`📄 PDF generation took: ${(performance.now() - pdfStart).toFixed(2)}ms`);
-
-      // if (!result.success) {
-      //   console.log('❌ PDF generation failed');
-      //   return fail(500, {
-      //     A4Form,
-      //     message: 'PDF generation failed'
-      //   });
-      // }
-
-
-
-      // generate json for factur-x xml generation in FastAPI
-      const PythonA4Data = JSON.stringify(calculateAmounts(A4Form.data));
-      // console.log(PythonA4Data)
-      const xmlResponse = await event.fetch('http://blitzrechnung-api:8000/generate-facturx', {
+      const response = await event.fetch('/api/generate-pdf', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: PythonA4Data
+        body: JSON.stringify({ printUrl, requestId })
+      });
+
+      const result = await response.json();
+      console.log(`📄 PDF generation took: ${(performance.now() - pdfStart).toFixed(2)}ms`);
+
+      if (!result.success) {
+        console.log('❌ PDF generation failed');
+        return fail(500, {
+          A4Form,
+          message: 'PDF generation failed'
+        });
+      }
+
+
+
+      // generate json for factur-x xml generation in FastAPI
+      const PythonA4Data = calculateAmounts(A4Form.data);
+      // console.log(PythonA4Data)
+      const xmlResponse = await event.fetch('http://blitzrechnung-api:8000/generate-facturx', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Request-ID': requestId
+        },
+        body: JSON.stringify({
+          ...PythonA4Data,
+          requestId
+        })
       });
 
       if (!xmlResponse.ok) {

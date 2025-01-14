@@ -6,6 +6,7 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app
+      - ./shared:/app/shared
 
   frontend:
     container_name: blitzrechnung-web
@@ -17,12 +18,12 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
+      - ./shared:/app/shared
     environment:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true
     depends_on:
       - backend
 
-# Remove the volume definition if no longer needed
-# volumes:
-#   frontend_node_modules:
+volumes:
+  shared-data:
