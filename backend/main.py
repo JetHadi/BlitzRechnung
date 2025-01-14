@@ -4,6 +4,9 @@ from fastapi import FastAPI, Response
 from pydantic import BaseModel
 from typing import Dict, Any
 from fastapi.middleware.cors import CORSMiddleware
+from tempfile import NamedTemporaryFile
+from facturx import xml_check_xsd
+
 
 app = FastAPI()
 
@@ -34,15 +37,40 @@ class InvoiceData(BaseModel):
     calculatedAmounts: Dict[str, Any]
 
 
+
+
 @app.post("/generate-facturx")
 async def generate_facturx(invoice_data: InvoiceData):
-    print(invoice_data)
     try:
+        # Generate XML content
         xml_content = create_facturx_xml(invoice_data.dict())
+
+        # Save to temporary file and validate
+        with NamedTemporaryFile(delete=False, suffix=".xml") as temp_file:
+            temp_file.write(xml_content)
+            temp_file.flush()
+
+            # Validate the XML
+            try:
+                with open(temp_file.name, "rb") as xml_file:
+                    xml_check_xsd(xml_file, flavor="factur-x", level="basic")
+            except Exception as validation_error:
+                return Response(
+                    content=f"XML Validation failed: {str(validation_error)}",
+                    status_code=422,
+                    media_type="text/plain",
+                )
+
+        # If validation passes, return the XML
         return Response(
             content=xml_content,
             media_type="application/xml",
             headers={"Content-Disposition": "attachment; filename=factur-x.xml"},
         )
+
     except Exception as e:
-        return Response(content=str(e), status_code=422, media_type="text/plain")
+        return Response(
+            content=f"XML Generation failed: {str(e)}",
+            status_code=422,
+            media_type="text/plain",
+        )

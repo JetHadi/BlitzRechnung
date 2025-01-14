@@ -8,6 +8,7 @@
 	import * as Table from '$lib/components/ui/table';
 	import { deafaultRechnungsPosition } from '$lib/types/rechnungsPositionDefaults';
 	import { Plus, Minus } from 'lucide-svelte';
+	import * as Select from '$lib/components/ui/select';
 
 	let {
 		mainSectionForm = $bindable(),
@@ -39,9 +40,9 @@
 		invalidateAll: false,
 		dataType: 'json',
 		onUpdate({ form }) {
-            console.log('onUpdate', form)
+			console.log('onUpdate', form);
 			if (form.valid) {
-				mainSectionData = { ...$formData};
+				mainSectionData = { ...$formData };
 				openDialog = false;
 			}
 		}
@@ -57,7 +58,7 @@
 		$formData.RechnungsPositionen = $formData.RechnungsPositionen.slice(0, -1);
 	}
 
-    $inspect(mainSectionData)
+	$inspect(mainSectionData);
 </script>
 
 <form method="POST" use:enhance>
@@ -102,7 +103,17 @@
 							<Form.Field {form} name="{position}-einheit">
 								<Form.Control>
 									{#snippet children({ props })}
-										<Input {...props} bind:value={position.einheit} />
+										<Select.Root type="single" {...props} bind:value={position.einheit}>
+											<Select.Trigger class="w-[180px]">{position.einheit}</Select.Trigger>
+											<Select.Content>
+												<Select.Item value="Stück">Stück</Select.Item>
+												<Select.Item value="Stunde">Stunde</Select.Item>
+												<Select.Item value="Tag">Tag</Select.Item>
+												<Select.Item value="Kilogramm">Kilogramm</Select.Item>
+												<Select.Item value="Meter">Meter</Select.Item>
+												<Select.Item value="Liter">Liter</Select.Item>
+											</Select.Content>
+										</Select.Root>
 									{/snippet}
 								</Form.Control>
 								<Form.FieldErrors />
@@ -113,7 +124,7 @@
 							<Form.Field {form} name="{position}-einheitspreis">
 								<Form.Control>
 									{#snippet children({ props })}
-										<Input  type="number" {...props} bind:value={position.einheitspreis} />
+										<Input type="number" {...props} bind:value={position.einheitspreis} />
 									{/snippet}
 								</Form.Control>
 								<Form.FieldErrors />

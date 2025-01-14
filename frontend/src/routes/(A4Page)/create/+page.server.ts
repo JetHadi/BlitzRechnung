@@ -16,6 +16,7 @@ import { FourthSectionContainerDefaults } from "$lib/types/4_fourthSectionContai
 import { fourthSectionContainerSchema } from "$lib/schema/4_fourthSectionContainer";
 import { FooterContainerDefaults } from "$lib/types/5_footerContainerDefaults";
 import { footerContainerSchema } from "$lib/schema/5_footerContainer";
+import { getUnitCode } from "$lib/utils";
 
 export const load: PageServerLoad = async () => {
   const startTime = performance.now();
@@ -37,7 +38,13 @@ export const load: PageServerLoad = async () => {
 }
 
 const calculateAmounts = (data) => {
-  const positions = data.mainSectionForm.RechnungsPositionen;
+  const positions = data.mainSectionForm.RechnungsPositionen.map(pos => ({
+    ...pos,
+    einheit: getUnitCode(pos.einheit) // Convert German label to code
+  }));
+
+  // Update the positions with converted units
+  data.mainSectionForm.RechnungsPositionen = positions;
   let lineTotalAmount = 0;
   let taxTotalAmount = 0;
 

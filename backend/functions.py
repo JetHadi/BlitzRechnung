@@ -37,6 +37,7 @@ def create_facturx_xml(json_data):
 
         etree.SubElement(document, f"{{{NAMESPACES['ram']}}}TypeCode").text = "380"
 
+                # IssueDateTime
         date = etree.SubElement(document, f"{{{NAMESPACES['ram']}}}IssueDateTime")
         issue_date = datetime.fromisoformat(
             json_data["firstSectionForm"]["rechnungsdatum"].replace("Z", "+00:00")
@@ -45,10 +46,89 @@ def create_facturx_xml(json_data):
             date, f"{{{NAMESPACES['udt']}}}DateTimeString", format="102"
         ).text = issue_date.strftime("%Y%m%d")
 
+        # Add notes
+        if json_data["secondSectionForm"].get("extraInvoiceInfoFirst"):
+            note1 = etree.SubElement(document, f"{{{NAMESPACES['ram']}}}IncludedNote")
+            etree.SubElement(note1, f"{{{NAMESPACES['ram']}}}Content").text = json_data["secondSectionForm"]["extraInvoiceInfoFirst"]
+
+        if json_data["fourthSectionForm"].get("extraInvoiceInfoSecond"):
+            note2 = etree.SubElement(document, f"{{{NAMESPACES['ram']}}}IncludedNote")
+            etree.SubElement(note2, f"{{{NAMESPACES['ram']}}}Content").text = json_data["fourthSectionForm"]["extraInvoiceInfoSecond"]
+
         # SupplyChainTradeTransaction
         transaction = etree.SubElement(
             root, f"{{{NAMESPACES['rsm']}}}SupplyChainTradeTransaction"
         )
+
+        # Add IncludedSupplyChainTradeLineItem first
+        for idx, position in enumerate(
+            json_data["mainSectionForm"]["RechnungsPositionen"], 1
+        ):
+            line_item = etree.SubElement(
+                transaction, f"{{{NAMESPACES['ram']}}}IncludedSupplyChainTradeLineItem"
+            )
+
+            # Line Document (Number)
+            line_doc = etree.SubElement(
+                line_item, f"{{{NAMESPACES['ram']}}}AssociatedDocumentLineDocument"
+            )
+            etree.SubElement(line_doc, f"{{{NAMESPACES['ram']}}}LineID").text = str(idx)
+
+            # Product Details
+            trade_product = etree.SubElement(
+                line_item, f"{{{NAMESPACES['ram']}}}SpecifiedTradeProduct"
+            )
+            etree.SubElement(trade_product, f"{{{NAMESPACES['ram']}}}Name").text = (
+                position["bezeichnung"]
+            )
+
+            # Price and Quantity Details
+            price_details = etree.SubElement(
+                line_item, f"{{{NAMESPACES['ram']}}}SpecifiedLineTradeAgreement"
+            )
+            net_price = etree.SubElement(
+                price_details, f"{{{NAMESPACES['ram']}}}NetPriceProductTradePrice"
+            )
+            etree.SubElement(net_price, f"{{{NAMESPACES['ram']}}}ChargeAmount").text = (
+                str(position["einheitspreis"])
+            )
+
+            # Delivery/Quantity Details
+            delivery = etree.SubElement(
+                line_item, f"{{{NAMESPACES['ram']}}}SpecifiedLineTradeDelivery"
+            )
+            etree.SubElement(
+                delivery,
+                f"{{{NAMESPACES['ram']}}}BilledQuantity",
+                unitCode=position["einheit"],
+            ).text = str(position["anzahl"])
+
+            # Tax and Monetary Details
+            settlement = etree.SubElement(
+                line_item, f"{{{NAMESPACES['ram']}}}SpecifiedLineTradeSettlement"
+            )
+
+            # Tax Details
+            trade_tax = etree.SubElement(
+                settlement, f"{{{NAMESPACES['ram']}}}ApplicableTradeTax"
+            )
+            etree.SubElement(trade_tax, f"{{{NAMESPACES['ram']}}}TypeCode").text = "VAT"
+            etree.SubElement(trade_tax, f"{{{NAMESPACES['ram']}}}CategoryCode").text = (
+                "S"
+            )
+            etree.SubElement(
+                trade_tax, f"{{{NAMESPACES['ram']}}}RateApplicablePercent"
+            ).text = str(position["ustProzent"])
+
+            # Monetary Summation
+            monetary_summation = etree.SubElement(
+                settlement,
+                f"{{{NAMESPACES['ram']}}}SpecifiedTradeSettlementLineMonetarySummation",
+            )
+            line_total = position["anzahl"] * position["einheitspreis"]
+            etree.SubElement(
+                monetary_summation, f"{{{NAMESPACES['ram']}}}LineTotalAmount"
+            ).text = str(line_total)
 
         # Trade Agreement
         agreement = etree.SubElement(
@@ -96,6 +176,11 @@ def create_facturx_xml(json_data):
             json_data["firstSectionForm"]["empfaenger_ort"]
         )
         etree.SubElement(buyer_address, f"{{{NAMESPACES['ram']}}}CountryID").text = "DE"
+
+        # Trade Delivery
+        delivery = etree.SubElement(
+            transaction, f"{{{NAMESPACES['ram']}}}ApplicableHeaderTradeDelivery"
+        )
 
         # Trade Settlement
         settlement = etree.SubElement(
