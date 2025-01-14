@@ -28,13 +28,42 @@ export const load: PageServerLoad = async () => {
   const fourthSectionForm = await superValidate(FourthSectionContainerDefaults, zod(fourthSectionContainerSchema));
   const footerForm = await superValidate(FooterContainerDefaults, zod(footerContainerSchema));
 
-  console.log('UST: ',MainSectionContainerDefaults.RechnungsPositionen[0].ust)
+  console.log('UST: ', MainSectionContainerDefaults.RechnungsPositionen[0].ust)
 
   const loadTime = performance.now() - startTime;
   console.log(`✨ Page load completed in ${loadTime.toFixed(2)}ms`);
 
   return { headerForm: headerForm, firstSectionForm: firstSectionForm, secondSectionForm: secondSectionForm, mainSectionForm: mainSectionForm, fourthSectionForm: fourthSectionForm, footerForm: footerForm }
 }
+
+const calculateAmounts = (data) => {
+  const positions = data.mainSectionForm.RechnungsPositionen;
+  let lineTotalAmount = 0;
+  let taxTotalAmount = 0;
+
+  // Calculate line totals and tax
+  positions.forEach(pos => {
+    const lineNet = pos.anzahl * pos.einheitspreis;
+    const lineTax = lineNet * (pos.ustProzent / 100);
+    lineTotalAmount += lineNet;
+    taxTotalAmount += lineTax;
+  });
+
+  // Calculate grand total
+  const grandTotalAmount = lineTotalAmount + taxTotalAmount;
+
+  // Add calculated amounts and currency to the data
+  data.calculatedAmounts = {
+    currency: "EUR",
+    lineTotalAmount: lineTotalAmount.toFixed(2),
+    taxBasisTotalAmount: lineTotalAmount.toFixed(2),
+    taxTotalAmount: taxTotalAmount.toFixed(2),
+    grandTotalAmount: grandTotalAmount.toFixed(2),
+    duePayableAmount: grandTotalAmount.toFixed(2)
+  };
+
+  return data;
+};
 
 export const actions: Actions = {
   default: async (event) => {
@@ -50,44 +79,67 @@ export const actions: Actions = {
       // console.log('objectForm: ', A4Form)
 
 
-      console.log(`📝 Form validation took: ${(performance.now() - validationStart).toFixed(2)}ms`);
+      // console.log(`📝 Form validation took: ${(performance.now() - validationStart).toFixed(2)}ms`);
 
-      if (!A4Form.valid) {
-        console.log('❌ Form validation failed');
-        return fail(400, { objectForm: A4Form });
-      }
+      // if (!A4Form.valid) {
+      //   console.log('❌ Form validation failed');
+      //   return fail(400, { objectForm: A4Form });
+      // }
 
-      // Data Preparation
-      const A4Data = A4Form.data // passing down the whole header form to the url
-      // console.log(A4Data)
+      // // Data Preparation
+      // const A4Data = JSON.stringify(A4Form.data) // passing down the whole header form to the url
+      // // console.log(A4Data)
 
-      const printUrl = `${event.url.origin}/read?data=${encodeURIComponent(JSON.stringify(A4Data))}`;
-      console.log('PrintURL', printUrl)
+      // const printUrl = `${event.url.origin}/read?data=${encodeURIComponent(A4Data)}`;
+      // console.log('PrintURL', printUrl)
 
-      // const RechnungsDaten = { Absenderdaten: form.data };
+      // // const RechnungsDaten = { Absenderdaten: form.data };
 
-      // PDF Generation
-      const pdfStart = performance.now();
-      console.log('📄 Starting PDF generation request');
+      // // PDF Generation
+      // const pdfStart = performance.now();
+      // console.log('📄 Starting PDF generation request');
 
-      const response = await event.fetch('/api/generate-pdf', {
+      // const response = await event.fetch('/api/generate-pdf', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   },
+      //   body: JSON.stringify({ printUrl })
+      // });
+
+      // const result = await response.json();
+      // console.log(`📄 PDF generation took: ${(performance.now() - pdfStart).toFixed(2)}ms`);
+
+      // if (!result.success) {
+      //   console.log('❌ PDF generation failed');
+      //   return fail(500, {
+      //     A4Form,
+      //     message: 'PDF generation failed'
+      //   });
+      // }
+
+
+
+      // generate json for factur-x xml generation in FastAPI
+      const PythonA4Data = JSON.stringify(calculateAmounts(A4Form.data));
+      // console.log(PythonA4Data)
+      const xmlResponse = await event.fetch('http://blitzrechnung-api:8000/generate-facturx', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ printUrl })
+        body: PythonA4Data
       });
 
-      const result = await response.json();
-      console.log(`📄 PDF generation took: ${(performance.now() - pdfStart).toFixed(2)}ms`);
-
-      if (!result.success) {
-        console.log('❌ PDF generation failed');
+      if (!xmlResponse.ok) {
+        console.log('❌ XML generation failed');
         return fail(500, {
           A4Form,
-          message: 'PDF generation failed'
+          message: 'XML generation failed'
         });
       }
+
+      const xmlContent = await xmlResponse.text();
 
       const totalTime = performance.now() - actionStart;
       console.log(`✅ Action completed successfully in ${totalTime.toFixed(2)}ms`);
@@ -96,7 +148,8 @@ export const actions: Actions = {
         A4Form,
         success: true,
         pdfPath: result.pdfPath,
-        message: `Form posted and PDF generated successfully in ${totalTime.toFixed(2)}ms!`
+        xmlContent: xmlContent,
+        message: `Form posted, PDF and XML generated successfully in ${totalTime.toFixed(2)}ms!`
       };
 
     } catch (error: any) {

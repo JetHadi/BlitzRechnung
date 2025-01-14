@@ -1,0 +1,52 @@
+{
+    "headerForm": {
+        "absender_name": "",
+        "absender_strasse": "Street Address",
+        "absender_plz": "12345",
+        "absender_ort": "City",
+        "absender_firma": "Your Company Name",
+        "absender_email": "contact@example.com",
+        "absender_telefon": "+49 (0)123 456789"
+    },
+    "firstSectionForm": {
+        "empfaenger_name": "",
+        "empfaenger_strasse": "Street Address",
+        "empfaenger_plz": "12345",
+        "empfaenger_ort": "City",
+        "empfaenger_firma": "Kunde",
+        "rechnungsnummer": "1",
+        "rechnungsdatum": "2025-01-13T16:35:17.074Z"
+    },
+    "secondSectionForm": {
+        "extraInvoiceInfoFirst": "Hier zusätzliche Informationen zu der Rechnung eintragen"
+    },
+    "mainSectionForm": {
+        "RechnungsPositionen": [
+            {
+                "bezeichnung": "Premium Rechnung",
+                "anzahl": 12,
+                "einheit": "Stück",
+                "einheitspreis": 1,
+                "ustProzent": 19
+            }
+        ]
+    },
+    "fourthSectionForm": {
+        "extraInvoiceInfoSecond": "Bitte überweisen Sie den Rechnungsbetrag unter Angabe der Rechnungsnummer auf das unten angegebene Konto. \n\nMit freundlichen Grüßen\nMax Wettermann"
+    },
+    "footerForm": {
+        "absender_steuernummer": "1234567891012",
+        "absender_ustId": "DE123456789",
+        "absender_bankname": "GewitterBank",
+        "absender_iban": "DE12 1234 1234 1234 1234 77",
+        "absender_bic": "BLITZEXXX"
+    },
+    "calculatedAmounts": {
+        "currency": "EUR",
+        "lineTotalAmount": "12.00",
+        "taxBasisTotalAmount": "12.00",
+        "taxTotalAmount": "2.28",
+        "grandTotalAmount": "14.28",
+        "duePayableAmount": "14.28"
+    }
+}
