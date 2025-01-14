@@ -26,7 +26,7 @@ def create_facturx_xml(json_data):
             f"{{{NAMESPACES['ram']}}}GuidelineSpecifiedDocumentContextParameter",
         )
         etree.SubElement(guideline, f"{{{NAMESPACES['ram']}}}ID").text = (
-            "urn:cen.eu:en16931:2017#compliant#urn:factur-x.eu:1p0:basic"
+            "urn:cen.eu:en16931:2017"
         )
 
         # ExchangedDocument
@@ -241,9 +241,9 @@ def create_facturx_xml(json_data):
         etree.SubElement(buyer_address, f"{{{NAMESPACES['ram']}}}CountryID").text = "DE"
 
         # Trade Delivery
-        delivery = etree.SubElement(
-            transaction, f"{{{NAMESPACES['ram']}}}ApplicableHeaderTradeDelivery"
-        )
+        # delivery = etree.SubElement(
+        #     transaction, f"{{{NAMESPACES['ram']}}}ApplicableHeaderTradeDelivery"
+        # )
 
         # Trade Settlement
         settlement = etree.SubElement(
@@ -302,6 +302,7 @@ def create_facturx_xml(json_data):
 
         # Tax details
         tax = etree.SubElement(settlement, f"{{{NAMESPACES['ram']}}}ApplicableTradeTax")
+        
         etree.SubElement(tax, f"{{{NAMESPACES['ram']}}}CalculatedAmount").text = (
             json_data["calculatedAmounts"]["taxTotalAmount"]
         )
