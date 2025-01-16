@@ -1,10 +1,10 @@
 import { z } from 'zod';
 
 export const RechnungSchema = z.object({
-    rechnungsnummer: z.string().trim(),
-    rechnungsdatum: z.coerce.date(),
-    leistungsdatum: z.coerce.date().optional(),
-    faelligkeitsdatum: z.coerce.date().optional()
+    rechnungsnummer: z.string().trim(),     // BT-1 (Rechnungsnummer)
+    rechnungsdatum: z.coerce.date(),        // BT-2 (Rechnungsdatum)
+    leistungsdatum: z.coerce.date(),        // BT-72 (Tatsächliches Lieferdatum)
+    faelligkeitsdatum: z.coerce.date()      // BT-9 (Fälligkeitsdatum der Zahlung)
 }).superRefine((data, ctx) => {
     // Only perform validation if faelligkeitsdatum is present
     if (data.faelligkeitsdatum) {
