@@ -1,0 +1,143 @@
+ubl:Invoice:
+  cbc:CustomizationID": "BT-24",
+	cbc:ProfileID": "BT-23",
+  cbc:ID: BT-1
+  cbc:IssueDate: BT-2
+  cbc:DueDate: BT-9
+  cbc:InvoiceTypeCode: BT-3
+  cbc:DocumentCurrencyCode: BT-5
+  cbc:BuyerReference: BT-10
+  cac:InvoicePeriod:
+    cbc:StartDate: BT-73
+    cbc:EndDate: BT-74
+  cac:OrderReference:
+    cbc:ID: BT-13
+
+  cac:AccountingSupplierParty:
+    cac:Party:
+      cbc:EndpointID: BT-34
+      cbc:EndpointID@schemeID: '9930'
+      cac:PartyName:
+        cbc:Name: BT-28
+      cac:PostalAddress:
+        cbc:StreetName: BT-35
+        cbc:CityName: BT-37
+        cbc:PostalZone: BT-38
+        cac:Country:
+          cbc:IdentificationCode: BT-40
+      cac:PartyTaxScheme:
+        cbc:CompanyID: BT-31
+        cac:TaxScheme:
+          cbc:ID: VAT
+      cac:PartyLegalEntity:
+        cbc:RegistrationName: BT-27
+      cac:Contact:
+        cbc:Name: BT-41
+        cbc:Telephone: BT-42
+        cbc:ElectronicMail: BT-43
+
+  cac:AccountingCustomerParty:
+    cac:Party:
+      cbc:EndpointID: BT-49
+      cbc:EndpointID@schemeID: '9930'
+      cac:PartyName:
+        cbc:Name: BT-45
+      cac:PostalAddress:
+        cbc:StreetName: BT-50
+        cbc:CityName: BT-52
+        cbc:PostalZone: BT-53
+        cac:Country:
+          cbc:IdentificationCode: BT-55
+      cac:PartyTaxScheme:
+        cbc:CompanyID: BT-48
+        cac:TaxScheme:
+          cbc:ID: VAT
+      cac:PartyLegalEntity:
+        cbc:RegistrationName: BT-44
+
+  cac:Delivery:
+    cbc:ActualDeliveryDate: BT-72
+    cac:DeliveryLocation:
+      cac:Address:
+        cbc:StreetName: BT-75
+        cbc:CityName: BT-77
+        cbc:PostalZone: BT-78
+        cac:Country:
+          cbc:IdentificationCode: BT-80
+    cac:DeliveryParty:
+      cac:PartyName:
+        cbc:Name: BT-70
+
+  cac:PaymentMeans:
+    cbc:PaymentMeansCode: BT-81
+    cbc:PaymentMeansCode@name: BT-82
+    cbc:PaymentID: BT-83
+    cac:PayeeFinancialAccount:
+      cbc:ID: BT-84
+      cbc:Name: BT-85
+      cac:FinancialInstitutionBranch:
+        cbc:ID: BT-86
+
+  cac:PaymentTerms:
+    cbc:Note: BT-20
+
+  cac:AllowanceCharge:
+    cbc:ChargeIndicator: BT-95
+    cbc:AllowanceChargeReasonCode: BT-98
+    cbc:AllowanceChargeReason: BT-97
+    cbc:MultiplierFactorNumeric: BT-94
+    cbc:Amount: BT-92
+    cbc:Amount@currencyID: EUR
+    cbc:BaseAmount: BT-93
+    cbc:BaseAmount@currencyID: EUR
+    cac:TaxCategory:
+      cbc:ID: BT-95
+      cbc:Percent: BT-96
+      cac:TaxScheme:
+        cbc:ID: VAT
+
+  cac:TaxTotal:
+    cbc:TaxAmount: BT-110
+    cbc:TaxAmount@currencyID: EUR
+    cac:TaxSubtotal:
+      cbc:TaxableAmount: BT-116
+      cbc:TaxableAmount@currencyID: EUR
+      cbc:TaxAmount: BT-117
+      cbc:TaxAmount@currencyID: EUR
+      cac:TaxCategory:
+        cbc:ID: BT-118
+        cbc:Percent: BT-119
+        cbc:TaxExemptionReasonCode: BT-121
+        cac:TaxScheme:
+          cbc:ID: VAT
+
+  cac:LegalMonetaryTotal:
+    cbc:LineExtensionAmount: BT-106
+    cbc:LineExtensionAmount@currencyID: EUR
+    cbc:TaxExclusiveAmount: BT-109
+    cbc:TaxExclusiveAmount@currencyID: EUR
+    cbc:TaxInclusiveAmount: BT-112
+    cbc:TaxInclusiveAmount@currencyID: EUR
+    cbc:AllowanceTotalAmount: BT-107
+    cbc:AllowanceTotalAmount@currencyID: EUR
+    cbc:ChargeTotalAmount: BT-108
+    cbc:ChargeTotalAmount@currencyID: EUR
+    cbc:PayableAmount: BT-115
+    cbc:PayableAmount@currencyID: EUR
+
+  cac:InvoiceLine:
+    cbc:ID: BT-126
+    cbc:InvoicedQuantity: BT-129
+    cbc:InvoicedQuantity@unitCode: BT-130
+    cbc:LineExtensionAmount: BT-131
+    cbc:LineExtensionAmount@currencyID: EUR
+    cac:Item:
+      cbc:Name: BT-153
+      cac:ClassifiedTaxCategory:
+        cbc:ID: BT-151
+        cbc:Percent: BT-152
+        cac:TaxScheme:
+          cbc:ID: VAT
+    cac:Price:
+      cbc:PriceAmount: BT-146
+      cbc:PriceAmount@currencyID: EUR
