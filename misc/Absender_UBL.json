@@ -1,0 +1,33 @@
+{
+    "cac:AccountingSupplierParty": {
+        "cac:Party": {
+            "cac:PartyName": {
+                "cbc:Name": "BT-28"
+            },
+            "cac:PostalAddress": {
+                "cbc:StreetName": "BT-35",
+                "cbc:CityName": "BT-37",
+                "cbc:PostalZone": "BT-38",
+                "cac:Country": {
+                    "cbc:IdentificationCode": "DE"
+                }
+            },
+            "cac:PartyTaxScheme": {
+                "cbc:CompanyID": "BT-31",
+                "cac:TaxScheme": {
+                    "cbc:ID": "VAT"
+                }
+            },
+            "cac:PartyLegalEntity": {
+                "cbc:RegistrationName": "BT-27",
+                "cbc:CompanyID": "BT-30",
+                "cbc:CompanyLegalForm": "BT-33"
+            },
+            "cac:Contact": {
+                "cbc:Name": "BT-41",
+                "cbc:Telephone": "BT-42",
+                "cbc:ElectronicMail": "BT-43"
+            }
+        }
+    }
+}
