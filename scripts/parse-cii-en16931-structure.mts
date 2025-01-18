@@ -4,7 +4,7 @@
 // site docs.peppol.eu.  It converts the XML files into a JSON schema for
 // the internal invoice format of `e-invoice-eu`.
 
-import { JSONSchemaType } from 'ajv';
+import { JSONSchemaType, str } from 'ajv';
 import { XMLParser } from 'fast-xml-parser';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -28,13 +28,42 @@ type Cardinality = {
 type Element = {
 	Term: string;
 	Name?: string;
-	Description?: string;
 	DataType?: string;
 	CodeList?: string[];
-	BusinessTerms?: string[];
 	children?: Array<Element>;
 	cardinality?: string;
 };
+
+type xsComplexType = {
+	Name: string;
+	xsSequence?: Array<xsElements>;
+	xsSimpleContent?: xsExtension;
+	xsChoice?: xsChoice;
+}
+
+type xsExtension = {
+	base: string;
+	xsAttribute: Array<xsAttribute> 
+}
+
+type xsAttribute ={
+	name: string;
+	type: string;
+	use?: string;
+}
+
+const atomicTypes = {
+	'xs:string': {
+		type: 'string',
+		pattern: ''
+	},
+	'xs:token': {
+		type: 'string',
+		pattern: ''
+	},
+	
+
+}
 
 const parser = new XMLParser({
 	ignoreAttributes: false,
@@ -43,6 +72,8 @@ const parser = new XMLParser({
 });
 
 const codeLists: { [key: string]: { enum: Array<string> } } = {};
+
+// needs more explanation
 const $defs = {
 	codeLists,
 	dataTypes: {
@@ -74,25 +105,29 @@ const $defs = {
 	},
 };
 
-const codeListDir = 'peppol-bis-invoice-3/structure/codelist';
-loadCodeLists(codeListDir);
+// const codeListDir = 'peppol-bis-invoice-3/structure/codelist';
+// loadCodeLists(codeListDir);
 
-const rootFilename = 'peppol-bis-invoice-3/structure/syntax/ubl-invoice.xml';
+const rootFilename = '../ZUGFeRD-3/Schema/3. Factur-X_1.07.2_EN16931/Factur-X_1.07.2_EN16931.xsd';
 const basedir = rootFilename.substring(0, rootFilename.lastIndexOf('/'));
-const structure = readXml(parser, rootFilename)[0].Structure;
-for (const element of structure) {
-	if ('Document' in element) {
-		element.Element = element.Document;
+const structure = readXml(parser, rootFilename);
+const xsSchema = structure[0]['xs:schema']
+// console.log(xsSchema)
+for (const element of xsSchema) {
+	if (element['xs:complexType']) {
+		console.log(element['xs:complexType'])
+		/*element.Element = element.Document;
 		delete element.Document;
 		const tree = buildTree(element.Element);
 		sortAttributes(tree);
 		const schema = buildSchema(tree);
 		fixupAttributes(schema);
 		patchSchema(schema);
-		console.log(JSON.stringify(schema, null, '\t'));
-		process.exit(0);
+		console.log(JSON.stringify(schema, null, '\t'));*/
+		
 	}
 }
+process.exit(0);
 
 throw new Error(`error parsing '${rootFilename}'`);
 
@@ -270,6 +305,7 @@ function buildSchema(tree: Element): JSONSchemaType<object> {
 		additionalProperties: false,
 		properties: {},
 		required: [],
+		// platzhalter um entweder auf die CodeList zu verweisen oder auf einen bestimmten string type mit pattern
 		$defs,
 	};
 
