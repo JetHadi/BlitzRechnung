@@ -10,7 +10,6 @@ export const BASICInvoiceSchema: JSONSchemaType<Invoice> = {
 	"$schema": "https://json-schema.org/draft/2019-09/schema",
     "$id": "BlitzRechnung/ZUGFeRD_BASIC",
     "type": "object",
-    "additionalProperties": false,
     "properties": {
         "rsm:CrossIndustryInvoice": {"$ref": "#/$defs/CrossIndustryInvoiceType"}
     },
@@ -19,7 +18,12 @@ export const BASICInvoiceSchema: JSONSchemaType<Invoice> = {
             "type": "object",
             "additionalProperties": false,
             "properties": {
-                "Value": {"type": "string"},
+                "Value": {
+                    "type": [
+                        "string",
+                        "number"
+                    ]
+                },
                 "schemeID": {"type": "string"}
             }
         },
@@ -44,7 +48,11 @@ export const BASICInvoiceSchema: JSONSchemaType<Invoice> = {
             "type": "object",
             "additionalProperties": false,
             "properties": {
-                "Value": {"type": "string"}
+                "Value": {
+                    "type": [
+                        "string",
+                        "number"
+                    ]}
             }
         },
         "DateTimeType.udt:DateTimeString": {
@@ -52,7 +60,10 @@ export const BASICInvoiceSchema: JSONSchemaType<Invoice> = {
             "required": ["format"],
             "additionalProperties": false,
             "properties": {
-                "Value": {"type": "string"},
+                "Value": {"type": [
+                        "string",
+                        "number"
+                    ]},
                 "format": {"type": "string"}
             }
         },
@@ -75,7 +86,11 @@ export const BASICInvoiceSchema: JSONSchemaType<Invoice> = {
             "type": "object",
             "additionalProperties": false,
             "properties": {
-                "Value": {"type": "string"}
+                "Value": {
+                    "type": [
+                        "string",
+                        "number"
+                    ]}
             }
         },
         "NoteType": {
@@ -576,7 +591,6 @@ export const BASICInvoiceSchema: JSONSchemaType<Invoice> = {
                 "rsm:ExchangedDocument",
                 "rsm:SupplyChainTradeTransaction"
             ],
-            "additionalProperties": false,
             "properties": {
                 "rsm:ExchangedDocumentContext": {"$ref": "#/$defs/ExchangedDocumentContextType"},
                 "rsm:ExchangedDocument": {"$ref": "#/$defs/ExchangedDocumentType"},

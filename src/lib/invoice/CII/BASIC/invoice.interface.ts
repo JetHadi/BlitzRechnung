@@ -7,11 +7,13 @@
 
 export interface Invoice {
 	'rsm:CrossIndustryInvoice'?: CrossIndustryInvoiceType;
+	[k: string]: unknown;
 }
 export interface CrossIndustryInvoiceType {
 	'rsm:ExchangedDocumentContext': ExchangedDocumentContextType;
 	'rsm:ExchangedDocument': ExchangedDocumentType;
 	'rsm:SupplyChainTradeTransaction': SupplyChainTradeTransactionType;
+	[k: string]: unknown;
 }
 export interface ExchangedDocumentContextType {
 	'ram:BusinessProcessSpecifiedDocumentContextParameter'?: DocumentContextParameterType;
@@ -21,7 +23,7 @@ export interface DocumentContextParameterType {
 	'ram:ID': IDType;
 }
 export interface IDType {
-	Value?: string;
+	Value?: string | number;
 	schemeID?: string;
 }
 export interface ExchangedDocumentType {
@@ -34,13 +36,13 @@ export interface ExchangedDocumentType {
 	'ram:IncludedNote'?: NoteType[];
 }
 export interface DocumentCodeType {
-	Value?: string;
+	Value?: string | number;
 }
 export interface DateTimeType {
 	'udt:DateTimeString': DateTimeType1;
 }
 export interface DateTimeType1 {
-	Value?: string;
+	Value?: string | number;
 	format: string;
 }
 export interface NoteType {
@@ -51,7 +53,7 @@ export interface TextType {
 	Value?: string;
 }
 export interface CodeType {
-	Value?: string;
+	Value?: string | number;
 }
 export interface SupplyChainTradeTransactionType {
 	/**
