@@ -138,7 +138,7 @@ Trennblätter A4
         </ram:NetPriceProductTradePrice>
       </ram:SpecifiedLineTradeAgreement>
       <ram:SpecifiedLineTradeDelivery>
-        <ram:BilledQuantity unitCode="asdasf">20.0000</ram:BilledQuantity>
+        <ram:BilledQuantity unitCode="H87">20.0000</ram:BilledQuantity>
       </ram:SpecifiedLineTradeDelivery>
       <ram:SpecifiedLineTradeSettlement>
 	   <ram:ApplicableTradeTax>
