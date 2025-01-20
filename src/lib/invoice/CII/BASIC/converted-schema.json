@@ -1,0 +1,472 @@
+{
+    "$schema": "http://json-schema.org/draft/2019-09/schema",
+    "$defs": {
+        "CrossIndustryInvoiceType": {
+            "required": [
+                "ExchangedDocumentContext",
+                "ExchangedDocument",
+                "SupplyChainTradeTransaction"
+            ],
+            "type": "object",
+            "properties": {
+                "ExchangedDocumentContext": {"$ref": "#/$defs/ram:ExchangedDocumentContextType"},
+                "ExchangedDocument": {"$ref": "#/$defs/ram:ExchangedDocumentType"},
+                "SupplyChainTradeTransaction": {"$ref": "#/$defs/ram:SupplyChainTradeTransactionType"}
+            }
+        },
+        "IndicatorType": {
+            "required": ["Indicator"],
+            "type": "object",
+            "properties": {
+                "Indicator": {"$ref": "#/$defs/xs:boolean"}
+            }
+        },
+        "AmountType": {
+            "properties": {
+                "currencyID": {"$ref": "#/$defs/xs:token"},
+                "value": {"$ref": "#/$defs/xs:decimal"}
+            },
+            "type": "object",
+            "required": ["value"]
+        },
+        "IDType": {
+            "properties": {
+                "schemeID": {"$ref": "#/$defs/xs:token"},
+                "value": {"$ref": "#/$defs/xs:token"}
+            },
+            "type": "object",
+            "required": ["value"]
+        },
+        "QuantityType": {
+            "properties": {
+                "unitCode": {"$ref": "#/$defs/xs:token"},
+                "value": {"$ref": "#/$defs/xs:decimal"}
+            },
+            "type": "object",
+            "required": ["value"]
+        },
+        "DateTimeType": {
+            "required": ["DateTimeString"],
+            "type": "object",
+            "properties": {
+                "DateTimeString": {
+                    "properties": {
+                        "format": {"$ref": "#/$defs/xs:string"},
+                        "value": {"$ref": "#/$defs/xs:string"}
+                    },
+                    "required": [
+                        "format",
+                        "value"
+                    ],
+                    "type": "object"
+                }
+            }
+        },
+        "CreditorFinancialAccountType": {
+            "type": "object",
+            "properties": {
+                "IBANID": {"$ref": "#/$defs/udt:IDType"},
+                "ProprietaryID": {"$ref": "#/$defs/udt:IDType"}
+            }
+        },
+        "DebtorFinancialAccountType": {
+            "required": ["IBANID"],
+            "type": "object",
+            "properties": {
+                "IBANID": {"$ref": "#/$defs/udt:IDType"}
+            }
+        },
+        "DocumentContextParameterType": {
+            "required": ["ID"],
+            "type": "object",
+            "properties": {
+                "ID": {"$ref": "#/$defs/udt:IDType"}
+            }
+        },
+        "DocumentLineDocumentType": {
+            "required": ["LineID"],
+            "type": "object",
+            "properties": {
+                "LineID": {"$ref": "#/$defs/udt:IDType"},
+                "IncludedNote": {"$ref": "#/$defs/ram:NoteType"}
+            }
+        },
+        "ExchangedDocumentContextType": {
+            "type": "object",
+            "properties": {
+                "BusinessProcessSpecifiedDocumentContextParameter": {"$ref": "#/$defs/ram:DocumentContextParameterType"},
+                "GuidelineSpecifiedDocumentContextParameter": {"$ref": "#/$defs/ram:DocumentContextParameterType"}
+            },
+            "required": ["GuidelineSpecifiedDocumentContextParameter"]
+        },
+        "ExchangedDocumentType": {
+            "required": [
+                "ID",
+                "TypeCode",
+                "IssueDateTime"
+            ],
+            "type": "object",
+            "properties": {
+                "ID": {"$ref": "#/$defs/udt:IDType"},
+                "TypeCode": {"$ref": "#/$defs/qdt:DocumentCodeType"},
+                "IssueDateTime": {"$ref": "#/$defs/udt:DateTimeType"},
+                "IncludedNote": {
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/ram:NoteType"},
+                    "minItems": 0
+                }
+            }
+        },
+        "HeaderTradeAgreementType": {
+            "type": "object",
+            "properties": {
+                "BuyerReference": {"$ref": "#/$defs/udt:TextType"},
+                "SellerTradeParty": {"$ref": "#/$defs/ram:TradePartyType"},
+                "BuyerTradeParty": {"$ref": "#/$defs/ram:TradePartyType"},
+                "SellerTaxRepresentativeTradeParty": {"$ref": "#/$defs/ram:TradePartyType"},
+                "BuyerOrderReferencedDocument": {"$ref": "#/$defs/ram:ReferencedDocumentType"},
+                "ContractReferencedDocument": {"$ref": "#/$defs/ram:ReferencedDocumentType"}
+            },
+            "required": [
+                "SellerTradeParty",
+                "BuyerTradeParty"
+            ]
+        },
+        "HeaderTradeDeliveryType": {
+            "type": "object",
+            "properties": {
+                "ShipToTradeParty": {"$ref": "#/$defs/ram:TradePartyType"},
+                "ActualDeliverySupplyChainEvent": {"$ref": "#/$defs/ram:SupplyChainEventType"},
+                "DespatchAdviceReferencedDocument": {"$ref": "#/$defs/ram:ReferencedDocumentType"}
+            }
+        },
+        "HeaderTradeSettlementType": {
+            "type": "object",
+            "properties": {
+                "CreditorReferenceID": {"$ref": "#/$defs/udt:IDType"},
+                "PaymentReference": {"$ref": "#/$defs/udt:TextType"},
+                "TaxCurrencyCode": {"$ref": "#/$defs/qdt:CurrencyCodeType"},
+                "InvoiceCurrencyCode": {"$ref": "#/$defs/qdt:CurrencyCodeType"},
+                "PayeeTradeParty": {"$ref": "#/$defs/ram:TradePartyType"},
+                "SpecifiedTradeSettlementPaymentMeans": {
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/ram:TradeSettlementPaymentMeansType"},
+                    "minItems": 0
+                },
+                "ApplicableTradeTax": {
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/ram:TradeTaxType"},
+                    "minItems": 1
+                },
+                "BillingSpecifiedPeriod": {"$ref": "#/$defs/ram:SpecifiedPeriodType"},
+                "SpecifiedTradeAllowanceCharge": {
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/ram:TradeAllowanceChargeType"},
+                    "minItems": 0
+                },
+                "SpecifiedTradePaymentTerms": {"$ref": "#/$defs/ram:TradePaymentTermsType"},
+                "SpecifiedTradeSettlementHeaderMonetarySummation": {"$ref": "#/$defs/ram:TradeSettlementHeaderMonetarySummationType"},
+                "InvoiceReferencedDocument": {
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/ram:ReferencedDocumentType"},
+                    "minItems": 0
+                },
+                "ReceivableSpecifiedTradeAccountingAccount": {"$ref": "#/$defs/ram:TradeAccountingAccountType"}
+            },
+            "required": [
+                "InvoiceCurrencyCode",
+                "ApplicableTradeTax",
+                "SpecifiedTradeSettlementHeaderMonetarySummation"
+            ]
+        },
+        "LegalOrganizationType": {
+            "type": "object",
+            "properties": {
+                "ID": {"$ref": "#/$defs/udt:IDType"},
+                "TradingBusinessName": {"$ref": "#/$defs/udt:TextType"}
+            }
+        },
+        "LineTradeAgreementType": {
+            "type": "object",
+            "properties": {
+                "GrossPriceProductTradePrice": {"$ref": "#/$defs/ram:TradePriceType"},
+                "NetPriceProductTradePrice": {"$ref": "#/$defs/ram:TradePriceType"}
+            },
+            "required": ["NetPriceProductTradePrice"]
+        },
+        "LineTradeDeliveryType": {
+            "required": ["BilledQuantity"],
+            "type": "object",
+            "properties": {
+                "BilledQuantity": {"$ref": "#/$defs/udt:QuantityType"}
+            }
+        },
+        "LineTradeSettlementType": {
+            "required": [
+                "ApplicableTradeTax",
+                "SpecifiedTradeSettlementLineMonetarySummation"
+            ],
+            "type": "object",
+            "properties": {
+                "ApplicableTradeTax": {"$ref": "#/$defs/ram:TradeTaxType"},
+                "BillingSpecifiedPeriod": {"$ref": "#/$defs/ram:SpecifiedPeriodType"},
+                "SpecifiedTradeAllowanceCharge": {
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/ram:TradeAllowanceChargeType"},
+                    "minItems": 0
+                },
+                "SpecifiedTradeSettlementLineMonetarySummation": {"$ref": "#/$defs/ram:TradeSettlementLineMonetarySummationType"}
+            }
+        },
+        "NoteType": {
+            "required": ["Content"],
+            "type": "object",
+            "properties": {
+                "Content": {"$ref": "#/$defs/udt:TextType"},
+                "SubjectCode": {"$ref": "#/$defs/udt:CodeType"}
+            }
+        },
+        "ReferencedDocumentType": {
+            "required": ["IssuerAssignedID"],
+            "type": "object",
+            "properties": {
+                "IssuerAssignedID": {"$ref": "#/$defs/udt:IDType"},
+                "FormattedIssueDateTime": {"$ref": "#/$defs/qdt:FormattedDateTimeType"}
+            }
+        },
+        "SpecifiedPeriodType": {
+            "type": "object",
+            "properties": {
+                "StartDateTime": {"$ref": "#/$defs/udt:DateTimeType"},
+                "EndDateTime": {"$ref": "#/$defs/udt:DateTimeType"}
+            }
+        },
+        "SupplyChainEventType": {
+            "required": ["OccurrenceDateTime"],
+            "type": "object",
+            "properties": {
+                "OccurrenceDateTime": {"$ref": "#/$defs/udt:DateTimeType"}
+            }
+        },
+        "SupplyChainTradeLineItemType": {
+            "required": [
+                "AssociatedDocumentLineDocument",
+                "SpecifiedTradeProduct",
+                "SpecifiedLineTradeAgreement",
+                "SpecifiedLineTradeDelivery",
+                "SpecifiedLineTradeSettlement"
+            ],
+            "type": "object",
+            "properties": {
+                "AssociatedDocumentLineDocument": {"$ref": "#/$defs/ram:DocumentLineDocumentType"},
+                "SpecifiedTradeProduct": {"$ref": "#/$defs/ram:TradeProductType"},
+                "SpecifiedLineTradeAgreement": {"$ref": "#/$defs/ram:LineTradeAgreementType"},
+                "SpecifiedLineTradeDelivery": {"$ref": "#/$defs/ram:LineTradeDeliveryType"},
+                "SpecifiedLineTradeSettlement": {"$ref": "#/$defs/ram:LineTradeSettlementType"}
+            }
+        },
+        "SupplyChainTradeTransactionType": {
+            "required": [
+                "IncludedSupplyChainTradeLineItem",
+                "ApplicableHeaderTradeAgreement",
+                "ApplicableHeaderTradeDelivery",
+                "ApplicableHeaderTradeSettlement"
+            ],
+            "type": "object",
+            "properties": {
+                "IncludedSupplyChainTradeLineItem": {
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/ram:SupplyChainTradeLineItemType"},
+                    "minItems": 1
+                },
+                "ApplicableHeaderTradeAgreement": {"$ref": "#/$defs/ram:HeaderTradeAgreementType"},
+                "ApplicableHeaderTradeDelivery": {"$ref": "#/$defs/ram:HeaderTradeDeliveryType"},
+                "ApplicableHeaderTradeSettlement": {"$ref": "#/$defs/ram:HeaderTradeSettlementType"}
+            }
+        },
+        "TaxRegistrationType": {
+            "required": ["ID"],
+            "type": "object",
+            "properties": {
+                "ID": {"$ref": "#/$defs/udt:IDType"}
+            }
+        },
+        "TradeAccountingAccountType": {
+            "required": ["ID"],
+            "type": "object",
+            "properties": {
+                "ID": {"$ref": "#/$defs/udt:IDType"}
+            }
+        },
+        "TradeAddressType": {
+            "type": "object",
+            "properties": {
+                "PostcodeCode": {"$ref": "#/$defs/udt:CodeType"},
+                "LineOne": {"$ref": "#/$defs/udt:TextType"},
+                "LineTwo": {"$ref": "#/$defs/udt:TextType"},
+                "LineThree": {"$ref": "#/$defs/udt:TextType"},
+                "CityName": {"$ref": "#/$defs/udt:TextType"},
+                "CountryID": {"$ref": "#/$defs/qdt:CountryIDType"},
+                "CountrySubDivisionName": {"$ref": "#/$defs/udt:TextType"}
+            },
+            "required": ["CountryID"]
+        },
+        "TradeAllowanceChargeType": {
+            "required": [
+                "ChargeIndicator",
+                "ActualAmount"
+            ],
+            "type": "object",
+            "properties": {
+                "ChargeIndicator": {"$ref": "#/$defs/udt:IndicatorType"},
+                "CalculationPercent": {"$ref": "#/$defs/udt:PercentType"},
+                "BasisAmount": {"$ref": "#/$defs/udt:AmountType"},
+                "ActualAmount": {"$ref": "#/$defs/udt:AmountType"},
+                "ReasonCode": {"$ref": "#/$defs/qdt:AllowanceChargeReasonCodeType"},
+                "Reason": {"$ref": "#/$defs/udt:TextType"},
+                "CategoryTradeTax": {"$ref": "#/$defs/ram:TradeTaxType"}
+            }
+        },
+        "TradePartyType": {
+            "type": "object",
+            "properties": {
+                "ID": {
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/udt:IDType"},
+                    "minItems": 0
+                },
+                "GlobalID": {
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/udt:IDType"},
+                    "minItems": 0
+                },
+                "Name": {"$ref": "#/$defs/udt:TextType"},
+                "SpecifiedLegalOrganization": {"$ref": "#/$defs/ram:LegalOrganizationType"},
+                "PostalTradeAddress": {"$ref": "#/$defs/ram:TradeAddressType"},
+                "URIUniversalCommunication": {"$ref": "#/$defs/ram:UniversalCommunicationType"},
+                "SpecifiedTaxRegistration": {
+                    "maxItems": 2,
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/ram:TaxRegistrationType"},
+                    "minItems": 0
+                }
+            }
+        },
+        "TradePaymentTermsType": {
+            "type": "object",
+            "properties": {
+                "Description": {"$ref": "#/$defs/udt:TextType"},
+                "DueDateDateTime": {"$ref": "#/$defs/udt:DateTimeType"},
+                "DirectDebitMandateID": {"$ref": "#/$defs/udt:IDType"}
+            }
+        },
+        "TradePriceType": {
+            "required": ["ChargeAmount"],
+            "type": "object",
+            "properties": {
+                "ChargeAmount": {"$ref": "#/$defs/udt:AmountType"},
+                "BasisQuantity": {"$ref": "#/$defs/udt:QuantityType"},
+                "AppliedTradeAllowanceCharge": {"$ref": "#/$defs/ram:TradeAllowanceChargeType"}
+            }
+        },
+        "TradeProductType": {
+            "type": "object",
+            "properties": {
+                "GlobalID": {"$ref": "#/$defs/udt:IDType"},
+                "Name": {"$ref": "#/$defs/udt:TextType"}
+            },
+            "required": ["Name"]
+        },
+        "TradeSettlementHeaderMonetarySummationType": {
+            "required": [
+                "LineTotalAmount",
+                "TaxBasisTotalAmount",
+                "GrandTotalAmount",
+                "DuePayableAmount"
+            ],
+            "type": "object",
+            "properties": {
+                "LineTotalAmount": {"$ref": "#/$defs/udt:AmountType"},
+                "ChargeTotalAmount": {"$ref": "#/$defs/udt:AmountType"},
+                "AllowanceTotalAmount": {"$ref": "#/$defs/udt:AmountType"},
+                "TaxBasisTotalAmount": {"$ref": "#/$defs/udt:AmountType"},
+                "TaxTotalAmount": {
+                    "maxItems": 2,
+                    "type": "array",
+                    "items": {"$ref": "#/$defs/udt:AmountType"},
+                    "minItems": 0
+                },
+                "GrandTotalAmount": {"$ref": "#/$defs/udt:AmountType"},
+                "TotalPrepaidAmount": {"$ref": "#/$defs/udt:AmountType"},
+                "DuePayableAmount": {"$ref": "#/$defs/udt:AmountType"}
+            }
+        },
+        "TradeSettlementLineMonetarySummationType": {
+            "required": ["LineTotalAmount"],
+            "type": "object",
+            "properties": {
+                "LineTotalAmount": {"$ref": "#/$defs/udt:AmountType"}
+            }
+        },
+        "TradeSettlementPaymentMeansType": {
+            "required": ["TypeCode"],
+            "type": "object",
+            "properties": {
+                "TypeCode": {"$ref": "#/$defs/qdt:PaymentMeansCodeType"},
+                "PayerPartyDebtorFinancialAccount": {"$ref": "#/$defs/ram:DebtorFinancialAccountType"},
+                "PayeePartyCreditorFinancialAccount": {"$ref": "#/$defs/ram:CreditorFinancialAccountType"}
+            }
+        },
+        "TradeTaxType": {
+            "type": "object",
+            "properties": {
+                "CalculatedAmount": {"$ref": "#/$defs/udt:AmountType"},
+                "TypeCode": {"$ref": "#/$defs/qdt:TaxTypeCodeType"},
+                "ExemptionReason": {"$ref": "#/$defs/udt:TextType"},
+                "BasisAmount": {"$ref": "#/$defs/udt:AmountType"},
+                "CategoryCode": {"$ref": "#/$defs/qdt:TaxCategoryCodeType"},
+                "ExemptionReasonCode": {"$ref": "#/$defs/udt:CodeType"},
+                "DueDateTypeCode": {"$ref": "#/$defs/qdt:TimeReferenceCodeType"},
+                "RateApplicablePercent": {"$ref": "#/$defs/udt:PercentType"}
+            },
+            "required": [
+                "TypeCode",
+                "CategoryCode"
+            ]
+        },
+        "UniversalCommunicationType": {
+            "required": ["URIID"],
+            "type": "object",
+            "properties": {
+                "URIID": {"$ref": "#/$defs/udt:IDType"}
+            }
+        },
+        "AllowanceChargeReasonCodeContentType": {"$ref": "#/$defs/xs:token"},
+        "CountryIDContentType": {"$ref": "#/$defs/xs:token"},
+        "CurrencyCodeContentType": {"$ref": "#/$defs/xs:token"},
+        "DocumentCodeContentType": {"$ref": "#/$defs/xs:token"},
+        "FormattedDateTimeFormatContentType": {"$ref": "#/$defs/xs:string"},
+        "PaymentMeansCodeContentType": {"$ref": "#/$defs/xs:token"},
+        "TaxCategoryCodeContentType": {"$ref": "#/$defs/xs:token"},
+        "TaxTypeCodeContentType": {"$ref": "#/$defs/xs:token"},
+        "TimeReferenceCodeContentType": {"$ref": "#/$defs/xs:token"},
+        "FormattedDateTimeType": {
+            "required": ["DateTimeString"],
+            "type": "object",
+            "properties": {
+                "DateTimeString": {
+                    "properties": {
+                        "format": {"$ref": "#/$defs/qdt:FormattedDateTimeFormatContentType"},
+                        "value": {"$ref": "#/$defs/xs:string"}
+                    },
+                    "required": [
+                        "format",
+                        "value"
+                    ],
+                    "type": "object"
+                }
+            }
+        }
+    },
+    "$ref": "#/$defs/rsm:CrossIndustryInvoiceType"
+}

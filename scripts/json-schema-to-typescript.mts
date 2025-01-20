@@ -1,32 +1,28 @@
 import { promises as fs } from 'fs';
 import * as path from 'path';
 
-if (process.argv.length !== 3) {
-	console.error(`Usage: ${process.argv[1]} NAME`);
-	process.exit(1);
-}
+const inputSchemaFilename = process.argv[2];
+const outputSchemaFilename = process.argv[3];
 
-generateCode(process.argv[2]);
+generateCode(inputSchemaFilename, outputSchemaFilename);
 
-async function generateCode(name: string) {
-	const schemaFile = path.join('src', 'schema', `${name}.schema.json`);
+async function generateCode(inputSchemaFilename, outputSchemaFilename) {
 
-	const json = (await fs.readFile(schemaFile, 'utf-8')).trim();
+	const json = (await fs.readFile(inputSchemaFilename, 'utf-8')).trim();
 
-	const interfaceName = name.replace(/^(.)/, c => c.toUpperCase());
+	const parentDir = path.basename(path.dirname(inputSchemaFilename));
 
 	const code =
 		'/*\n' +
-		` * This file is generated from '${schemaFile}'.\n` +
+		` * This file is generated from 'inputSchemaFilename'.\n` +
 		' * Do not edit!\n' +
 		' */\n' +
 		'\n' +
-		`import { JSONSchemaType } from 'ajv';\n` +
-		`import { ${interfaceName} } from './${name}.interface';\n` +
+		`import type { JSONSchemaType } from 'ajv';\n` +
+		`import type { Invoice} from './invoice.interface';\n` +
 		'\n' +
-		`export const ${name}Schema: JSONSchemaType<${interfaceName}> = ${json}` +
-		` as unknown as JSONSchemaType<${interfaceName}>;\n`;
+		`export const ${parentDir}InvoiceSchema: JSONSchemaType<Invoice> = ${json}` +
+		` as unknown as JSONSchemaType<Invoice>;\n`;
 
-	const outputFile = path.join('src', name, `${name}.schema.ts`);
-	await fs.writeFile(outputFile, code);
+	await fs.writeFile(outputSchemaFilename, code);
 }

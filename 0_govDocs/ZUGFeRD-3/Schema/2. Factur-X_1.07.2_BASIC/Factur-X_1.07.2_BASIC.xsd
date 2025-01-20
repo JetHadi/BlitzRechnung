@@ -9,12 +9,12 @@
   <xs:import namespace="urn:un:unece:uncefact:data:standard:QualifiedDataType:100" schemaLocation="Factur-X_1.07.2_BASIC_urn_un_unece_uncefact_data_standard_QualifiedDataType_100.xsd"/>
   <xs:import namespace="urn:un:unece:uncefact:data:standard:ReusableAggregateBusinessInformationEntity:100" schemaLocation="Factur-X_1.07.2_BASIC_urn_un_unece_uncefact_data_standard_ReusableAggregateBusinessInformationEntity_100.xsd"/>
   <xs:import namespace="urn:un:unece:uncefact:data:standard:UnqualifiedDataType:100" schemaLocation="Factur-X_1.07.2_BASIC_urn_un_unece_uncefact_data_standard_UnqualifiedDataType_100.xsd"/>
-  <xs:element name="CrossIndustryInvoice" type="rsm:CrossIndustryInvoiceType"/>
+  <xs:element name="rsm___CrossIndustryInvoice" type="rsm:CrossIndustryInvoiceType"/>
   <xs:complexType name="CrossIndustryInvoiceType">
     <xs:sequence>
-      <xs:element name="ExchangedDocumentContext" type="ram:ExchangedDocumentContextType"/>
-      <xs:element name="ExchangedDocument" type="ram:ExchangedDocumentType"/>
-      <xs:element name="SupplyChainTradeTransaction" type="ram:SupplyChainTradeTransactionType"/>
+      <xs:element name="rsm___ExchangedDocumentContext" type="ram:ExchangedDocumentContextType"/>
+      <xs:element name="rsm___ExchangedDocument" type="ram:ExchangedDocumentType"/>
+      <xs:element name="rsm___SupplyChainTradeTransaction" type="ram:SupplyChainTradeTransactionType"/>
     </xs:sequence>
   </xs:complexType>
 </xs:schema>

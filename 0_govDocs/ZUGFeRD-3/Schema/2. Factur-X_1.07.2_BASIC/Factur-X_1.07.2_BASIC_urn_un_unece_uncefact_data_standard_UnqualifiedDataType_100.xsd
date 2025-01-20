@@ -17,7 +17,7 @@
   </xs:complexType>
   <xs:complexType name="DateTimeType">
     <xs:choice>
-      <xs:element name="DateTimeString">
+      <xs:element name="udt___DateTimeString">
         <xs:complexType>
           <xs:simpleContent>
             <xs:extension base="xs:string">
@@ -37,7 +37,7 @@
   </xs:complexType>
   <xs:complexType name="IndicatorType">
     <xs:choice>
-      <xs:element name="Indicator" type="xs:boolean"/>
+      <xs:element name="udt___Indicator" type="xs:boolean"/>
     </xs:choice>
   </xs:complexType>
   <xs:complexType name="PercentType">
