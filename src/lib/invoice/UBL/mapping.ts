@@ -1,8 +1,6 @@
-export interface UBLMapping {
-    [key: string]: string;
-}
+import type { BT_Mapping } from "$lib/types/businessTerms";
 
-export const mapping_BT_UBL: UBLMapping = {
+export const mapping_BT_UBL: BT_Mapping = {
     "BT-24": "ubl:Invoice.cbc:CustomizationID",
     "BT-23": "ubl:Invoice.cbc:ProfileID",
     "BT-1": "ubl:Invoice.cbc:ID",
