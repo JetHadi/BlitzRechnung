@@ -46,7 +46,11 @@
 		"fast-xml-parser": "^4.5.1",
 		"json-schema-to-typescript": "^15.0.4",
 		"jsonix": "^3.0.0",
+		"node-schematron": "^2.1.0-rc.1",
 		"puppeteer": "^24.0.0",
-		"xsd-json-converter": "^1.2.7"
+		"saxon-js": "^2.7.0",
+		"xmldom": "^0.6.0",
+		"xsd-json-converter": "^1.2.7",
+		"xslt-processor": "^3.3.1"
 	}
 }
