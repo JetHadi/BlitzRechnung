@@ -10,12 +10,12 @@ function filterCSVLines(inputPath: string, outputPath: string): void {
         
         // Define the patterns to match - now with semicolon
         const patterns: RegExp[] = [
-            /^BT-\d+-0(?:;|$|\r)/,
-            /^BT-\d+-00(?:;|$|\r)/,
-            /^BT-\d+-000(?:;|$|\r)/,
-            /^BG-\d+-0(?:;|$|\r)/,
-            /^BG-\d+-00(?:;|$|\r)/,
-            /^BG-\d+-000(?:;|$|\r)/,
+            // /^BT-\d+-0(?:;|$|\r)/,
+            // /^BT-\d+-00(?:;|$|\r)/,
+            // /^BT-\d+-000(?:;|$|\r)/,
+            // /^BG-\d+-0(?:;|$|\r)/,
+            // /^BG-\d+-00(?:;|$|\r)/,
+            // /^BG-\d+-000(?:;|$|\r)/,
             /^BT-X-.*(?:;|$|\r)/,
             /^BG-X-.*(?:;|$|\r)/
         ];
@@ -38,7 +38,7 @@ function filterCSVLines(inputPath: string, outputPath: string): void {
     }
 }
 // Example usage
-const inputFile = 'src/lib/invoice/CII/EXTENDED_BT_MAPPING.csv';
+const inputFile = 'misc/EXTENDED_BT_MAPPING.csv';
 const outputFile = 'src/lib/invoice/CII/OUT_EXTENDED_BT_MAPPING.csv';
 
 filterCSVLines(inputFile, outputFile);

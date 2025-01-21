@@ -7,8 +7,16 @@ import { readFileSync } from 'fs';
 function extractAndMapXML(xmlString: string, mapping: BT_Mapping) {
     const options = {
         ignoreAttributes: false,
-        textNodeName: "#text"
+        textNodeName: "#text",
+        attributeNamePrefix: "@_"
     };
+
+
+    function getAttributeKey(obj: any): string | null {
+        const attrKey = Object.keys(obj).find(key => key.startsWith('@_'));
+        return attrKey ? attrKey : null;
+    }
+
 
     const parser = new XMLParser(options);
     const result = parser.parse(xmlString);
@@ -26,6 +34,10 @@ function extractAndMapXML(xmlString: string, mapping: BT_Mapping) {
     });
 
     function traverseObject(obj: any, currentPath: string = '', isArray: boolean = false) {
+
+
+
+
         if (!obj || typeof obj !== 'object') {
             return;
         }
@@ -40,8 +52,25 @@ function extractAndMapXML(xmlString: string, mapping: BT_Mapping) {
         for (const key in obj) {
             const newPath = currentPath ? `${currentPath}/${key}` : key;
 
+            if (currentPath == 'rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IssueDateTime/udt:DateTimeString') {
+                // console.log(obj['rsm:CrossIndustryInvoice']['rsm:ExchangedDocument']['ram:IssueDateTime']['udt:DateTimeString'])
+                // console.log(currentPath, typeof(key),key)
+            }
+
             if (typeof obj[key] !== 'object') {
-                if (reverseMappings[newPath]) {
+
+                if (key == '#text') {
+                    // console.log(currentPath)
+                    if (reverseMappings[currentPath]) {
+                        const btKey = reverseMappings[currentPath];
+                        const attributeKey = getAttributeKey(obj);
+                        if (attributeKey) {
+                            extractedValues[btKey] = obj[key] + '@' + obj[attributeKey];
+                        } else {
+                            extractedValues[btKey] = obj[key]
+                        }
+                    }
+                } else if (reverseMappings[newPath]) {
                     const btKey = reverseMappings[newPath];
                     if (isArray) {
                         if (!Array.isArray(extractedValues[btKey])) {
@@ -51,11 +80,6 @@ function extractAndMapXML(xmlString: string, mapping: BT_Mapping) {
                     } else {
                         extractedValues[btKey] = obj[key];
                     }
-                }
-            } else if (key === '#text') {
-                if (reverseMappings[currentPath]) {
-                    const btKey = reverseMappings[currentPath];
-                    extractedValues[btKey] = obj[key];
                 }
             } else {
                 traverseObject(obj[key], newPath, isArray);
