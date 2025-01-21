@@ -1,53 +1,106 @@
 import type { BT_Mapping } from "$lib/types/businessTerms";
 import { XMLParser } from "fast-xml-parser";
 import { mappingBTCII } from "./CII/en16931/mapping";
+import { mapping_BT_UBL } from "./UBL/mapping";
+import { readFileSync } from 'fs';
 
-// Function to extract and map XML data
 function extractAndMapXML(xmlString: string, mapping: BT_Mapping) {
-    // Configure parser options to handle text nodes
     const options = {
         ignoreAttributes: false,
         textNodeName: "#text"
     };
-    
+
     const parser = new XMLParser(options);
     const result = parser.parse(xmlString);
-    console.log(result)
-    
-    // Store mapped values in reverse to map against value of BTMapping
+
     const reverseMappings: { [path: string]: string } = {};
     Object.entries(mapping).forEach(([bt, path]) => {
         reverseMappings[path] = bt;
     });
 
-    const extractedValues: { [bt: string]: string } = {};
+    const extractedValues: { [bt: string]: string | string[] } = {};
 
-    // Function to traverse XML and find matching paths
-    function traverseObject(obj: any, currentPath: string = '') {
-        console.log(obj)
-        if (typeof obj !== 'object') return;
-        
+    // Initialize arrays for BTs that might contain multiple values
+    Object.keys(mapping).forEach(bt => {
+        extractedValues[bt] = [];
+    });
+
+    function traverseObject(obj: any, currentPath: string = '', isArray: boolean = false) {
+        if (!obj || typeof obj !== 'object') {
+            return;
+        }
+
+        if (Array.isArray(obj)) {
+            obj.forEach((item) => {
+                traverseObject(item, currentPath, true);
+            });
+            return;
+        }
+
         for (const key in obj) {
-            console.log(key)
             const newPath = currentPath ? `${currentPath}/${key}` : key;
-            
-            if (key === '#text') {
-                // Check if parent path exists in our mapping
+
+            if (typeof obj[key] !== 'object') {
+                if (reverseMappings[newPath]) {
+                    const btKey = reverseMappings[newPath];
+                    if (isArray) {
+                        if (!Array.isArray(extractedValues[btKey])) {
+                            extractedValues[btKey] = [];
+                        }
+                        (extractedValues[btKey] as string[]).push(obj[key]);
+                    } else {
+                        extractedValues[btKey] = obj[key];
+                    }
+                }
+            } else if (key === '#text') {
                 if (reverseMappings[currentPath]) {
                     const btKey = reverseMappings[currentPath];
                     extractedValues[btKey] = obj[key];
                 }
             } else {
-                traverseObject(obj[key], newPath);
+                traverseObject(obj[key], newPath, isArray);
             }
         }
     }
 
     traverseObject(result);
-    console.log('Extracted BT values:', extractedValues);
+    console.log(extractedValues)
     return extractedValues;
 }
 
+
 // Example usage
 const xmlExample = 'CII/BASIC/tests/factur-x.xml'
-const mappedResults = extractAndMapXML(xmlExample, mappingBTCII);
+const xmlData = readFileSync('src/lib/invoice/CII/BASIC/tests/factur-x.xml', 'utf8');
+
+const mappedResults = extractAndMapXML(xmlData, mappingBTCII);
+
+
+// general accesors to get Business Term rules
+interface XmlResponse {
+    [key: string]: any;
+}
+
+const createAccessor = (key: string) => {
+    return (xmlObj: XmlResponse): any => {
+        const value = xmlObj[mapping_BT_UBL[key]];
+        // const rules = xmlRules[key];
+        return { value };
+    };
+};
+
+const generateAccessors = (keys: string[], xmlObj: XmlResponse) => {
+    return keys.reduce((acc, key) => {
+        const value = xmlObj[mapping_BT_UBL[key]];
+        // const rules = xmlRules[key];
+        acc[key] = { value };
+        return acc;
+    }, {} as Record<string, { value: any; }>);
+};
+
+/* Usage
+const businessTerms = generateAccessors(Object.keys(mapping_BT_UBL), xmlObj);
+
+const BT_21 = businessTerms['BT-21'];  // Returns { value, rules }
+const { value, rules } = businessTerms['BT-21'];
+*/
