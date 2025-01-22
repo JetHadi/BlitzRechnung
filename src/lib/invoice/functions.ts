@@ -1,7 +1,7 @@
 import type { BT_Mapping } from "$lib/types/businessTerms";
 import { XMLParser } from "fast-xml-parser";
 import { mappingBTCII } from "./CII/en16931/mapping";
-import { mapping_BT_UBL } from "./UBL/mapping";
+import { mappingBTUBL } from "./UBL/mapping";
 import { readFileSync } from 'fs';
 
 function extractAndMapXML(xmlString: string, mapping: BT_Mapping) {
@@ -20,6 +20,8 @@ function extractAndMapXML(xmlString: string, mapping: BT_Mapping) {
 
     const parser = new XMLParser(options);
     const result = parser.parse(xmlString);
+
+    console.log(result)
 
     const reverseMappings: { [path: string]: string } = {};
     Object.entries(mapping).forEach(([bt, path]) => {
@@ -51,11 +53,6 @@ function extractAndMapXML(xmlString: string, mapping: BT_Mapping) {
 
         for (const key in obj) {
             const newPath = currentPath ? `${currentPath}/${key}` : key;
-
-            if (currentPath == 'rsm:CrossIndustryInvoice/rsm:ExchangedDocument/ram:IssueDateTime/udt:DateTimeString') {
-                // console.log(obj['rsm:CrossIndustryInvoice']['rsm:ExchangedDocument']['ram:IssueDateTime']['udt:DateTimeString'])
-                // console.log(currentPath, typeof(key),key)
-            }
 
             if (typeof obj[key] !== 'object') {
 
@@ -94,10 +91,10 @@ function extractAndMapXML(xmlString: string, mapping: BT_Mapping) {
 
 
 // Example usage
-const xmlExample = 'CII/BASIC/tests/factur-x.xml'
-const xmlData = readFileSync('src/lib/invoice/CII/BASIC/tests/factur-x.xml', 'utf8');
+const xmlExample = 'src/lib/invoice/UBL/tests/base-example.xml'
+const xmlData = readFileSync(xmlExample, 'utf8');
 
-const mappedResults = extractAndMapXML(xmlData, mappingBTCII);
+const mappedResults = extractAndMapXML(xmlData, mappingBTUBL);
 
 
 // general accesors to get Business Term rules
@@ -107,7 +104,7 @@ interface XmlResponse {
 
 const createAccessor = (key: string) => {
     return (xmlObj: XmlResponse): any => {
-        const value = xmlObj[mapping_BT_UBL[key]];
+        const value = xmlObj[mappingBTUBL[key]];
         // const rules = xmlRules[key];
         return { value };
     };
@@ -115,7 +112,7 @@ const createAccessor = (key: string) => {
 
 const generateAccessors = (keys: string[], xmlObj: XmlResponse) => {
     return keys.reduce((acc, key) => {
-        const value = xmlObj[mapping_BT_UBL[key]];
+        const value = xmlObj[mappingBTUBL[key]];
         // const rules = xmlRules[key];
         acc[key] = { value };
         return acc;

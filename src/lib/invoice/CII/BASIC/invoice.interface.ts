@@ -6,7 +6,8 @@
  */
 
 export interface Invoice {
-	'rsm:CrossIndustryInvoice'?: CrossIndustryInvoiceType;
+	'rsm:CrossIndustryInvoice': CrossIndustryInvoiceType;
+	// -- only generated because of xmln etc attributes
 	[k: string]: unknown;
 }
 export interface CrossIndustryInvoiceType {
@@ -20,14 +21,14 @@ export interface ExchangedDocumentContextType {
 	'ram:GuidelineSpecifiedDocumentContextParameter': DocumentContextParameterType;
 }
 export interface DocumentContextParameterType {
-	'ram:ID': IDType;
+	'ram:ID': string;
 }
 export interface IDType {
 	Value?: string | number;
 	schemeID?: string;
 }
 export interface ExchangedDocumentType {
-	'ram:ID': IDType;
+	'ram:ID': string;
 	'ram:TypeCode': DocumentCodeType;
 	'ram:IssueDateTime': DateTimeType;
 	/**
