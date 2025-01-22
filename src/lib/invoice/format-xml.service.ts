@@ -1,10 +1,11 @@
 
 import { create } from 'xmlbuilder2';
 import type { InvoiceServiceOptions } from './types';
+import { promises } from 'fs';
 
 
 export class FormatXMLService {
-	// replace with own logger for svelte
+	// TODO: replace with own logger for svelte
 	//private readonly logger = new Logger(FormatXMLService.name);
 
 	get mimeType(): string {
@@ -42,15 +43,17 @@ export class FormatXMLService {
 
 	protected async getInvoicePdf(
 		options: InvoiceServiceOptions,
-	): Promise<Blob> {
-		if (options.pdfPath) {
-			const response = await fetch(options.pdfPath);
-			if (!response.ok) {
-				throw new Error('Failed to fetch PDF');
-			}
-			return await response.blob();
-		} else {
+	): Promise<Buffer> {
+		if (!options.pdfPath) {
 			throw new Error('Invoice PDF path is needed!');
+		}
+	
+		try {
+			// Read file directly from server filesystem as Buffer
+			// This works for both PDFDocument.load() and base64 conversion
+			return await promises.readFile(options.pdfPath);
+		} catch (error: any) {
+			throw new Error(`Failed to read PDF file: ${error.message}`);
 		}
 	}
 }
