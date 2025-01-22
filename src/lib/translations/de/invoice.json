@@ -1,0 +1,8 @@
+{
+    "invoice_subject": "Rechnung {invoiceNumber}, datiert vom {invoiceDate}, ausgestellt von {invoiceCreator}",
+    "invoice": "Rechnung",
+    "embedded_xml_name": "Der Name des eingebetteten XML-Dokuments",
+    "hybrid_document_type": "Der englischsprachige Type des hybriden Dokuments in Großbuchstaben, z. B. INVOICE oder ORDER",
+    "xml_document_version": "Die Version des Standards, dem das eingebettete XML-Dokument entspricht",
+    "conformance_level": "Der Konformitäts-Level des eingebetteten XML-Dokuments"
+}

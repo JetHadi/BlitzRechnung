@@ -1,0 +1,8 @@
+{
+    "invoice_subject": "Invoice {invoiceNumber} dated {invoiceDate} issued by {invoiceCreator}",
+    "invoice": "Invoice",
+    "embedded_xml_name": "The name of the embedded XML document",
+    "hybrid_document_type": "The type of the hybrid document in capital letters, e.g. INVOICE or ORDER",
+    "xml_document_version": "The actual version of the standard applying to the embedded XML document",
+    "conformance_level": "The conformance level of the embedded XML document"
+}
