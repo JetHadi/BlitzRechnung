@@ -1,6 +1,6 @@
 import type { BT_Mapping } from "$lib/types/businessTerms";
 import { XMLParser } from "fast-xml-parser";
-import { mappingBTCII } from "./CII/en16931/mapping";
+import { mappingBTCII } from "./CII/Factur-X/en16931/mapping";
 import { mappingBTUBL } from "./UBL/mapping";
 import { readFileSync } from 'fs';
 
