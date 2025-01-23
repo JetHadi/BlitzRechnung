@@ -8,7 +8,7 @@ export const RechnungsAbsenderSchema = z.object({
     absender_firma: z.string().max(20),         // BT-28 (Handelsname des Verkäufers)
     absender_email: z.string().email(),         // BT-43 (E-Mail-Adresse der Kontaktstelle des Verkäufers)
     absender_telefon: z.string().max(20),       // BT-42 (Telefonnummer der Kontaktstelle des Verkäufers)
-    absender_logo: z.string().url(),            // No corresponding BT field
+    absender_logo: z.string().url().optional(),            // No corresponding BT field
 });
 
 

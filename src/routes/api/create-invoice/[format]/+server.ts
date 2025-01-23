@@ -15,20 +15,25 @@ export async function POST({ request, params }: RequestEvent) {
     try {
         const format = (params.format as string).toLowerCase();
         const formData = await request.formData();
+        //console.log('create-invoice formData', formData)
 
         // Get invoice data
-        const invoiceFile = formData.get('invoice');
-        if (!invoiceFile) {
-            throw error(400, 'No invoice file uploaded');
-        }
+        const invoiceFile = formData.get('Invoice') as string;
+        //console.log(invoiceFile)
+        // if (!invoiceFile) {
+        //     throw error(400, 'No invoice file provided');
+        // }
 
         // Parse invoice data
-        const invoiceText = await (invoiceFile as File).text();
-        const invoiceData = JSON.parse(invoiceText) as Invoice;
+        // const invoiceText = await (invoiceFile as File).text();
+        const invoiceData = JSON.parse(invoiceFile, (key, value) => {
+            if (typeof value === 'number') {
+                return value.toString();
+            }
+            return value;
+        });
 
         // Get optional files
-        const data = formData.get('data') as File | null;
-        const pdf = formData.get('pdf') as File | null;
         const pdfPath = formData.get('pdfPath')?.toString() ?? '';
 
         // Get attachments
@@ -46,7 +51,7 @@ export async function POST({ request, params }: RequestEvent) {
         });
 
         // Get other form fields
-        const lang = formData.get('lang')?.toString() ?? 'en';
+        const lang = formData.get('lang')?.toString() ?? 'de';
         const embedPDF = formData.get('embedPDF') === 'true';
         const pdfID = formData.get('pdfID')?.toString();
         const pdfDescription = formData.get('pdfDescription')?.toString();
@@ -79,7 +84,7 @@ export async function POST({ request, params }: RequestEvent) {
             headers
         });
 
-    } catch (err : any) {
+    } catch (err: any) {
         if (err instanceof ValidationError) {
             throw error(400, {
                 message: `Transformation failed: ${JSON.stringify(err)}`

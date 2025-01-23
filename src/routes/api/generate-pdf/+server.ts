@@ -55,7 +55,7 @@ export const POST: RequestHandler = async ({ url, request }) => {
 
             return json({
                 success: true,
-                pdfPath: `/pdfs/${filename}`
+                pdfPath: `shared/pdfs/${filename}`
             });
 
         } finally {
