@@ -504,7 +504,7 @@ export const actions: Actions = {
       // generate json for factur-x xml generation in FastAPI
       const PythonA4Data = calculateAmounts(A4Form.data);
       // console.log(PythonA4Data)
-      const xmlResponse = await event.fetch('/api/create-invoice/ubl', {
+      const xmlResponse = await event.fetch('/api/create-invoice/UBL', {
         method: 'POST',
         body: formData
       });
@@ -518,7 +518,7 @@ export const actions: Actions = {
       }
 
       const xmlContent = await xmlResponse.text();
-
+      console.log(xmlContent)
       const totalTime = performance.now() - actionStart;
       console.log(`✅ Action completed successfully in ${totalTime.toFixed(2)}ms`);
 

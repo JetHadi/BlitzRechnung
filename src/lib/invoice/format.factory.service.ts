@@ -29,6 +29,13 @@ export class FormatFactoryService {
 		[key: string]: new (...args: any[]) => EInvoiceFormat;
 	} = {};
 
+	constructor() {
+		for (const format in this.formatServices) {
+			this.formatServicesLookup[format.toLowerCase()] =
+				this.formatServices[format];
+		}
+	}
+
 	createFormatService(format: string): EInvoiceFormat {
 		const normalizedFormat = this.normalizeFormat(format);
 		const FormatService = this.formatServicesLookup[normalizedFormat];
