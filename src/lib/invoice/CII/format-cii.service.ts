@@ -1510,15 +1510,12 @@ export class FormatCIIService
 	): Promise<string | Buffer> {
 		const cii: ObjectNode = {};
 
+		this.fillInvoiceDefaults(invoice)
+
 		this.convert(invoice, '$', cii, '$', [ublInvoice]);
 
 		cii['rsm:CrossIndustryInvoice@xmlns:xsi'] =
 			'http://www.w3.org/2001/XMLSchema-instance';
-		cii['rsm:CrossIndustryInvoice@xsi:schemaLocation'] =
-			'urn:un:unece:uncefact:data' +
-			':standard:CrossIndustryInvoice:100' +
-			' ../schema/D16B%20SCRDM%20(Subset)/uncoupled%20clm/CII/uncefact' +
-			'/data/standard/CrossIndustryInvoice_100pD16B.xsd';
 		cii['rsm:CrossIndustryInvoice@xmlns:qdt'] =
 			'urn:un:unece:uncefact:data:standard:QualifiedDataType:100';
 		cii['rsm:CrossIndustryInvoice@xmlns:udt'] =

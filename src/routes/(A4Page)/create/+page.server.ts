@@ -133,7 +133,7 @@ export const actions: Actions = {
         "ubl:Invoice": {
           "cbc:CustomizationID": "urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0",
           "cbc:ProfileID": "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0",
-          "cbc:ID": 1234567890,
+          "cbc:ID": 2222222,
           "cbc:IssueDate": "2024-09-24",
           "cbc:DueDate": "2024-10-08",
           "cbc:InvoiceTypeCode": "380",
@@ -502,7 +502,8 @@ export const actions: Actions = {
 
 
       // create invoice
-      const createInvoiceResponse = await event.fetch('/api/create-invoice/factur-x-basic', {
+      // FIXME: create correct xml or pdf download link
+      const createInvoiceResponse = await event.fetch('/api/create-invoice/Factur-X-EN16931', {
         method: 'POST',
         body: formData
       });

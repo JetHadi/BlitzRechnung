@@ -1,3 +1,4 @@
+// TODO: remove unecessary files and clean up directories
 import { BASICInvoiceSchema } from '../invoice.schema'
 import { XMLParser } from 'fast-xml-parser';
 import Ajv2019 from "ajv/dist/2019"
@@ -113,8 +114,8 @@ async function validateFacturX(schematronPath: string, xmlPath: string) {
 
 // Usage
 validateFacturX(
-  './Factur-X_1.07.2_BASIC.sch',
-  './factur-x.xml'
+  './Factur-X_1.07.2_EN16931.sch',
+  './factur-x-en16931.xml'
 ).then(results => {
   console.log('Validation results:', results);
 }).catch(error => {
