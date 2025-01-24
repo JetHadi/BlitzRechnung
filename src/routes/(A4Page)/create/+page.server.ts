@@ -30,8 +30,6 @@ export const load: PageServerLoad = async () => {
   const fourthSectionForm = await superValidate(FourthSectionContainerDefaults, zod(fourthSectionContainerSchema));
   const footerForm = await superValidate(FooterContainerDefaults, zod(footerContainerSchema));
 
-  console.log('UST: ', MainSectionContainerDefaults.RechnungsPositionen[0].ust)
-
   const loadTime = performance.now() - startTime;
   console.log(`✨ Page load completed in ${loadTime.toFixed(2)}ms`);
 
@@ -85,8 +83,6 @@ export const actions: Actions = {
       const validationStart = performance.now();
 
       const A4Form = await superValidate(event, zod(A4RechnungSchema));
-      console.log('objectForm: ', A4Form)
-
 
       console.log(`📝 Form validation took: ${(performance.now() - validationStart).toFixed(2)}ms`);
 
@@ -95,14 +91,15 @@ export const actions: Actions = {
         return fail(400, { objectForm: A4Form });
       }
 
-      // Data Preparation
+      // Data Preparation for pdf creation
       const A4Data = JSON.stringify(A4Form.data) // passing down the whole header form to the url
       // console.log(A4Data)
 
+      /*
+      PDF creation process
+      */
       const printUrl = `${event.url.origin}/read?data=${encodeURIComponent(A4Data)}`;
       console.log('PrintURL', printUrl)
-
-      // const RechnungsDaten = { Absenderdaten: form.data };
 
       // PDF Generation
       const pdfStart = performance.now();
@@ -129,6 +126,10 @@ export const actions: Actions = {
 
       const pdfPath: string = result.pdfPath
 
+      /*
+      XML creation process
+      */ 
+      const invoiceData = calculateAmounts(A4Form.data)
       const testInvoice = {
         "ubl:Invoice": {
           "cbc:CustomizationID": "urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0",
