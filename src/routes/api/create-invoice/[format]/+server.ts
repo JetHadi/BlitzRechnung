@@ -72,11 +72,17 @@ export async function POST({ request, params }: RequestEvent) {
             pdfDescription
         });
 
-        // Set appropriate content type
+        // TODO: Set appropriate content type
+        // TODO: check for prod use
+        const filename = `invoice-${Date.now()}.pdf`; // unique filename
+
         const headers = new Headers({
             'Content-Type': typeof document === 'string'
                 ? 'application/xml'
-                : 'application/pdf'
+                : 'application/pdf',
+            'Content-Disposition': typeof document === 'string' ? 'attachment; filename="invoice.xml"' : 'attachment; filename="invoice.pdf"',
+            'X-Content-Type-Options': 'nosniff',
+            'Cache-Control': 'no-cache'
         });
 
         return new Response(document, {

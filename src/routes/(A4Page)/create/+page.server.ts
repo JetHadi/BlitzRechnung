@@ -501,35 +501,38 @@ export const actions: Actions = {
       formData.append('pdfPath', pdfPath)
 
 
-      // generate json for factur-x xml generation in FastAPI
-      const PythonA4Data = calculateAmounts(A4Form.data);
-      // console.log(PythonA4Data)
-      const xmlResponse = await event.fetch('/api/create-invoice/UBL', {
+      // create invoice
+      const createInvoiceResponse = await event.fetch('/api/create-invoice/factur-x-basic', {
         method: 'POST',
         body: formData
       });
 
-      if (!xmlResponse.ok) {
-        console.log('❌ XML generation failed');
+      if (!createInvoiceResponse.ok) {
+        console.log('❌ Invoice generation failed');
         return fail(500, {
           A4Form,
-          message: 'XML generation failed'
+          message: 'Invoice generation failed'
         });
       }
 
-      const xmlContent = await xmlResponse.text();
-      console.log(xmlContent)
+
+      // Convert response to base64 for serialization
+      const contentType = createInvoiceResponse.headers.get('Content-Type');
+      const buffer = await createInvoiceResponse.arrayBuffer();
+      const base64Data = Buffer.from(buffer).toString('base64');
+
       const totalTime = performance.now() - actionStart;
-      console.log(`✅ Action completed successfully in ${totalTime.toFixed(2)}ms`);
 
       return {
         A4Form,
         success: true,
-        pdfPath: result.pdfPath,
-        xmlContent: xmlContent,
-        message: `Form posted, PDF and XML generated successfully in ${totalTime.toFixed(2)}ms!`
+        fileData: {
+          content: base64Data,
+          contentType,
+          filename: `invoice-${Date.now()}.${contentType?.includes('xml') ? 'xml' : 'pdf'}`
+        },
+        message: `Document generated successfully in ${totalTime.toFixed(2)}ms!`
       };
-
     } catch (error: any) {
       const errorTime = performance.now() - actionStart;
       console.error(`❌ Error after ${errorTime.toFixed(2)}ms:`, error);
