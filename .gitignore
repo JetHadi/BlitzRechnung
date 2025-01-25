@@ -65,3 +65,4 @@ vite.config.ts.timestamp-*
 # ignore generated pdfs and xml
 frontend/static/pdfs/*
 shared
+test.json
