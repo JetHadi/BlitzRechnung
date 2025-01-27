@@ -7,7 +7,7 @@ import { headerContainerSchema } from "$lib/schema/0_headerContainer";
 import { HeaderContainerDefaults } from "$lib/types/0_headerContainerDefaults";
 import { FirstSectionContainerDefaults } from "$lib/types/1_firstSectionContainerDefaults";
 import { firstSectionContainerSchema } from "$lib/schema/1_firstSectionContainer";
-import { A4RechnungSchema } from "$lib/schema/rechnung";
+import { A4RechnungSchema, type A4RechnungType } from "$lib/schema/rechnung";
 import { SecondSectionContainerDefaults } from "$lib/types/2_secondSectionContainerDefaults";
 import { secondSectionContainerSchema } from "$lib/schema/2_secondSectionContainer";
 import { mainSectionContainerSchema } from "$lib/schema/3_mainSectionContainer";
@@ -16,8 +16,9 @@ import { FourthSectionContainerDefaults } from "$lib/types/4_fourthSectionContai
 import { fourthSectionContainerSchema } from "$lib/schema/4_fourthSectionContainer";
 import { FooterContainerDefaults } from "$lib/types/5_footerContainerDefaults";
 import { footerContainerSchema } from "$lib/schema/5_footerContainer";
-import { getUnitCode } from "$lib/utils";
+//import { getUnitCode } from "$lib/utils";
 import { randomUUID } from "crypto";
+import { DefaultUBLInvoice, type BusinessTerms } from "$lib/invoice/UBL/createDefaults/defaultUBLInvoice";
 
 export const load: PageServerLoad = async () => {
   const startTime = performance.now();
@@ -36,40 +37,132 @@ export const load: PageServerLoad = async () => {
   return { headerForm: headerForm, firstSectionForm: firstSectionForm, secondSectionForm: secondSectionForm, mainSectionForm: mainSectionForm, fourthSectionForm: fourthSectionForm, footerForm: footerForm }
 }
 
-const calculateAmounts = (data) => {
-  const positions = data.mainSectionForm.RechnungsPositionen.map(pos => ({
+const getUnitCode = (unit: string): string => {
+  const unitMapping: { [key: string]: string } = {
+    'Stück': 'EA',    // one; unit (preferred code for pieces)
+    'Stunde': 'HUR',   // hour
+    'Tag': 'DAY',      // day
+    'Kilogramm': 'KGM', // kilogram
+    'Meter': 'MTR',    // meter
+    'Liter': 'LTR'     // liter
+  };
+
+  return unitMapping[unit] || 'C62'; // default to C62 if unit not found
+};
+
+
+// FIXME: add correct data type for calculate Amounts
+const calculateAmounts = (data : any) => {
+  const positions = data.mainSectionForm.RechnungsPositionen.map((pos: { einheit: string; }) => ({
     ...pos,
-    einheit: getUnitCode(pos.einheit) // Convert German label to code
+    einheit: getUnitCode(pos.einheit)
   }));
 
-  // Update the positions with converted units
   data.mainSectionForm.RechnungsPositionen = positions;
   let lineTotalAmount = 0;
   let taxTotalAmount = 0;
 
-  // Calculate line totals and tax
-  positions.forEach(pos => {
+  // Initialize arrays for each BT
+  let BT_116: (string | undefined)[] = [];
+  let BT_117: (string | undefined)[] = [];
+  let BT_118: (string | undefined)[] = [];
+  let BT_119: (string | undefined)[] = [];
+  let BT_120: (string | undefined)[] = [];
+  let BT_121: (string | undefined)[] = [];
+  let BT_126: (string | undefined)[] = [];
+  let BT_129: (string | undefined)[] = [];
+  let BT_130: (string | undefined)[] = [];
+  let BT_131: (string | undefined)[] = [];
+  let BT_146: (string | undefined)[] = [];
+  let BT_151: (string | undefined)[] = [];
+  let BT_152: (string | undefined)[] = [];
+  let BT_153: (string | undefined)[] = [];
+
+  interface TaxGroup {
+    baseAmount: number;
+    taxAmount: number;
+  }
+
+  interface TaxGroups {
+    [key: string]: TaxGroup;
+  }
+
+  // Group positions by tax percentage to maintain order
+  const taxGroups: TaxGroups = {};
+
+  positions.forEach((pos : any, index : number) => {
     const lineNet = pos.anzahl * pos.einheitspreis;
     const lineTax = lineNet * (pos.ustProzent / 100);
     lineTotalAmount += lineNet;
     taxTotalAmount += lineTax;
+
+    // Add position-specific BTs
+    BT_126.push((index + 1).toString());
+    BT_129.push(pos.anzahl.toString());
+    BT_130.push(pos.einheit);
+    BT_131.push(lineNet.toFixed(2));
+    BT_146.push(pos.einheitspreis.toFixed(2));
+    BT_151.push(pos.ustProzent === '0' ? 'E' : 'S');
+    BT_152.push(pos.ustProzent);
+    BT_153.push(pos.bezeichnung);
+
+    if (!taxGroups[pos.ustProzent]) {
+      taxGroups[pos.ustProzent] = {
+        baseAmount: 0,
+        taxAmount: 0
+      };
+    }
+    taxGroups[pos.ustProzent].baseAmount += lineNet;
+    taxGroups[pos.ustProzent].taxAmount += lineTax;
   });
 
-  // Calculate grand total
+
+  // Convert groups to ordered arrays
+  Object.entries(taxGroups).forEach(([taxRate, amounts]) => {
+    BT_116.push(amounts.baseAmount.toFixed(2));
+    BT_117.push(amounts.taxAmount.toFixed(2));
+    BT_119.push(taxRate);
+
+    if (taxRate === '0') {
+      BT_118.push('E');
+      BT_120.push('Kein Ausweis von Umsatzsteuer, da Kleinunternehmer gemäß § 19 UStG');
+      BT_121.push(undefined);
+    } else {
+      BT_118.push('S');
+      BT_120.push(undefined);
+      BT_121.push(undefined);
+    }
+  });
+
   const grandTotalAmount = lineTotalAmount + taxTotalAmount;
 
-  // Add calculated amounts and currency to the data
   data.calculatedAmounts = {
     currency: "EUR",
     lineTotalAmount: lineTotalAmount.toFixed(2),
     taxBasisTotalAmount: lineTotalAmount.toFixed(2),
     taxTotalAmount: taxTotalAmount.toFixed(2),
     grandTotalAmount: grandTotalAmount.toFixed(2),
-    duePayableAmount: grandTotalAmount.toFixed(2)
+    duePayableAmount: grandTotalAmount.toFixed(2),
+    BT_116,
+    BT_117,
+    BT_118,
+    BT_119,
+    BT_120,
+    BT_121,
+    BT_126,
+    BT_129,
+    BT_130,
+    BT_131,
+    BT_146,
+    BT_151,
+    BT_152,
+    BT_153
   };
 
   return data;
 };
+
+
 
 export const actions: Actions = {
   default: async (event) => {
@@ -128,8 +221,9 @@ export const actions: Actions = {
 
       /*
       XML creation process
-      */ 
+      */
       const invoiceData = calculateAmounts(A4Form.data)
+
       const testInvoice = {
         "ubl:Invoice": {
           "cbc:CustomizationID": "urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0",
@@ -495,6 +589,80 @@ export const actions: Actions = {
           ]
         }
       }
+
+      function addDays(date: Date, days: number): Date {
+        const newDate = new Date(date);
+        newDate.setDate(date.getDate() + days);
+        return newDate;
+      }
+
+
+      const mappedBT: BusinessTerms = {
+        BT_1: invoiceData.data.firstSectionForm.rechnungsnummer,
+        BT_2: invoiceData.data.firstSectionForm.rechnungsdatum.toISOString().slice(0, 10),
+        BT_3: "380", // TODO: maybe have a look at other BT-3 values if necessary
+        BT_5: "EUR",
+        BT_9: invoiceData.data.firstSectionForm.faelligkeitsdatum?.toISOString().slice(0, 10) || addDays(invoiceData.data.firstSectionForm.rechnungsdatum, 30).toISOString().slice(0, 10),
+        // FIXME: Der Benutzer sollte den Hinweis bekommen, dass hier die juristisch eingetragene Person als Absendername (BT-27) angegeben werden muss
+        BT_27: invoiceData.data.headerForm.absender_firma || invoiceData.data.headerForm.absender_name,
+        BT_31: invoiceData.data.footerForm.absender_ustId,
+        BT_32: invoiceData.data.footerForm.absender_steuernummer,
+        // sollte übermittelt werden, falls Kleinunternehmer-Regelung stattfindet
+        // FIXME: add Kleinunternehmer Boolean to Form
+        BT_33: invoiceData.data.firstSectionForm.Kleinunternehmer ? '„Kein Ausweis von Umsatzsteuer, da Kleinunternehmer gemäß § 19 UStG“' : undefined,
+        BT_34: invoiceData.data.footerForm.absender_ustId ? {
+          value: invoiceData.data.footerForm.absender_ustId,
+          schemeID: "9930"
+        } : undefined,
+        BT_35: invoiceData.data.headerForm.absender_strasse,
+        BT_37: invoiceData.data.headerForm.absender_ort,
+        BT_38: invoiceData.data.headerForm.absender_plz,
+        BT_40: "DE",
+        // FIXME: Der Benutzer sollte eindeutig zwischen Firmenname und Kontaktperson unterscheiden
+        BT_41: invoiceData.data.headerForm.absender_name,
+        BT_42: invoiceData.data.headerForm.absender_telefon,
+        BT_43: invoiceData.data.headerForm.absender_email,
+        BT_44: invoiceData.data.firstSectionForm.empfaenger_firma || invoiceData.data.firstSectionForm.empfaenger_name,
+        BT_45: invoiceData.data.firstSectionForm.empfaenger_firma ? invoiceData.data.firstSectionForm.empfaenger_name : undefined,
+        // TODO: integrte europian invoices and therefore ustd for the buyer
+        BT_49: {
+          value: '',
+          schemeID: undefined
+        },
+        BT_50: invoiceData.data.firstSectionForm.empfaenger_strasse,
+        BT_52: invoiceData.data.firstSectionForm.empfaenger_ort,
+        BT_53: invoiceData.data.firstSectionForm.empfaenger_plz,
+        BT_55: "DE",
+        BT_59: invoiceData.data.headerForm.absender_firma || invoiceData.data.headerForm.absender_name,
+        BT_106: invoiceData.data.calculatedAmounts.lineTotalAmount,
+        BT_109: invoiceData.data.calculatedAmounts.taxBasisTotalAmount,
+        BT_110: invoiceData.data.calculatedAmounts.taxTotalAmount,
+        BT_112: invoiceData.data.calculatedAmounts.grandTotalAmount,
+        BT_115: invoiceData.data.calculatedAmounts.duePayableAmount,
+        /* 
+        für jeden Steuersatz muss ein eigener Eintrag hier erstellt werden.
+        Ab hier sollte ein eigener Array entstehen
+        //BG-23 -- Umsatzsteuer-Auflistung für die verschieden angefallenen Umsatzsteuern
+        */
+        BT_116: invoiceData.data.calculatedAmounts.BT_116, // Nettobetrag auf dem Steuer angewendet wird
+        BT_117: invoiceData.data.calculatedAmounts.BT_117, // Steuerbetrag in Euro der dadurch entsteht
+        BT_118: invoiceData.data.calculatedAmounts.BT_118, // Kategorie der Steuer -- Für 19% und 7% gilt Code = 'S', Bei Kleinunternehmer welche keine Umsatzszeuer ausweisen gilt Code = 'E'
+        BT_119: invoiceData.data.calculatedAmounts.BT_119, // angefallener Steuersatz in Prozent
+        BT_120: invoiceData.data.calculatedAmounts.BT_120,
+
+        //BG-30 -- Rechnungspositions-Auflistungen
+        BT_126: invoiceData.data.calculatedAmounts.BT_126, // Position des Artikels in der Liste (index)
+        BT_129: invoiceData.data.calculatedAmounts.BT_129, // In Rechnung gestellte Menge der Position
+        BT_130: invoiceData.data.calculatedAmounts.BT_130, // Code der Maßeinheit der in rechnung gestellten Menge
+        BT_131: invoiceData.data.calculatedAmounts.BT_131, // Nettobetrag der in Rechnung gestellten Menge (Menge*Einheitspreis)
+        BT_146: invoiceData.data.calculatedAmounts.BT_146, // Netto-Einheitspreis des Artikels
+        BT_151: invoiceData.data.calculatedAmounts.BT_151, // Umsatzsteuerkategorie-Code (Entweder 'S' oder 'E')
+        BT_152: invoiceData.data.calculatedAmounts.BT_152, // Umsatzsteuersatz der Position in Prozent
+        BT_153: invoiceData.data.calculatedAmounts.BT_153, // Artikelname bzw Beschreibung
+      }
+
+      const defaultUBLInvoice = new DefaultUBLInvoice;
+      const createdXMLInvoice = defaultUBLInvoice.getInvoice(mappedBT)
 
       const formData = new FormData()
 

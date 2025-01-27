@@ -1,6 +1,6 @@
 import type { ADDITIONALSUPPORTINGDOCUMENTS, BUYER, BuyerCountryCode, BuyerElectronicAddressIdentificationSchemeIdentifier, BuyerIdentifierIdentificationSchemeIdentifier, BuyerLegalRegistrationIdentifierIdentificationSchemeIdentifier, CONTRACTREFERENCE, DeliverToCountryCode, DeliverToLocationIdentifierIdentificationSchemeIdentifier, DELIVERYINFORMATION, DELIVERYORINVOICEPERIOD, DESPATCHADVICEREFERENCE, DocumentLevelAllowanceOrChargeReasonCode, DocumentLevelAllowanceOrChargeVATCategoryCode, DOCUMENTLEVELALLOWANCESANDCHARGES, DOCUMENTTOTALS, Invoice, InvoiceCurrencyCode, InvoicedItemVATCategoryCode, InvoicedQuantityUnitOfMeasure, INVOICELINE, InvoiceLineObjectIdentifierIdentificationSchemeIdentifier, InvoiceTypeCode, ItemCountryOfOrigin, ItemPriceBaseQuantityUnitOfMeasureCode, ItemStandardIdentifierIdentificationSchemeIdentifier, LineLevelAllowanceOrChargeReason, LineLevelAllowanceOrChargeReasonCode, ORDERANDSALESORDERREFERENCE, PAYEE, PayeeLegalRegistrationIdentifierIdentificationSchemeIdentifier, PayeeOrBankAssignedCreditorIdentifierIdentificationSchemeIdentifier, PAYMENTINSTRUCTIONS, PaymentMeansTypeCode, PAYMENTTERMS, PRECEDINGINVOICEREFERENCE, PROJECTREFERENCE, RECEIPTADVICEREFERENCE, SELLER, SellerCountryCode, SellerElectronicAddressIdentificationSchemeIdentifier, SellerOrBankAssignedCreditorIdentifierIdentificationSchemeIdentifier, SELLERTAXREPRESENTATIVEPARTY, TaxRepresentativeCountryCode, TAXTOTAL, TENDERORLOTREFERENCE, ValueAddedTaxPointDateCode, VATAccountingCurrencyCode, VATCategoryCode, VATExemptionReasonCode } from "../invoice.interface";
 
-interface BusinessTerms {
+export interface BusinessTerms {
     BT_1: string,
     BT_2: string,
     BT_3: InvoiceTypeCode,
@@ -8,7 +8,7 @@ interface BusinessTerms {
     BT_6?: VATAccountingCurrencyCode,
     BT_7?: string,
     BT_8?: ValueAddedTaxPointDateCode,
-    BT_9?: string,
+    BT_9: string,
     BT_10?: string,
     BT_11?: string,
     BT_12?: string,
@@ -19,7 +19,7 @@ interface BusinessTerms {
     BT_17?: string,
     BT_18?: string,
     BT_19?: string,
-    BT_20: string,
+    BT_20?: string,
     BT_22?: string,
     BT_23?: string,
     BT_24?: string,
@@ -32,7 +32,7 @@ interface BusinessTerms {
     BT_31?: string,
     BT_32?: string,
     BT_33?: string,
-    BT_34: { value: string, schemeID?: SellerElectronicAddressIdentificationSchemeIdentifier },
+    BT_34?: { value: string, schemeID?: SellerElectronicAddressIdentificationSchemeIdentifier },
     BT_35?: string,
     BT_36?: string,
     BT_37?: string,
@@ -53,6 +53,8 @@ interface BusinessTerms {
         schemeID?: BuyerLegalRegistrationIdentifierIdentificationSchemeIdentifier;
     },
     BT_48?: string,
+    // Umsatzsteuer des Käufers ist in Deutschland nicht notwendig.
+    // Nur in innergemeinschaftlichen (europäischen)
     BT_49: {
         value: string;
         schemeID?: BuyerElectronicAddressIdentificationSchemeIdentifier;
@@ -75,14 +77,14 @@ interface BusinessTerms {
         value: string;
         schemeID?: PayeeLegalRegistrationIdentifierIdentificationSchemeIdentifier;
     },
-    BT_62: string,
-    BT_63: string,
+    BT_62?: string,
+    BT_63?: string,
     BT_64?: string,
     BT_65?: string,
     BT_66?: string,
     BT_67?: string,
     BT_68?: string,
-    BT_69: TaxRepresentativeCountryCode,
+    BT_69?: TaxRepresentativeCountryCode,
     BT_70?: string,
     BT_71?: {
         value?: string;
@@ -97,7 +99,7 @@ interface BusinessTerms {
     BT_78?: string,
     BT_79?: string,
     BT_80?: DeliverToCountryCode,
-    BT_81: PaymentMeansTypeCode,
+    BT_81?: PaymentMeansTypeCode,
     BT_82?: string,
     BT_83?: string,
     BT_84?: string,
@@ -107,17 +109,17 @@ interface BusinessTerms {
     BT_88?: string,
     BT_89?: string,
     BT_91?: string,
-    BT_92: string,
+    BT_92?: string,
     BT_93?: string,
     BT_94?: string,
-    BT_95: DocumentLevelAllowanceOrChargeVATCategoryCode,
+    BT_95?: DocumentLevelAllowanceOrChargeVATCategoryCode,
     BT_96?: string,
     BT_97?: string,
     BT_98?: DocumentLevelAllowanceOrChargeReasonCode,
-    BT_99: string,
+    BT_99?: string,
     BT_100?: string,
     BT_101?: string,
-    BT_102: DocumentLevelAllowanceOrChargeVATCategoryCode,
+    BT_102?: DocumentLevelAllowanceOrChargeVATCategoryCode,
     BT_103?: string,
     BT_104?: string,
     BT_105?: DocumentLevelAllowanceOrChargeReasonCode,
@@ -130,44 +132,44 @@ interface BusinessTerms {
     BT_113?: string,
     BT_114?: string,
     BT_115: string,
-    BT_116?: string,
-    BT_117?: string,
-    BT_118?: VATCategoryCode,
-    BT_119?: string,
-    BT_120?: string,
-    BT_121?: string,
+    BT_116?: string[],
+    BT_117?: string[],
+    BT_118?: VATCategoryCode[],
+    BT_119?: string[],
+    BT_120?: string[],
+    BT_121?: string[],
     BT_122?: string,
     BT_123?: string,
     BT_124?: string,
     BT_125?: string,
-    BT_126: string,
+    BT_126: string[],
     BT_127?: string,
     BT_128?: { value: string, schemeID: InvoiceLineObjectIdentifierIdentificationSchemeIdentifier },
-    BT_129: string,
-    BT_130: InvoicedQuantityUnitOfMeasure,
-    BT_131: string,
+    BT_129: string[],
+    BT_130: InvoicedQuantityUnitOfMeasure[],
+    BT_131: string[],
     BT_132?: string,
     BT_133?: string,
     BT_134?: string,
     BT_135?: string,
-    BT_136: string | undefined;
-    BT_137: string | undefined;
-    BT_138: string | undefined;
-    BT_139: string | undefined;
-    BT_140: LineLevelAllowanceOrChargeReasonCode | undefined;
-    BT_141: string | undefined;
-    BT_142: string | undefined;
-    BT_143: string | undefined;
-    BT_144: string | undefined;
-    BT_145: LineLevelAllowanceOrChargeReasonCode | undefined;
-    BT_146: string,
-    BT_147: string | undefined;
-    BT_148: string | undefined;
+    BT_136?: string;
+    BT_137?: string;
+    BT_138?: string;
+    BT_139?: string;
+    BT_140?: LineLevelAllowanceOrChargeReasonCode;
+    BT_141?: string;
+    BT_142?: string;
+    BT_143?: string;
+    BT_144?: string;
+    BT_145?: LineLevelAllowanceOrChargeReasonCode;
+    BT_146: string[],
+    BT_147?: string;
+    BT_148?: string;
     BT_149?: string,
     BT_150?: ItemPriceBaseQuantityUnitOfMeasureCode,
-    BT_151: InvoicedItemVATCategoryCode,
-    BT_152?: string,
-    BT_153: string,
+    BT_151: InvoicedItemVATCategoryCode[],
+    BT_152?: string[],
+    BT_153: string[],
     BT_154?: string,
     BT_155?: string,
     BT_156?: string,
@@ -177,16 +179,17 @@ interface BusinessTerms {
     },
     BT_158?: string,
     BT_159?: ItemCountryOfOrigin,
-    BT_160: string | undefined,
-    BT_161: string | undefined,
+    BT_160?: string,
+    BT_161?: string,
     BT_162?: string,
     BT_163?: string,
     BT_164?: string,
     BT_165?: string,
-    ChargeIndicator: 'true' | 'false'
+    ChargeIndicator?: 'true' | 'false'
 }
 
 export class DefaultUBLInvoice {
+
     getInvoice(params: BusinessTerms): Invoice {
         const invoice = {
             'ubl:Invoice': {
@@ -200,7 +203,7 @@ export class DefaultUBLInvoice {
                 'cbc:Note': params.BT_22,
                 'cbc:TaxPointDate': params.BT_7,
                 'cbc:DocumentCurrencyCode': params.BT_5,
-                //FIXME: if BT-6 is different than BT-6 then BT-111 has to be also set
+                //FIXME: if BT-6 is different than BT-5 then BT-111 has to be also set
                 'cbc:TaxCurrencyCode': params.BT_6,
                 'cbc:AccountingCost': params.BT_19,
                 'cbc:BuyerReference': params.BT_10,
@@ -219,19 +222,19 @@ export class DefaultUBLInvoice {
 
                 'cac:PayeeParty': this.createPayeeParty({ BT_60: params.BT_60, BT_59: params.BT_59, BT_61: params.BT_61 }),
 
-                'cac:TaxRepresentativeParty': this.createTaxRepresentativeParty({ BT_62: params.BT_62, BT_64: params.BT_64, BT_65: params.BT_65, BT_66: params.BT_66, BT_67: params.BT_67, BT_68: params.BT_68, BT_164: params.BT_164, BT_69: params.BT_69, BT_63: params.BT_63 }),
+                'cac:TaxRepresentativeParty': (params.BT_62 && params.BT_63 && params.BT_69) ? this.createTaxRepresentativeParty({ BT_62: params.BT_62, BT_64: params.BT_64, BT_65: params.BT_65, BT_66: params.BT_66, BT_67: params.BT_67, BT_68: params.BT_68, BT_164: params.BT_164, BT_69: params.BT_69, BT_63: params.BT_63 }) : undefined,
 
                 'cac:Delivery': this.createDelivery({ BT_72: params.BT_72, BT_71: params.BT_71, BT_75: params.BT_75, BT_76: params.BT_76, BT_77: params.BT_77, BT_78: params.BT_78, BT_79: params.BT_79, BT_165: params.BT_165, BT_80: params.BT_80, BT_70: params.BT_70 }),
 
-                'cac:PaymentMeans': this.createPaymentMeans({ BT_81: params.BT_81, BT_82: params.BT_82, BT_83: params.BT_83, BT_87: params.BT_87, BT_88: params.BT_88, BT_84: params.BT_84, BT_85: params.BT_85, BT_86: params.BT_86, BT_89: params.BT_89, BT_91: params.BT_91 }),
+                'cac:PaymentMeans': params.BT_81 ? this.createPaymentMeans({ BT_81: params.BT_81, BT_82: params.BT_82, BT_83: params.BT_83, BT_87: params.BT_87, BT_88: params.BT_88, BT_84: params.BT_84, BT_85: params.BT_85, BT_86: params.BT_86, BT_89: params.BT_89, BT_91: params.BT_91 }) : undefined,
 
-                'cac:PaymentTerms': this.createPaymentTerms({ BT_20: params.BT_20 }),
-
-                'cac:AllowanceCharge': this.createAllowanceCharge({
+                'cac:PaymentTerms': params.BT_20 ? this.createPaymentTerms({ BT_20: params.BT_20 }) : undefined,
+                // TODO: Implement correct Allowance or Charge 
+                'cac:AllowanceCharge': (params.ChargeIndicator) && ((params.BT_92 && params.BT_95) || (params.BT_99 && params.BT_102)) ? this.createAllowanceCharge({
                     BT_98: params.BT_98, BT_105: params.BT_105, BT_97: params.BT_97, BT_104: params.BT_104, BT_94: params.BT_94, BT_101: params.BT_101, BT_92: params.BT_92, BT_99: params.BT_99, BT_93: params.BT_93, BT_100: params.BT_100, BT_95: params.BT_95, BT_102: params.BT_102, BT_96: params.BT_96, BT_103: params.BT_103,
                     ChargeIndicator: params.ChargeIndicator,
                     BT_5: params.BT_5
-                }),
+                }) : undefined,
 
                 'cac:TaxTotal': this.createTaxTotal({
                     BT_110: params.BT_110, BT_116: params.BT_116, BT_117: params.BT_117, BT_118: params.BT_118, BT_119: params.BT_119, BT_121: params.BT_121, BT_120: params.BT_120,
@@ -370,7 +373,7 @@ export class DefaultUBLInvoice {
         {
             BT_40: SellerCountryCode,   // Country IdentificationCode
             BT_27: string,   // PartyLegalEntity RegistrationName
-            BT_34: { value: string, schemeID?: SellerElectronicAddressIdentificationSchemeIdentifier },  // EndpointID
+            BT_34?: { value: string, schemeID?: SellerElectronicAddressIdentificationSchemeIdentifier },  // EndpointID
             BT_29?: { value: string, schemeID?: SellerOrBankAssignedCreditorIdentifierIdentificationSchemeIdentifier },  // PartyIdentification ID
             BT_28?: string,  // PartyName Name
             BT_35?: string,  // StreetName
@@ -390,8 +393,8 @@ export class DefaultUBLInvoice {
     ): SELLER {
         return {
             'cac:Party': {
-                'cbc:EndpointID': params.BT_34.value,
-                'cbc:EndpointID@schemeID': params.BT_34.schemeID, // Optional scheme identifier
+                'cbc:EndpointID': params.BT_34 ? params.BT_34?.value : '',
+                'cbc:EndpointID@schemeID': params.BT_34?.schemeID, // Optional scheme identifier
                 'cac:PartyIdentification': params.BT_29 ? [{
                     'cbc:ID': params.BT_29.value,
                     'cbc:ID@schemeID': params.BT_29?.schemeID
@@ -643,11 +646,11 @@ export class DefaultUBLInvoice {
     private createAllowanceCharge(params:
         {
             ChargeIndicator: 'true' | 'false',
-            BT_92: string,  // Amount
-            BT_99: string,
+            BT_92?: string,  // Amount
+            BT_99?: string,
             BT_5: InvoiceCurrencyCode,
-            BT_95: DocumentLevelAllowanceOrChargeVATCategoryCode,  // Tax Category ID
-            BT_102: DocumentLevelAllowanceOrChargeVATCategoryCode,
+            BT_95?: DocumentLevelAllowanceOrChargeVATCategoryCode,  // Tax Category ID
+            BT_102?: DocumentLevelAllowanceOrChargeVATCategoryCode,
             BT_98?: DocumentLevelAllowanceOrChargeReasonCode,  // Allowance Reason Code
             BT_105?: DocumentLevelAllowanceOrChargeReasonCode, // Charge Reason Code
             BT_97?: string,  // Allowance Reason
@@ -664,12 +667,12 @@ export class DefaultUBLInvoice {
             'cbc:AllowanceChargeReasonCode': params.ChargeIndicator === 'true' ? params.BT_105 : params.BT_98,
             'cbc:AllowanceChargeReason': params.ChargeIndicator === 'true' ? params.BT_104 : params.BT_97,
             'cbc:MultiplierFactorNumeric': params.ChargeIndicator === 'true' ? params.BT_101 : params.BT_94,
-            'cbc:Amount': params.ChargeIndicator === 'true' ? params.BT_99 : params.BT_92,
+            'cbc:Amount': params.ChargeIndicator === 'true' ? (params.BT_99 ? params.BT_99 : '') : (params.BT_92 ? params.BT_92 : ''),
             'cbc:Amount@currencyID': params.BT_5,
             'cbc:BaseAmount': params.ChargeIndicator === 'true' ? params.BT_100 : params.BT_93,
             'cbc:BaseAmount@currencyID': params.BT_5,
             'cac:TaxCategory': {
-                'cbc:ID': params.ChargeIndicator === 'true' ? params.BT_102 : params.BT_95,
+                'cbc:ID': params.ChargeIndicator === 'true' ? (params.BT_102 ? params.BT_102 : 'S') : (params.BT_95 ? params.BT_95 : 'S'),
                 'cbc:Percent': params.ChargeIndicator === 'true' ? params.BT_103 : params.BT_96,
                 'cac:TaxScheme': {
                     'cbc:ID': 'VAT'
@@ -679,38 +682,48 @@ export class DefaultUBLInvoice {
     }
 
 
-    private createTaxTotal(params:
-        {
-            BT_110: string,
-            BT_5: InvoiceCurrencyCode, // Use document currency code instead of tax currency
-            BT_116?: string,
-            BT_117?: string,
-            BT_118?: VATCategoryCode,
-            BT_119?: string,
-            BT_121?: VATExemptionReasonCode,
-            BT_120?: string
-        }): [TAXTOTAL] | [TAXTOTAL, TAXTOTAL] {
+    private createTaxTotal(params: {
+        BT_110: string,
+        BT_5: InvoiceCurrencyCode,
+        BT_116?: string[],
+        BT_117?: string[],
+        BT_118?: VATCategoryCode[],
+        BT_119?: string[],
+        BT_121?: VATExemptionReasonCode[],
+        BT_120?: string[]
+    }): [TAXTOTAL] {
+        const taxSubtotals: any[] = [];
+
+        if ((params.BT_116 && params.BT_116?.length > 0) &&
+            (params.BT_117 && params.BT_117?.length > 0) &&
+            (params.BT_118 && params.BT_118?.length > 0)) {
+
+            params.BT_116.forEach((_, index) => {
+                taxSubtotals.push({
+                    'cbc:TaxableAmount': params.BT_116?.length ? params.BT_116[index] : undefined,
+                    'cbc:TaxableAmount@currencyID': params.BT_5,
+                    'cbc:TaxAmount': params.BT_117?.length ? params.BT_117[index] : undefined,
+                    'cbc:TaxAmount@currencyID': params.BT_5,
+                    'cac:TaxCategory': {
+                        'cbc:ID': params.BT_118?.length ? params.BT_118[index] : undefined,
+                        'cbc:Percent': params.BT_119?.length ? params.BT_119?.[index] : undefined,
+                        'cbc:TaxExemptionReasonCode': params.BT_121?.length ? params.BT_121?.[index] : undefined,
+                        'cbc:TaxExemptionReason': params.BT_120?.length ? params.BT_120?.[index] : undefined,
+                        'cac:TaxScheme': {
+                            'cbc:ID': 'VAT'
+                        }
+                    }
+                });
+            });
+        }
+
         return [{
-            // FIXME: add BT-111 if BT_6 is different than BT_5
             'cbc:TaxAmount': params.BT_110,
             'cbc:TaxAmount@currencyID': params.BT_5,
-            'cac:TaxSubtotal': (params.BT_116 && params.BT_117 && params.BT_118) ? [{
-                'cbc:TaxableAmount': params.BT_116,
-                'cbc:TaxableAmount@currencyID': params.BT_5,
-                'cbc:TaxAmount': params.BT_117,
-                'cbc:TaxAmount@currencyID': params.BT_5,
-                'cac:TaxCategory': {
-                    'cbc:ID': params.BT_118,
-                    'cbc:Percent': params.BT_119,
-                    'cbc:TaxExemptionReasonCode': params.BT_121,
-                    'cbc:TaxExemptionReason': params.BT_120,
-                    'cac:TaxScheme': {
-                        'cbc:ID': 'VAT'
-                    }
-                }
-            }] : undefined
+            'cac:TaxSubtotal': taxSubtotals.length > 0 ? taxSubtotals : undefined
         }];
     }
+
 
 
     private createLegalMonetaryTotal(params: {
@@ -746,12 +759,12 @@ export class DefaultUBLInvoice {
 
     private createInvoiceLine(params: {
         BT_5: InvoiceCurrencyCode,
-        BT_126: string,
+        BT_126: string[],
         BT_127?: string,
         BT_128?: { value: string, schemeID: InvoiceLineObjectIdentifierIdentificationSchemeIdentifier },
-        BT_129: string,
-        BT_130: InvoicedQuantityUnitOfMeasure,
-        BT_131: string,
+        BT_129: string[],
+        BT_130: InvoicedQuantityUnitOfMeasure[],
+        BT_131: string[],
         BT_132?: string,
         BT_133?: string,
         BT_134?: string,
@@ -766,14 +779,14 @@ export class DefaultUBLInvoice {
         BT_143?: string,
         BT_144?: LineLevelAllowanceOrChargeReason,
         BT_145?: LineLevelAllowanceOrChargeReasonCode,
-        BT_146: string,
+        BT_146: string[],
         BT_147?: string,
         BT_148?: string,
         BT_149?: string,
         BT_150?: ItemPriceBaseQuantityUnitOfMeasureCode,
-        BT_151: InvoicedItemVATCategoryCode,
-        BT_152?: string,
-        BT_153: string,
+        BT_151: InvoicedItemVATCategoryCode[],
+        BT_152?: string[],
+        BT_153: string[],
         BT_154?: string,
         BT_155?: string,
         BT_156?: string,
@@ -782,14 +795,15 @@ export class DefaultUBLInvoice {
         BT_159?: ItemCountryOfOrigin,
         BT_160?: string,
         BT_161?: string,
-        ChargeIndicator: 'true' | 'false'
+        ChargeIndicator?: 'true' | 'false'
     }): [INVOICELINE, ...INVOICELINE[]] {
-        return [{
-            'cbc:ID': params.BT_126,
+        // Create an array of invoice lines based on the length of BT_126 (line IDs)
+        return params.BT_126.map((_, index) => ({
+            'cbc:ID': params.BT_126[index],
             'cbc:Note': params.BT_127,
-            'cbc:InvoicedQuantity': params.BT_129,
-            'cbc:InvoicedQuantity@unitCode': params.BT_130,
-            'cbc:LineExtensionAmount': params.BT_131,
+            'cbc:InvoicedQuantity': params.BT_129[index],
+            'cbc:InvoicedQuantity@unitCode': params.BT_130[index],
+            'cbc:LineExtensionAmount': params.BT_131[index],
             'cbc:LineExtensionAmount@currencyID': params.BT_5,
             'cbc:AccountingCost': params.BT_133,
             'cac:InvoicePeriod': (params.BT_134 || params.BT_135) ? {
@@ -805,18 +819,18 @@ export class DefaultUBLInvoice {
                 'cbc:DocumentTypeCode': '130'
             } : undefined,
             'cac:AllowanceCharge': params.ChargeIndicator && (params.BT_136 || params.BT_141) ? [{
-                'cbc:ChargeIndicator': params.ChargeIndicator, // Default to allowance, can be changed to 'true' for charges
-                'cbc:AllowanceChargeReasonCode': params.BT_140 || params.BT_145, // Line-level allowance/charge reason code
-                'cbc:AllowanceChargeReason': params.BT_139 || params.BT_144, // Line-level allowance/charge reason
-                'cbc:MultiplierFactorNumeric': params.BT_138 || params.BT_143, // Multiplier factor
-                'cbc:Amount': params.BT_136 || params.BT_141 || '0', // Allowance/charge amount
-                'cbc:Amount@currencyID': params.BT_5, // Use document currency code
-                'cbc:BaseAmount': params.BT_137 || params.BT_142, // Base amount for allowance/charge
-                'cbc:BaseAmount@currencyID': params.BT_5 // Use document currency code
+                'cbc:ChargeIndicator': params.ChargeIndicator,
+                'cbc:AllowanceChargeReasonCode': params.BT_140 || params.BT_145,
+                'cbc:AllowanceChargeReason': params.BT_139 || params.BT_144,
+                'cbc:MultiplierFactorNumeric': params.BT_138 || params.BT_143,
+                'cbc:Amount': params.BT_136 || params.BT_141 || '0',
+                'cbc:Amount@currencyID': params.BT_5,
+                'cbc:BaseAmount': params.BT_137 || params.BT_142,
+                'cbc:BaseAmount@currencyID': params.BT_5
             }] : undefined,
             'cac:Item': {
                 'cbc:Description': params.BT_154,
-                'cbc:Name': params.BT_153, // Ensure Name is always provided
+                'cbc:Name': params.BT_153[index],
                 'cac:BuyersItemIdentification': params.BT_156 ? {
                     'cbc:ID': params.BT_156
                 } : undefined,
@@ -834,8 +848,8 @@ export class DefaultUBLInvoice {
                     'cbc:ItemClassificationCode': params.BT_158
                 }] : undefined,
                 'cac:ClassifiedTaxCategory': {
-                    'cbc:ID': params.BT_151 || 'S', // Default to 'S' if not provided
-                    'cbc:Percent': params.BT_152,
+                    'cbc:ID': params.BT_151[index],
+                    'cbc:Percent': params.BT_152?.[index],
                     'cac:TaxScheme': {
                         'cbc:ID': 'VAT'
                     }
@@ -846,14 +860,11 @@ export class DefaultUBLInvoice {
                 }] : undefined
             },
             'cac:Price': {
-                'cbc:PriceAmount': params.BT_146,
+                'cbc:PriceAmount': params.BT_146[index],
                 'cbc:PriceAmount@currencyID': params.BT_5,
                 'cbc:BaseQuantity': params.BT_149,
                 'cbc:BaseQuantity@unitCode': params.BT_150,
                 'cac:AllowanceCharge': params.BT_147 ? {
-                    /**
-                         * Mandatory element. Value must be “false”
-                         */
                     'cbc:ChargeIndicator': 'false',
                     'cbc:Amount': params.BT_147,
                     'cbc:Amount@currencyID': params.BT_147 ? params.BT_5 : undefined,
@@ -861,7 +872,8 @@ export class DefaultUBLInvoice {
                     'cbc:BaseAmount@currencyID': params.BT_148 ? params.BT_5 : undefined
                 } : undefined
             }
-        }];
+        })) as [INVOICELINE, ...INVOICELINE[]];
     }
+
 
 }
