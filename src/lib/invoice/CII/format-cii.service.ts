@@ -100,21 +100,21 @@ export type SubType = 'DateTimeString';
 // rendered if the elements it depends on exist in the source.
 export type Transformation =
 	| {
-			type: 'object' | 'array';
-			subtype?: never;
-			src: string[];
-			dest: string[];
-			children: Transformation[];
-			fxProfileMask?: never;
-	  }
+		type: 'object' | 'array';
+		subtype?: never;
+		src: string[];
+		dest: string[];
+		children: Transformation[];
+		fxProfileMask?: never;
+	}
 	| {
-			type: 'string';
-			subtype?: SubType;
-			src: string[];
-			dest: string[];
-			children?: never;
-			fxProfileMask: FXProfile;
-	  };
+		type: 'string';
+		subtype?: SubType;
+		src: string[];
+		dest: string[];
+		children?: never;
+		fxProfileMask: FXProfile;
+	};
 
 const cacAdditionalItemProperty: Transformation = {
 	type: 'object',
@@ -791,32 +791,6 @@ export const deliveryAddress: Transformation[] = [
 		dest: ['ram:CountrySubdivisionName'],
 		fxProfileMask: FX_MASK_BASIC_WL,
 	},
-	{
-		type: 'string',
-		src: ['cac:Delivery', 'cbc:ActualDeliveryDate'],
-		dest: [
-			'ram:ActualDeliverySupplyChainEvent',
-			'ram:OccurrenceDateTime',
-			'udt:DateTimeString',
-		],
-		fxProfileMask: FX_MASK_BASIC_WL,
-	},
-	{
-		type: 'string',
-		src: ['cac:Delivery', 'cbc:ActualDeliveryDate', 'fixed:102'],
-		dest: [
-			'ram:ActualDeliverySupplyChainEvent',
-			'ram:OccurrenceDateTime',
-			'udt:DateTimeString@format',
-		],
-		fxProfileMask: FX_MASK_MINIMUM,
-	},
-	{
-		type: 'string',
-		src: ['cac:DespatchDocumentReference', 'cbc:ID'],
-		dest: ['ram:DespatchAdviceReferencedDocument', 'ram:IssuerAssignedID'],
-		fxProfileMask: FX_MASK_BASIC_WL,
-	},
 ];
 
 const cacPayeeParty: Transformation[] = [
@@ -1276,6 +1250,7 @@ export const ublInvoice: Transformation = {
 					],
 					fxProfileMask: FX_MASK_EXTENDED,
 				},
+				// FIXME: How is this applied in CII ? There are no children here
 				{
 					type: 'object',
 					src: [],
@@ -1317,6 +1292,35 @@ export const ublInvoice: Transformation = {
 						'ram:PostalTradeAddress',
 					],
 					children: deliveryAddress,
+				},
+				{
+					type: 'string',
+					subtype: 'DateTimeString',
+					src: ['cac:Delivery', 'cbc:ActualDeliveryDate'],
+					dest: [
+						'ram:ApplicableHeaderTradeDelivery',
+						'ram:ActualDeliverySupplyChainEvent',
+						'ram:OccurrenceDateTime',
+						'udt:DateTimeString',
+					],
+					fxProfileMask: FX_MASK_BASIC_WL,
+				},
+				{
+					type: 'string',
+					src: ['cac:Delivery', 'cbc:ActualDeliveryDate', 'fixed:102'],
+					dest: [
+						'ram:ApplicableHeaderTradeDelivery',
+						'ram:ActualDeliverySupplyChainEvent',
+						'ram:OccurrenceDateTime',
+						'udt:DateTimeString@format',
+					],
+					fxProfileMask: FX_MASK_MINIMUM,
+				},
+				{
+					type: 'string',
+					src: ['cac:DespatchDocumentReference', 'cbc:ID'],
+					dest: ['ram:DespatchAdviceReferencedDocument', 'ram:IssuerAssignedID'],
+					fxProfileMask: FX_MASK_BASIC_WL,
 				},
 				{
 					type: 'string',
@@ -1485,8 +1489,7 @@ export const ublInvoice: Transformation = {
 
 export class FormatCIIService
 	extends FormatUBLService
-	implements EInvoiceFormat
-{
+	implements EInvoiceFormat {
 	get customizationID(): string {
 		return 'urn:cen.eu:en16931:2017';
 	}
