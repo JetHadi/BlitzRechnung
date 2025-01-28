@@ -68,7 +68,7 @@ export interface BusinessTerms {
     BT_56?: string,
     BT_57?: string,
     BT_58?: string,
-    BT_59: string,
+    BT_59?: string,
     BT_60?: {
         value: string;
         schemeID?: PayeeOrBankAssignedCreditorIdentifierIdentificationSchemeIdentifier;
@@ -220,7 +220,7 @@ export class DefaultUBLInvoice {
 
                 'cac:AccountingCustomerParty': this.createAccountingCustomerParty({ BT_49: params.BT_49, BT_46: params.BT_46, BT_45: params.BT_45, BT_50: params.BT_50, BT_51: params.BT_51, BT_52: params.BT_52, BT_53: params.BT_53, BT_54: params.BT_54, BT_163: params.BT_163, BT_55: params.BT_55, BT_48: params.BT_48, BT_44: params.BT_44, BT_47: params.BT_47, BT_56: params.BT_56, BT_57: params.BT_57, BT_58: params.BT_58 }),
 
-                'cac:PayeeParty': this.createPayeeParty({ BT_60: params.BT_60, BT_59: params.BT_59, BT_61: params.BT_61 }),
+                'cac:PayeeParty': params.BT_59 ? this.createPayeeParty({ BT_60: params.BT_60, BT_59: params.BT_59, BT_61: params.BT_61 }) : undefined,
 
                 'cac:TaxRepresentativeParty': (params.BT_62 && params.BT_63 && params.BT_69) ? this.createTaxRepresentativeParty({ BT_62: params.BT_62, BT_64: params.BT_64, BT_65: params.BT_65, BT_66: params.BT_66, BT_67: params.BT_67, BT_68: params.BT_68, BT_164: params.BT_164, BT_69: params.BT_69, BT_63: params.BT_63 }) : undefined,
 
@@ -458,8 +458,9 @@ export class DefaultUBLInvoice {
         }): BUYER {
         return {
             'cac:Party': {
-                'cbc:EndpointID': params.BT_49.value,
-                'cbc:EndpointID@schemeID': params.BT_49.schemeID,
+                //FIXME: EndpointID is only necessary in Peppol to be VAT Number
+                'cbc:EndpointID':params.BT_49 ? params.BT_49.value : undefined,
+                'cbc:EndpointID@schemeID': params.BT_49?.schemeID,
                 'cac:PartyIdentification': params.BT_46 ? {
                     'cbc:ID': params.BT_46.value,
                     'cbc:ID@schemeID': params.BT_46.schemeID
@@ -503,6 +504,7 @@ export class DefaultUBLInvoice {
 
     private createPayeeParty(params:
         {
+            // FIXME: Falls der Zahlungsempfänger anders als Verkäufer ist, dann muss BT_59 gesetzt werden bei CII
             BT_59: string,
             BT_60?: { value: string, schemeID?: PayeeOrBankAssignedCreditorIdentifierIdentificationSchemeIdentifier },
             BT_61?: { value: string, schemeID?: PayeeLegalRegistrationIdentifierIdentificationSchemeIdentifier },

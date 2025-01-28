@@ -223,7 +223,7 @@ export const actions: Actions = {
       XML creation process
       */
       const invoiceData = calculateAmounts(A4Form.data)
-
+      // console.log(invoiceData)
       const testInvoice = {
         "ubl:Invoice": {
           "cbc:CustomizationID": "urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0",
@@ -598,67 +598,72 @@ export const actions: Actions = {
 
 
       const mappedBT: BusinessTerms = {
-        BT_1: invoiceData.data.firstSectionForm.rechnungsnummer,
-        BT_2: invoiceData.data.firstSectionForm.rechnungsdatum.toISOString().slice(0, 10),
+        BT_1: invoiceData.firstSectionForm.rechnungsnummer,
+        BT_2: invoiceData.firstSectionForm.rechnungsdatum.toISOString().slice(0, 10),
         BT_3: "380", // TODO: maybe have a look at other BT-3 values if necessary
         BT_5: "EUR",
-        BT_9: invoiceData.data.firstSectionForm.faelligkeitsdatum?.toISOString().slice(0, 10) || addDays(invoiceData.data.firstSectionForm.rechnungsdatum, 30).toISOString().slice(0, 10),
+        BT_9: invoiceData.firstSectionForm.faelligkeitsdatum?.toISOString().slice(0, 10) || addDays(invoiceData.firstSectionForm.rechnungsdatum, 30).toISOString().slice(0, 10),
         // FIXME: Der Benutzer sollte den Hinweis bekommen, dass hier die juristisch eingetragene Person als Absendername (BT-27) angegeben werden muss
-        BT_27: invoiceData.data.headerForm.absender_firma || invoiceData.data.headerForm.absender_name,
-        BT_31: invoiceData.data.footerForm.absender_ustId,
-        BT_32: invoiceData.data.footerForm.absender_steuernummer,
+        BT_27: invoiceData.headerForm.absender_firma || invoiceData.headerForm.absender_name,
+        BT_31: invoiceData.footerForm.absender_ustId,
+        BT_32: invoiceData.footerForm.absender_steuernummer,
         // sollte übermittelt werden, falls Kleinunternehmer-Regelung stattfindet
         // FIXME: add Kleinunternehmer Boolean to Form
-        BT_33: invoiceData.data.firstSectionForm.Kleinunternehmer ? '„Kein Ausweis von Umsatzsteuer, da Kleinunternehmer gemäß § 19 UStG“' : undefined,
-        BT_34: invoiceData.data.footerForm.absender_ustId ? {
-          value: invoiceData.data.footerForm.absender_ustId,
+        BT_33: invoiceData.firstSectionForm.Kleinunternehmer ? '„Kein Ausweis von Umsatzsteuer, da Kleinunternehmer gemäß § 19 UStG“' : undefined,
+        BT_34: invoiceData.footerForm.absender_ustId ? {
+          value: invoiceData.footerForm.absender_ustId,
           schemeID: "9930"
         } : undefined,
-        BT_35: invoiceData.data.headerForm.absender_strasse,
-        BT_37: invoiceData.data.headerForm.absender_ort,
-        BT_38: invoiceData.data.headerForm.absender_plz,
+        BT_35: invoiceData.headerForm.absender_strasse,
+        BT_37: invoiceData.headerForm.absender_ort,
+        BT_38: invoiceData.headerForm.absender_plz,
         BT_40: "DE",
         // FIXME: Der Benutzer sollte eindeutig zwischen Firmenname und Kontaktperson unterscheiden
-        BT_41: invoiceData.data.headerForm.absender_name,
-        BT_42: invoiceData.data.headerForm.absender_telefon,
-        BT_43: invoiceData.data.headerForm.absender_email,
-        BT_44: invoiceData.data.firstSectionForm.empfaenger_firma || invoiceData.data.firstSectionForm.empfaenger_name,
-        BT_45: invoiceData.data.firstSectionForm.empfaenger_firma ? invoiceData.data.firstSectionForm.empfaenger_name : undefined,
+        BT_41: invoiceData.headerForm.absender_name || undefined,
+        BT_42: invoiceData.headerForm.absender_telefon,
+        BT_43: invoiceData.headerForm.absender_email,
+        BT_44: invoiceData.firstSectionForm.empfaenger_firma || invoiceData.firstSectionForm.empfaenger_name,
+        BT_45: invoiceData.firstSectionForm.empfaenger_firma ? invoiceData.firstSectionForm.empfaenger_name : undefined,
         // TODO: integrte europian invoices and therefore ustd for the buyer
+        // FIXME: for UBL BT-49 is necessary for CII not. It will be made optional temporarily
         BT_49: {
-          value: '',
-          schemeID: undefined
+          value: 'mail',
+          schemeID: '9930'
         },
-        BT_50: invoiceData.data.firstSectionForm.empfaenger_strasse,
-        BT_52: invoiceData.data.firstSectionForm.empfaenger_ort,
-        BT_53: invoiceData.data.firstSectionForm.empfaenger_plz,
+        BT_50: invoiceData.firstSectionForm.empfaenger_strasse,
+        BT_52: invoiceData.firstSectionForm.empfaenger_ort,
+        BT_53: invoiceData.firstSectionForm.empfaenger_plz,
         BT_55: "DE",
-        BT_59: invoiceData.data.headerForm.absender_firma || invoiceData.data.headerForm.absender_name,
-        BT_106: invoiceData.data.calculatedAmounts.lineTotalAmount,
-        BT_109: invoiceData.data.calculatedAmounts.taxBasisTotalAmount,
-        BT_110: invoiceData.data.calculatedAmounts.taxTotalAmount,
-        BT_112: invoiceData.data.calculatedAmounts.grandTotalAmount,
-        BT_115: invoiceData.data.calculatedAmounts.duePayableAmount,
-        /* 
+        // FIXME: Falls Zahlungsempfänger anders als Verkäufer ist, dann muss BT-59 angegeben werden.
+        //BT_59: invoiceData.headerForm.absender_firma || invoiceData.headerForm.absender_name,
+        // Zeitpunkt der Lieferung muss in DE mit angegeben werden, wenn keine genaue Angabe dann gilt Rechnungsdatum
+        BT_72: invoiceData.firstSectionForm.rechnungsdatum.toISOString().slice(0, 10),
+        // BT_59: invoiceData.headerForm.absender_firma || invoiceData.headerForm.absender_name,
+        BT_106: invoiceData.calculatedAmounts.lineTotalAmount,
+        BT_109: invoiceData.calculatedAmounts.taxBasisTotalAmount,
+        BT_110: invoiceData.calculatedAmounts.taxTotalAmount,
+        BT_112: invoiceData.calculatedAmounts.grandTotalAmount,
+        BT_115: invoiceData.calculatedAmounts.duePayableAmount,
+        /*
         für jeden Steuersatz muss ein eigener Eintrag hier erstellt werden.
         Ab hier sollte ein eigener Array entstehen
         //BG-23 -- Umsatzsteuer-Auflistung für die verschieden angefallenen Umsatzsteuern
         */
-        BT_116: invoiceData.data.calculatedAmounts.BT_116, // Nettobetrag auf dem Steuer angewendet wird
-        BT_117: invoiceData.data.calculatedAmounts.BT_117, // Steuerbetrag in Euro der dadurch entsteht
-        BT_118: invoiceData.data.calculatedAmounts.BT_118, // Kategorie der Steuer -- Für 19% und 7% gilt Code = 'S', Bei Kleinunternehmer welche keine Umsatzszeuer ausweisen gilt Code = 'E'
-        BT_119: invoiceData.data.calculatedAmounts.BT_119, // angefallener Steuersatz in Prozent
-        BT_120: invoiceData.data.calculatedAmounts.BT_120,
+        BT_116: invoiceData.calculatedAmounts.BT_116, // Nettobetrag auf dem Steuer angewendet wird
+        BT_117: invoiceData.calculatedAmounts.BT_117, // Steuerbetrag in Euro der dadurch entsteht
+        BT_118: invoiceData.calculatedAmounts.BT_118, // Kategorie der Steuer -- Für 19% und 7% gilt Code = 'S', Bei Kleinunternehmer welche keine Umsatzszeuer ausweisen gilt Code = 'E'
+        BT_119: invoiceData.calculatedAmounts.BT_119, // angefallener Steuersatz in Prozent
+        BT_120: invoiceData.calculatedAmounts.BT_120,
 
         //BG-30 -- Rechnungspositions-Auflistungen
-        BT_126: invoiceData.data.calculatedAmounts.BT_126, // Position des Artikels in der Liste (index)
-        BT_129: invoiceData.data.calculatedAmounts.BT_129, // In Rechnung gestellte Menge der Position
-        BT_130: invoiceData.data.calculatedAmounts.BT_130, // Code der Maßeinheit der in rechnung gestellten Menge
-        BT_131: invoiceData.data.calculatedAmounts.BT_131, // Nettobetrag der in Rechnung gestellten Menge (Menge*Einheitspreis)
-        BT_146: invoiceData.data.calculatedAmounts.BT_146, // Netto-Einheitspreis des Artikels
-        BT_151: invoiceData.data.calculatedAmounts.BT_151, // Umsatzsteuerkategorie-Code (Entweder 'S' oder 'E')
-        BT_152: invoiceData.data.calculatedAmounts.BT_152, // Umsatzsteuersatz der Position in Prozent
-        BT_153: invoiceData.data.calculatedAmounts.BT_153, // Artikelname bzw Beschreibung
+        BT_126: invoiceData.calculatedAmounts.BT_126, // Position des Artikels in der Liste (index)
+        BT_129: invoiceData.calculatedAmounts.BT_129, // In Rechnung gestellte Menge der Position
+        BT_130: invoiceData.calculatedAmounts.BT_130, // Code der Maßeinheit der in rechnung gestellten Menge
+        BT_131: invoiceData.calculatedAmounts.BT_131, // Nettobetrag der in Rechnung gestellten Menge (Menge*Einheitspreis)
+        BT_146: invoiceData.calculatedAmounts.BT_146, // Netto-Einheitspreis des Artikels
+        BT_151: invoiceData.calculatedAmounts.BT_151, // Umsatzsteuerkategorie-Code (Entweder 'S' oder 'E')
+        BT_152: invoiceData.calculatedAmounts.BT_152, // Umsatzsteuersatz der Position in Prozent
+        BT_153: invoiceData.calculatedAmounts.BT_153,
       }
 
       const defaultUBLInvoice = new DefaultUBLInvoice;
@@ -666,7 +671,7 @@ export const actions: Actions = {
 
       const formData = new FormData()
 
-      formData.append('Invoice', JSON.stringify(testInvoice))
+      formData.append('Invoice', JSON.stringify(createdXMLInvoice))
       formData.append('pdfPath', pdfPath)
 
 
