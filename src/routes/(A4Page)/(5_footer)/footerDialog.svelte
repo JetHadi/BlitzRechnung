@@ -11,30 +11,52 @@
 	import { footerContainerSchema } from '$lib/schema/5_footerContainer';
 
 	// for local client storage
-	let { footerForm = $bindable(), footerData = $bindable(), openDialog = $bindable() } = $props();
+	let {
+		footerForm = $bindable(),
+		footerData = $bindable(),
+		openDialog = $bindable(),
+		kleinunternehmer
+	} = $props();
 
 	const form = superForm(footerForm, {
 		validators: zodClient(footerContainerSchema),
 		SPA: true,
 		invalidateAll: false, // Prevents full page reload
-		onSubmit({}){
-			console.log("from DialogFooter onSubmit:",footerForm.data.firma)
+		onSubmit({}) {
+			console.log('from DialogFooter onSubmit:', footerForm.data.firma);
+			if ($formData.absender_steuernummer == '') {
+				$formData.absender_steuernummer = undefined;
+			}
+			console.log($formData.absender_steuernummer);
+			if ($formData.absender_ustId == '') {
+				$formData.absender_ustId = undefined;
+			}
 		},
 		onUpdate({ form }) {
 			if (form.valid) {
 				footerForm.data = { ...$formData };
 				console.log('from DialogFooter onUpdate: ', footerForm.data.firma);
-				openDialog = false
+				openDialog = false;
 			}
 		}
 	});
 
 	const { form: formData, enhance } = form;
+
+	$effect(() => {
+		console.log(kleinunternehmer);
+
+		if (kleinunternehmer) {
+			$formData.absender_ustId = '';
+		} else {
+			$formData.absender_steuernummer = '';
+		}
+	});
 </script>
 
 <FooterContainer footerData={$formData} isInteractive={false} propaGateFrom={'DialogFooter'} />
 <form method="POST" use:enhance>
-	<Form.Field {form} name="bankname">
+	<Form.Field {form} name="absender_bankname">
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>Bankname</Form.Label>
@@ -45,7 +67,7 @@
 		<Form.FieldErrors />
 	</Form.Field>
 
-	<Form.Field {form} name="iban">
+	<Form.Field {form} name="absender_iban">
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>IBAN</Form.Label>
@@ -56,7 +78,7 @@
 		<Form.FieldErrors />
 	</Form.Field>
 
-	<Form.Field {form} name="bic">
+	<Form.Field {form} name="absender_bic">
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>BIC</Form.Label>
@@ -66,28 +88,64 @@
 		<Form.Description />
 		<Form.FieldErrors />
 	</Form.Field>
-
-	<Form.Field {form} name="ustId">
+	<!--TODO: Add Prefix like DE etc here 
+	<Form.Field {form} name="absender_ustId">
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>USt.-ID</Form.Label>
-				<Input {...props} bind:value={$formData.absender_ustId} />
+				<Input
+					{...props}
+					bind:value={$formData.absender_ustId}
+					oninput={(e) => {
+						if (!e.target.value.startsWith('DE')) {
+							e.target.value = `DE${e.target.value.replace(/^DE/, '')}`;
+							$formData.absender_ustId = e.target.value;
+						}
+					}}
+				/>
+			{/snippet}
+		</Form.Control>
+		<Form.Description />
+		<Form.FieldErrors />
+	</Form.Field>
+	-->
+	<Form.Field {form} name="absender_ustId">
+		<Form.Control>
+			{#snippet children({ props })}
+				<Form.Label>USt.-ID</Form.Label>
+				<Input
+					{...props}
+					bind:value={$formData.absender_ustId}
+					oninput={(e) => {
+						if (e.target.value == '') {
+							$formData.absender_ustId = undefined;
+						}
+					}}
+				/>
 			{/snippet}
 		</Form.Control>
 		<Form.Description />
 		<Form.FieldErrors />
 	</Form.Field>
 
-	<Form.Field {form} name="steuernummer">
+	<Form.Field {form} name="absender_steuernummer">
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>Steuernummer</Form.Label>
-				<Input {...props} bind:value={$formData.absender_steuernummer} />
+				<Input
+					{...props}
+					bind:value={$formData.absender_steuernummer}
+					oninput={(e) => {
+						if (e.target.value == '') {
+							$formData.absender_steuernummer = undefined;
+						}
+					}}
+				/>
 			{/snippet}
 		</Form.Control>
 		<Form.Description />
 		<Form.FieldErrors />
 	</Form.Field>
-    
+
 	<Form.Button>Submit</Form.Button>
 </form>

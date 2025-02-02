@@ -52,7 +52,7 @@ const getUnitCode = (unit: string): string => {
 
 
 // FIXME: add correct data type for calculate Amounts
-const calculateAmounts = (data : any) => {
+const calculateAmounts = (data: any) => {
   const positions = data.mainSectionForm.RechnungsPositionen.map((pos: { einheit: string; }) => ({
     ...pos,
     einheit: getUnitCode(pos.einheit)
@@ -90,7 +90,7 @@ const calculateAmounts = (data : any) => {
   // Group positions by tax percentage to maintain order
   const taxGroups: TaxGroups = {};
 
-  positions.forEach((pos : any, index : number) => {
+  positions.forEach((pos: any, index: number) => {
     const lineNet = pos.anzahl * pos.einheitspreis;
     const lineTax = lineNet * (pos.ustProzent / 100);
     lineTotalAmount += lineNet;
@@ -102,14 +102,14 @@ const calculateAmounts = (data : any) => {
     BT_130.push(pos.einheit);
     BT_131.push(lineNet.toFixed(2));
     BT_146.push(pos.einheitspreis.toFixed(2));
-    BT_151.push(pos.ustProzent === '0' ? 'E' : 'S');
+    BT_151.push(pos.ustProzent == 0 ? 'E' : 'S');
     BT_152.push(pos.ustProzent);
     BT_153.push(pos.bezeichnung);
 
     if (!taxGroups[pos.ustProzent]) {
       taxGroups[pos.ustProzent] = {
-        baseAmount: 0,
-        taxAmount: 0
+        baseAmount: 0.00,
+        taxAmount: 0.00
       };
     }
     taxGroups[pos.ustProzent].baseAmount += lineNet;
@@ -119,7 +119,7 @@ const calculateAmounts = (data : any) => {
 
   // Convert groups to ordered arrays
   Object.entries(taxGroups).forEach(([taxRate, amounts]) => {
-    BT_116.push(amounts.baseAmount.toFixed(2));
+    BT_116.push(amounts.baseAmount.toFixed(2))
     BT_117.push(amounts.taxAmount.toFixed(2));
     BT_119.push(taxRate);
 
@@ -192,19 +192,25 @@ export const actions: Actions = {
       PDF creation process
       */
       const printUrl = `${event.url.origin}/read?data=${encodeURIComponent(A4Data)}`;
-      console.log('PrintURL', printUrl)
+      //console.log('PrintURL', printUrl)
 
       // PDF Generation
       const pdfStart = performance.now();
       console.log('📄 Starting PDF generation request');
 
+      // In your form action/page
       const response = await event.fetch('/api/generate-pdf', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ printUrl, requestId })
+        body: JSON.stringify({
+          //formData: A4Form.data,  // Send form data directly
+          printUrl,
+          requestId
+        })
       });
+
 
       const result = await response.json();
       console.log(`📄 PDF generation took: ${(performance.now() - pdfStart).toFixed(2)}ms`);
@@ -223,372 +229,6 @@ export const actions: Actions = {
       XML creation process
       */
       const invoiceData = calculateAmounts(A4Form.data)
-      // console.log(invoiceData)
-      const testInvoice = {
-        "ubl:Invoice": {
-          "cbc:CustomizationID": "urn:cen.eu:en16931:2017#compliant#urn:xeinkauf.de:kosit:xrechnung_3.0",
-          "cbc:ProfileID": "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0",
-          "cbc:ID": 2222222,
-          "cbc:IssueDate": "2024-09-24",
-          "cbc:DueDate": "2024-10-08",
-          "cbc:InvoiceTypeCode": "380",
-          "cbc:DocumentCurrencyCode": "EUR",
-          "cbc:BuyerReference": "dept0815",
-          "cac:InvoicePeriod": {
-            "cbc:StartDate": "2024-04-23",
-            "cbc:EndDate": "2024-09-23"
-          },
-          "cac:OrderReference": {
-            "cbc:ID": "A7450891"
-          },
-          "cac:AccountingSupplierParty": {
-            "cac:Party": {
-              "cbc:EndpointID": "DE202526944",
-              "cbc:EndpointID@schemeID": "9930",
-              "cac:PartyName": {
-                "cbc:Name": "Acme Ltd."
-              },
-              "cac:PostalAddress": {
-                "cbc:StreetName": "42 Milky Way",
-                "cbc:CityName": "Faraway",
-                "cbc:PostalZone": 1234,
-                "cac:Country": {
-                  "cbc:IdentificationCode": "DE"
-                }
-              },
-              "cac:PartyTaxScheme": [
-                {
-                  "cbc:CompanyID": "DE202526944",
-                  "cac:TaxScheme": {
-                    "cbc:ID": "VAT"
-                  }
-                }
-              ],
-              "cac:PartyLegalEntity": {
-                "cbc:RegistrationName": "Acme Ltd."
-              },
-              "cac:Contact": {
-                "cbc:Name": "John Doe",
-                "cbc:Telephone": "+49 221 765 43-21",
-                "cbc:ElectronicMail": "jdoe@acme.com"
-              }
-            }
-          },
-          "cac:AccountingCustomerParty": {
-            "cac:Party": {
-              "cbc:EndpointID": "DE427984273",
-              "cbc:EndpointID@schemeID": "9930",
-              "cac:PartyName": {
-                "cbc:Name": "Globex Corp."
-              },
-              "cac:PostalAddress": {
-                "cbc:StreetName": "Globex Corp.",
-                "cbc:CityName": "Springfield",
-                "cbc:PostalZone": 80085,
-                "cac:Country": {
-                  "cbc:IdentificationCode": "DE"
-                }
-              },
-              "cac:PartyTaxScheme": {
-                "cbc:CompanyID": "DE427984273",
-                "cac:TaxScheme": {
-                  "cbc:ID": "VAT"
-                }
-              },
-              "cac:PartyLegalEntity": {
-                "cbc:RegistrationName": "Acme Ltd."
-              }
-            }
-          },
-          "cac:Delivery": {
-            "cbc:ActualDeliveryDate": "2024-09-23",
-            "cac:DeliveryLocation": {
-              "cac:Address": {
-                "cbc:StreetName": "Globex Corp.",
-                "cbc:CityName": "Springfield",
-                "cbc:PostalZone": 80085,
-                "cac:Country": {
-                  "cbc:IdentificationCode": "DE"
-                }
-              }
-            },
-            "cac:DeliveryParty": {
-              "cac:PartyName": {
-                "cbc:Name": "Globex Corp."
-              }
-            }
-          },
-          "cac:PaymentMeans": [
-            {
-              "cbc:PaymentMeansCode": 30,
-              "cbc:PaymentMeansCode@name": "Bank Transfer",
-              "cbc:PaymentID": "Invoice No. 1234567890",
-              "cac:PayeeFinancialAccount": {
-                "cbc:ID": "DE370800400123456789",
-                "cbc:Name": "Acme Ltd.",
-                "cac:FinancialInstitutionBranch": {
-                  "cbc:ID": "DRESDEFF370"
-                }
-              }
-            }
-          ],
-          "cac:PaymentTerms": {
-            "cbc:Note": "Payable without deductions by October 08, 2024."
-          },
-          "cac:AllowanceCharge": [
-            {
-              "cbc:ChargeIndicator": "true",
-              "cbc:AllowanceChargeReasonCode": "FC",
-              "cbc:AllowanceChargeReason": "Freight costs",
-              "cbc:Amount": 47.9,
-              "cbc:Amount@currencyID": "EUR",
-              "cbc:BaseAmount": 25597.74,
-              "cbc:BaseAmount@currencyID": "EUR",
-              "cac:TaxCategory": {
-                "cbc:ID": "K",
-                "cbc:Percent": 0,
-                "cac:TaxScheme": {
-                  "cbc:ID": "VAT"
-                }
-              }
-            },
-            {
-              "cbc:ChargeIndicator": "false",
-              "cbc:AllowanceChargeReasonCode": 95,
-              "cbc:AllowanceChargeReason": "Discount",
-              "cbc:MultiplierFactorNumeric": 3,
-              "cbc:Amount": 767.93,
-              "cbc:Amount@currencyID": "EUR",
-              "cbc:BaseAmount": 25597.74,
-              "cbc:BaseAmount@currencyID": "EUR",
-              "cac:TaxCategory": {
-                "cbc:ID": "AE",
-                "cbc:Percent": 0,
-                "cac:TaxScheme": {
-                  "cbc:ID": "VAT"
-                }
-              }
-            }
-          ],
-          "cac:TaxTotal": [
-            {
-              "cbc:TaxAmount": 42.28,
-              "cbc:TaxAmount@currencyID": "EUR",
-              "cac:TaxSubtotal": [
-                {
-                  "cbc:TaxableAmount": 15.24,
-                  "cbc:TaxableAmount@currencyID": "EUR",
-                  "cbc:TaxAmount": 2.9,
-                  "cbc:TaxAmount@currencyID": "EUR",
-                  "cac:TaxCategory": {
-                    "cbc:ID": "S",
-                    "cbc:Percent": 19,
-                    "cac:TaxScheme": {
-                      "cbc:ID": "VAT"
-                    }
-                  }
-                },
-                {
-                  "cbc:TaxableAmount": 562.5,
-                  "cbc:TaxableAmount@currencyID": "EUR",
-                  "cbc:TaxAmount": 39.38,
-                  "cbc:TaxAmount@currencyID": "EUR",
-                  "cac:TaxCategory": {
-                    "cbc:ID": "S",
-                    "cbc:Percent": 7,
-                    "cac:TaxScheme": {
-                      "cbc:ID": "VAT"
-                    }
-                  }
-                },
-                {
-                  "cbc:TaxableAmount": 18792.07,
-                  "cbc:TaxableAmount@currencyID": "EUR",
-                  "cbc:TaxAmount": 0,
-                  "cbc:TaxAmount@currencyID": "EUR",
-                  "cac:TaxCategory": {
-                    "cbc:ID": "AE",
-                    "cbc:Percent": 0,
-                    "cbc:TaxExemptionReasonCode": "VATEX-EU-AE",
-                    "cac:TaxScheme": {
-                      "cbc:ID": "VAT"
-                    }
-                  }
-                },
-                {
-                  "cbc:TaxableAmount": 3315,
-                  "cbc:TaxableAmount@currencyID": "EUR",
-                  "cbc:TaxAmount": 0,
-                  "cbc:TaxAmount@currencyID": "EUR",
-                  "cac:TaxCategory": {
-                    "cbc:ID": "Z",
-                    "cbc:Percent": 0,
-                    "cac:TaxScheme": {
-                      "cbc:ID": "VAT"
-                    }
-                  }
-                },
-                {
-                  "cbc:TaxableAmount": 2192.9,
-                  "cbc:TaxableAmount@currencyID": "EUR",
-                  "cbc:TaxAmount": 0,
-                  "cbc:TaxAmount@currencyID": "EUR",
-                  "cac:TaxCategory": {
-                    "cbc:ID": "K",
-                    "cbc:Percent": 0,
-                    "cbc:TaxExemptionReasonCode": "VATEX-EU-IC",
-                    "cac:TaxScheme": {
-                      "cbc:ID": "VAT"
-                    }
-                  }
-                }
-              ]
-            }
-          ],
-          "cac:LegalMonetaryTotal": {
-            "cbc:LineExtensionAmount": 25597.74,
-            "cbc:LineExtensionAmount@currencyID": "EUR",
-            "cbc:TaxExclusiveAmount": 24877.71,
-            "cbc:TaxExclusiveAmount@currencyID": "EUR",
-            "cbc:TaxInclusiveAmount": 24919.99,
-            "cbc:TaxInclusiveAmount@currencyID": "EUR",
-            "cbc:AllowanceTotalAmount": 767.93,
-            "cbc:AllowanceTotalAmount@currencyID": "EUR",
-            "cbc:ChargeTotalAmount": 47.9,
-            "cbc:ChargeTotalAmount@currencyID": "EUR",
-            "cbc:PayableAmount": 24919.99,
-            "cbc:PayableAmount@currencyID": "EUR"
-          },
-          "cac:InvoiceLine": [
-            {
-              "cbc:ID": 1,
-              "cbc:InvoicedQuantity": 120,
-              "cbc:InvoicedQuantity@unitCode": "HUR",
-              "cbc:LineExtensionAmount": 10200,
-              "cbc:LineExtensionAmount@currencyID": "EUR",
-              "cac:Item": {
-                "cbc:Name": "Design",
-                "cac:ClassifiedTaxCategory": {
-                  "cbc:ID": "AE",
-                  "cbc:Percent": 0,
-                  "cac:TaxScheme": {
-                    "cbc:ID": "VAT"
-                  }
-                }
-              },
-              "cac:Price": {
-                "cbc:PriceAmount": 85,
-                "cbc:PriceAmount@currencyID": "EUR"
-              }
-            },
-            {
-              "cbc:ID": 2,
-              "cbc:InvoicedQuantity": 2,
-              "cbc:InvoicedQuantity@unitCode": "H87",
-              "cbc:LineExtensionAmount": 15.24,
-              "cbc:LineExtensionAmount@currencyID": "EUR",
-              "cac:Item": {
-                "cbc:Name": "Printer paper 500 sheets",
-                "cac:ClassifiedTaxCategory": {
-                  "cbc:ID": "S",
-                  "cbc:Percent": 19,
-                  "cac:TaxScheme": {
-                    "cbc:ID": "VAT"
-                  }
-                }
-              },
-              "cac:Price": {
-                "cbc:PriceAmount": 7.62,
-                "cbc:PriceAmount@currencyID": "EUR"
-              }
-            },
-            {
-              "cbc:ID": 3,
-              "cbc:InvoicedQuantity": 3,
-              "cbc:InvoicedQuantity@unitCode": "DAY",
-              "cbc:LineExtensionAmount": 562.5,
-              "cbc:LineExtensionAmount@currencyID": "EUR",
-              "cac:Item": {
-                "cbc:Name": "Hotel room",
-                "cac:ClassifiedTaxCategory": {
-                  "cbc:ID": "S",
-                  "cbc:Percent": 7,
-                  "cac:TaxScheme": {
-                    "cbc:ID": "VAT"
-                  }
-                }
-              },
-              "cac:Price": {
-                "cbc:PriceAmount": 187.5,
-                "cbc:PriceAmount@currencyID": "EUR"
-              }
-            },
-            {
-              "cbc:ID": 4,
-              "cbc:InvoicedQuantity": 17,
-              "cbc:InvoicedQuantity@unitCode": "HUR",
-              "cbc:LineExtensionAmount": 3315,
-              "cbc:LineExtensionAmount@currencyID": "EUR",
-              "cac:Item": {
-                "cbc:Name": "Setup static site generator",
-                "cac:ClassifiedTaxCategory": {
-                  "cbc:ID": "Z",
-                  "cbc:Percent": 0,
-                  "cac:TaxScheme": {
-                    "cbc:ID": "VAT"
-                  }
-                }
-              },
-              "cac:Price": {
-                "cbc:PriceAmount": 195,
-                "cbc:PriceAmount@currencyID": "EUR"
-              }
-            },
-            {
-              "cbc:ID": 5,
-              "cbc:InvoicedQuantity": 48,
-              "cbc:InvoicedQuantity@unitCode": "HUR",
-              "cbc:LineExtensionAmount": 9360,
-              "cbc:LineExtensionAmount@currencyID": "EUR",
-              "cac:Item": {
-                "cbc:Name": "Template programming",
-                "cac:ClassifiedTaxCategory": {
-                  "cbc:ID": "AE",
-                  "cbc:Percent": 0,
-                  "cac:TaxScheme": {
-                    "cbc:ID": "VAT"
-                  }
-                }
-              },
-              "cac:Price": {
-                "cbc:PriceAmount": 195,
-                "cbc:PriceAmount@currencyID": "EUR"
-              }
-            },
-            {
-              "cbc:ID": 6,
-              "cbc:InvoicedQuantity": 11,
-              "cbc:InvoicedQuantity@unitCode": "HUR",
-              "cbc:LineExtensionAmount": 2145,
-              "cbc:LineExtensionAmount@currencyID": "EUR",
-              "cac:Item": {
-                "cbc:Name": "Penetration test",
-                "cac:ClassifiedTaxCategory": {
-                  "cbc:ID": "K",
-                  "cbc:Percent": 0,
-                  "cac:TaxScheme": {
-                    "cbc:ID": "VAT"
-                  }
-                }
-              },
-              "cac:Price": {
-                "cbc:PriceAmount": 195,
-                "cbc:PriceAmount@currencyID": "EUR"
-              }
-            }
-          ]
-        }
-      }
 
       function addDays(date: Date, days: number): Date {
         const newDate = new Date(date);
@@ -605,11 +245,17 @@ export const actions: Actions = {
         BT_9: invoiceData.firstSectionForm.faelligkeitsdatum?.toISOString().slice(0, 10) || addDays(invoiceData.firstSectionForm.rechnungsdatum, 30).toISOString().slice(0, 10),
         // FIXME: Der Benutzer sollte den Hinweis bekommen, dass hier die juristisch eingetragene Person als Absendername (BT-27) angegeben werden muss
         BT_27: invoiceData.headerForm.absender_firma || invoiceData.headerForm.absender_name,
+        // FIXME: Verkäuferkennung korrekt erstellen -- Vorlage wäre BLITZ-{steuernummer_bereinigt}-KU
+        BT_29: invoiceData.footerForm.absender_steuernummer ? {
+          value: `BLITZ-${(invoiceData.footerForm.absender_steuernummer.replace(/\D/g, ''))}-KU`,
+          schemeID: "SEL"
+        } : undefined,
         BT_31: invoiceData.footerForm.absender_ustId,
         BT_32: invoiceData.footerForm.absender_steuernummer,
         // sollte übermittelt werden, falls Kleinunternehmer-Regelung stattfindet
         // FIXME: add Kleinunternehmer Boolean to Form
-        BT_33: invoiceData.firstSectionForm.Kleinunternehmer ? '„Kein Ausweis von Umsatzsteuer, da Kleinunternehmer gemäß § 19 UStG“' : undefined,
+        BT_33: invoiceData.headerForm.absender_kleinunternehmer ? '„Kein Ausweis von Umsatzsteuer, da Kleinunternehmer gemäß § 19 UStG“' : undefined,
+
         BT_34: invoiceData.footerForm.absender_ustId ? {
           value: invoiceData.footerForm.absender_ustId,
           schemeID: "9930"
@@ -626,10 +272,10 @@ export const actions: Actions = {
         BT_45: invoiceData.firstSectionForm.empfaenger_firma ? invoiceData.firstSectionForm.empfaenger_name : undefined,
         // TODO: integrte europian invoices and therefore ustd for the buyer
         // FIXME: for UBL BT-49 is necessary for CII not. It will be made optional temporarily
-        BT_49: {
-          value: 'mail',
-          schemeID: '9930'
-        },
+        BT_49: invoiceData.firstSectionForm.empfaenger_ustId ? {
+          value: invoiceData.footerForm.absender_ustId,
+          schemeID: "9930"
+        } : undefined,
         BT_50: invoiceData.firstSectionForm.empfaenger_strasse,
         BT_52: invoiceData.firstSectionForm.empfaenger_ort,
         BT_53: invoiceData.firstSectionForm.empfaenger_plz,

@@ -131,10 +131,39 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>Rechnungsdatum</Form.Label>
+				<!-- TODO: here is an example of a function inside bind -->
 				<Input
 					type="date"
 					{...props}
 					bind:value={() => transform2String($formData.rechnungsdatum), (v) => handleDateChange(v)}
+				/>
+			{/snippet}
+		</Form.Control>
+		<Form.Description />
+		<Form.FieldErrors />
+	</Form.Field>
+
+	<Form.Field {form} name="rechnungsdatum">
+		<Form.Control>
+			{#snippet children({ props })}
+				<Form.Label>Kunden USt. ID</Form.Label>
+				<Input
+					{...props}
+					bind:value={$formData.empfaenger_ustId}
+				/>
+			{/snippet}
+		</Form.Control>
+		<Form.Description />
+		<Form.FieldErrors />
+	</Form.Field>
+
+	<Form.Field {form} name="rechnungsdatum">
+		<Form.Control>
+			{#snippet children({ props })}
+				<Form.Label>Kunden SteuerNr</Form.Label>
+				<Input
+					{...props}
+					bind:value={$formData.empfaenger_steuernummer}
 				/>
 			{/snippet}
 		</Form.Control>

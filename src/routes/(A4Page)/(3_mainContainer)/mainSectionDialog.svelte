@@ -9,11 +9,13 @@
 	import { deafaultRechnungsPosition } from '$lib/types/rechnungsPositionDefaults';
 	import { Plus, Minus } from 'lucide-svelte';
 	import * as Select from '$lib/components/ui/select';
+	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
 
 	let {
 		mainSectionForm = $bindable(),
 		mainSectionData = $bindable(),
-		openDialog = $bindable()
+		openDialog = $bindable(),
+		kleinunternehmer
 	} = $props();
 
 	// Format number as German currency
@@ -24,7 +26,7 @@
 		});
 	};
 
-	const defaultRechnungsPositiion = deafaultRechnungsPosition;
+	let defaultRechnungsPosition = deafaultRechnungsPosition;
 
 	let gesamt = $state((anzahl: number, einheitspreis: number) => {
 		return anzahl * einheitspreis;
@@ -51,18 +53,26 @@
 	const { form: formData, enhance } = form;
 
 	function addNewDefaultPosition() {
-		$formData.RechnungsPositionen = [...$formData.RechnungsPositionen, defaultRechnungsPositiion];
+		$formData.RechnungsPositionen = [...$formData.RechnungsPositionen, defaultRechnungsPosition];
 	}
 
 	function removeLastAddedPosition() {
 		$formData.RechnungsPositionen = $formData.RechnungsPositionen.slice(0, -1);
 	}
 
-	$inspect(mainSectionData);
+	// $inspect(mainSectionData);
+	$effect(() => {
+		if (kleinunternehmer) {
+			if (mainSectionData.RechnungsPositionen[0].bezeichnung == 'Premium Rechnung') {
+				$formData.RechnungsPositionen[0].ustProzent = 0;
+			}
+			defaultRechnungsPosition.ustProzent = 0;
+		}
+	});
 </script>
 
 <form method="POST" use:enhance>
-	<div class="rounded-md border">
+	<div class="rounded-md border-y">
 		<Table.Root>
 			<Table.Header>
 				<Table.Row class="bg-muted/50">
@@ -78,33 +88,43 @@
 			<Table.Body>
 				{#each $formData.RechnungsPositionen as position}
 					<Table.Row>
-						<Table.Cell class="font-medium">
+						<Table.Cell class="w-min-[300px] px-1">
 							<Form.Field {form} name="{position}-bezeichnung">
 								<Form.Control>
 									{#snippet children({ props })}
-										<Input {...props} bind:value={position.bezeichnung} />
+										<Textarea
+											class="h-[40px] min-h-[40px] pt-2"
+											{...props}
+											bind:value={position.bezeichnung}
+											contenteditable
+										/>
 									{/snippet}
 								</Form.Control>
 								<Form.FieldErrors />
 							</Form.Field>
 						</Table.Cell>
-						<Table.Cell class="text-right">
+						<Table.Cell class="p-1">
 							<Form.Field {form} name="{position}-anzahl">
 								<Form.Control>
 									{#snippet children({ props })}
-										<Input type="number" {...props} bind:value={position.anzahl} />
+										<Input
+											type="number"
+											{...props}
+											bind:value={position.anzahl}
+											class="text-right [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+										/>
 									{/snippet}
 								</Form.Control>
 								<Form.FieldErrors />
 							</Form.Field>
 						</Table.Cell>
 
-						<Table.Cell class="text-right">
+						<Table.Cell class="p-1">
 							<Form.Field {form} name="{position}-einheit">
 								<Form.Control>
 									{#snippet children({ props })}
 										<Select.Root type="single" {...props} bind:value={position.einheit}>
-											<Select.Trigger class="w-[180px]">{position.einheit}</Select.Trigger>
+											<Select.Trigger class="p-2 text-right">{position.einheit}</Select.Trigger>
 											<Select.Content>
 												<Select.Item value="Stück">Stück</Select.Item>
 												<Select.Item value="Stunde">Stunde</Select.Item>
@@ -120,29 +140,39 @@
 							</Form.Field>
 						</Table.Cell>
 
-						<Table.Cell class="text-right">
+						<Table.Cell class="p-1">
 							<Form.Field {form} name="{position}-einheitspreis">
 								<Form.Control>
 									{#snippet children({ props })}
-										<Input type="number" {...props} bind:value={position.einheitspreis} />
+										<Input
+											class="text-right [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+											type="number"
+											{...props}
+											bind:value={position.einheitspreis}
+										/>
 									{/snippet}
 								</Form.Control>
 								<Form.FieldErrors />
 							</Form.Field>
 						</Table.Cell>
 
-						<Table.Cell class="text-right">
+						<Table.Cell class="p-1">
 							<Form.Field {form} name="{position}-ustProzent">
 								<Form.Control>
 									{#snippet children({ props })}
-										<Input type="number" {...props} bind:value={position.ustProzent} />
+										<Input
+											type="number"
+											{...props}
+											bind:value={position.ustProzent}
+											class="text-right [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+										/>
 									{/snippet}
 								</Form.Control>
 								<Form.FieldErrors />
 							</Form.Field>
 						</Table.Cell>
 
-						<Table.Cell class="text-right"
+						<Table.Cell class="p-1 text-right"
 							>{formatCurrency(
 								ust(position.ustProzent, gesamt(position.anzahl, position.einheitspreis))
 							)}</Table.Cell
@@ -158,7 +188,7 @@
 	<div class="mb-4 mt-4 flex gap-2">
 		<button
 			type="button"
-			class="ring-offset-background focus-visible:ring-ring bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-10 items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+			class="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
 			onclick={addNewDefaultPosition}
 			disabled={$formData.RechnungsPositionen.length >= 10}
 		>
@@ -168,7 +198,7 @@
 
 		<button
 			type="button"
-			class="ring-offset-background focus-visible:ring-ring bg-destructive text-destructive-foreground hover:bg-destructive/90 inline-flex h-10 items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+			class="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-md bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground ring-offset-background transition-colors hover:bg-destructive/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
 			onclick={removeLastAddedPosition}
 			disabled={$formData.RechnungsPositionen.length <= 1}
 		>

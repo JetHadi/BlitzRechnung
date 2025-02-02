@@ -60,29 +60,31 @@
 	<Table.Root>
 		<Table.Header>
 			<Table.Row class="bg-muted/50">
-				<Table.Head class="w-[300px]">Bezeichnung</Table.Head>
-				<Table.Head class="text-right">Anzahl</Table.Head>
-				<Table.Head class="text-right">Einheit</Table.Head>
-				<Table.Head class="text-right">Einheitspreis</Table.Head>
-				<Table.Head class="text-right">USt.%</Table.Head>
-				<Table.Head class="text-right">USt.</Table.Head>
-				<Table.Head class="text-right">Gesamt</Table.Head>
+				<Table.Head class="p-2 w-[300px]">Bezeichnung</Table.Head>
+				<Table.Head class="p-2 text-right">Anzahl</Table.Head>
+				<Table.Head class="p-2 text-right">Einheit</Table.Head>
+				<Table.Head class="p-2 text-right">Einheitspreis</Table.Head>
+				<Table.Head class="p-2 text-right">USt.%</Table.Head>
+				<Table.Head class="p-2 text-right ">USt.</Table.Head>
+				<Table.Head class="p-2 text-right">Gesamt</Table.Head>
 			</Table.Row>
 		</Table.Header>
 		<Table.Body>
 			{#each mainSectionData.RechnungsPositionen as position}
 				<Table.Row class="pointer-events-none">
-					<Table.Cell class="text-left font-medium">{position.bezeichnung}</Table.Cell>
-					<Table.Cell class="text-right">{position.anzahl}</Table.Cell>
-					<Table.Cell class="text-right">{position.einheit}</Table.Cell>
-					<Table.Cell class="text-right">{formatCurrency(position.einheitspreis)}</Table.Cell>
-					<Table.Cell class="text-right">{position.ustProzent}</Table.Cell>
-					<Table.Cell class="text-right"
+					<Table.Cell class="p-2 max-w-[210px] break-words text-left font-medium"
+						>{position.bezeichnung}</Table.Cell
+					>
+					<Table.Cell class="p-2 text-right">{position.anzahl}</Table.Cell>
+					<Table.Cell class="p-2 text-right">{position.einheit}</Table.Cell>
+					<Table.Cell class="p-2 text-right">{formatCurrency(position.einheitspreis)}</Table.Cell>
+					<Table.Cell class="p-2 text-right">{position.ustProzent}</Table.Cell>
+					<Table.Cell class="p-2 text-right"
 						>{formatCurrency(
 							ust(position.ustProzent, gesamt(position.anzahl, position.einheitspreis))
 						)}</Table.Cell
 					>
-					<Table.Cell class="text-right font-medium"
+					<Table.Cell class="p-2 text-right font-medium"
 						>{formatCurrency(gesamt(position.anzahl, position.einheitspreis))}</Table.Cell
 					>
 				</Table.Row>

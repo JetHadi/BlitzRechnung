@@ -4,11 +4,7 @@
 	import { defaultRechnungsSender } from '$lib/types/rechnungsSender';
 	import { cn } from '$lib/utils';
 
-	let {
-		headerData = $bindable(),
-		isInteractive = true,
-		propaGateFrom = ""
-	} = $props();
+	let { headerData = $bindable(), isInteractive = true, propaGateFrom = '' } = $props();
 
 	// const headerProps = $derived({
 	// 	firma: localHeaderObject.firma,
@@ -25,32 +21,48 @@
 	// });
 </script>
 
-
 <div
-  class={cn(
-    "container mx-auto rounded-lg border border-transparent p-4",
-    isInteractive && "cursor-pointer transition-all duration-200 hover:border-gray-200 hover:bg-gray-50"
-  )}
+	class={cn(
+		'container mx-auto rounded-lg border border-transparent p-4',
+		isInteractive &&
+			'cursor-pointer transition-all duration-200 hover:border-gray-200 hover:bg-gray-50'
+	)}
 >
-  <div class="flex items-start justify-between">
-    <div class="w-1/4">
-      <Logo />
-    </div>
+	<div class="flex items-start justify-between">
+		{#if headerData.absender_logo === ''}
+			<div class="select-none opacity-0">
+				<!-- Invisible placeholder -->
+				<Logo />
+			</div>
+		{:else if headerData.absender_logo}
+			<img
+				src={headerData.absender_logo}
+				alt="Company Logo"
+				class="h-auto max-w-[160px] object-contain"
+			/>
+		{:else}
+			<Logo /> <!-- Fallback to default logo -->
+		{/if}
 
-    <div class="w-2/4 text-center">
-      <h1 class="text-2xl font-bold">Rechnung</h1>
-    </div>
+		<div class="w-2/4 text-center">
+			<h1 class="text-2xl font-bold">Rechnung</h1>
+		</div>
 
-    <div class="w-1/4 text-left text-sm">
-      {headerData.absender_firma}<br />
-      {headerData.absender_strasse}<br />
-      {headerData.plz} {headerData.absender_ort}<br />
-      {#if headerData.absender_telefon}
-        {headerData.absender_telefon}<br />
-      {/if}
-      {#if headerData.absender_email}
-        {headerData.absender_email}
-      {/if}
-    </div>
-  </div>
+		<div class="w-1/4 text-left text-sm">
+			{headerData.absender_firma}<br />
+			{headerData.absender_strasse}<br />
+			{headerData.absender_plz}
+			{headerData.absender_ort}<br />
+			{#if headerData.absender_telefon}
+				{headerData.absender_telefon}<br />
+			{/if}
+			{#if headerData.absender_email}
+				{headerData.absender_email}<br />
+			{/if}
+			<!-- {#if headerData.absender_name != headerData.absender_firma}
+      Ihre Kontaktperson:<br/>
+      <span class="font-bold">{headerData.absender_name}</span>
+      {/if} -->
+		</div>
+	</div>
 </div>

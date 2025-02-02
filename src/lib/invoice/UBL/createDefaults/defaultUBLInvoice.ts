@@ -55,7 +55,7 @@ export interface BusinessTerms {
     BT_48?: string,
     // Umsatzsteuer des Käufers ist in Deutschland nicht notwendig.
     // Nur in innergemeinschaftlichen (europäischen)
-    BT_49: {
+    BT_49?: {
         value: string;
         schemeID?: BuyerElectronicAddressIdentificationSchemeIdentifier;
     },
@@ -393,11 +393,12 @@ export class DefaultUBLInvoice {
     ): SELLER {
         return {
             'cac:Party': {
-                'cbc:EndpointID': params.BT_34 ? params.BT_34?.value : '',
+                'cbc:EndpointID': params.BT_34?.value,
                 'cbc:EndpointID@schemeID': params.BT_34?.schemeID, // Optional scheme identifier
                 'cac:PartyIdentification': params.BT_29 ? [{
                     'cbc:ID': params.BT_29.value,
-                    'cbc:ID@schemeID': params.BT_29?.schemeID
+                    // TODO: Im falle von CII führt die Angabe einer schemeID zu einem Fehler, da keines der Formate hier bei selbstgewählten Kennungen passt
+                    // 'cbc:ID@schemeID': params.BT_29?.schemeID
                 }] : undefined,
                 'cac:PartyName': params.BT_28 ? {
                     'cbc:Name': params.BT_28
@@ -415,11 +416,11 @@ export class DefaultUBLInvoice {
                         'cbc:IdentificationCode': params.BT_40
                     }
                 },
-                // FIXME: Verkäufer kann maximal 2 angeben = Steuernummer und Umsatzsteueridentifikations-Nnummer
-                'cac:PartyTaxScheme': params.BT_31 ? [{
-                    'cbc:CompanyID': params.BT_31,
+                // FIXME: Verkäufer kann maximal 2 angeben = Steuernummer und Umsatzsteueridentifikations-Nnummer -- hier ähnlich zu InvoiceLine auch ein Object mapping machen
+                'cac:PartyTaxScheme': (params.BT_31 || params.BT_32) ? [{
+                    'cbc:CompanyID': params.BT_31 || params.BT_32 || '' ,
                     'cac:TaxScheme': {
-                        'cbc:ID': params.BT_32 || 'VAT' // Default to 'VAT' if not specified
+                        'cbc:ID':  params.BT_31 ? 'VA' : 'FC' // Default to 'VAT' if not specified
                     }
                 }] : undefined,
                 'cac:PartyLegalEntity': {
@@ -441,7 +442,7 @@ export class DefaultUBLInvoice {
         {
             BT_55: BuyerCountryCode,  // Country IdentificationCode
             BT_44: string, // PartyLegalEntity RegistrationName
-            BT_49: { value: string, schemeID?: BuyerElectronicAddressIdentificationSchemeIdentifier },  // EndpointID
+            BT_49?: { value: string, schemeID?: BuyerElectronicAddressIdentificationSchemeIdentifier },  // EndpointID
             BT_46?: { value: string, schemeID?: BuyerIdentifierIdentificationSchemeIdentifier }, // PartyIdentification ID
             BT_45?: string, // PartyName Name
             BT_50?: string, // StreetName
@@ -459,7 +460,7 @@ export class DefaultUBLInvoice {
         return {
             'cac:Party': {
                 //FIXME: EndpointID is only necessary in Peppol to be VAT Number
-                'cbc:EndpointID':params.BT_49 ? params.BT_49.value : undefined,
+                'cbc:EndpointID':params.BT_49?.value,
                 'cbc:EndpointID@schemeID': params.BT_49?.schemeID,
                 'cac:PartyIdentification': params.BT_46 ? {
                     'cbc:ID': params.BT_46.value,

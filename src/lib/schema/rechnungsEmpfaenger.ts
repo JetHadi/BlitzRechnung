@@ -7,6 +7,9 @@ export const RechnungsEmpfaengerSchema = z.object({
     empfaenger_plz: z.string().length(5),       // BT-53 (Postleitzahl der Käuferanschrift)
     empfaenger_ort: z.string().min(2).max(100), // BT-52 (Stadt der Käuferanschrift)
     empfaenger_firma: z.string().max(20),       // BT-45 (Handelsname des Käufers)
+    //FIXME: Nur notwendig für UBL
+    empfaenger_steuernummer: z.string().optional(), // in UBL entspricht dies BT-49
+    empfaenger_ustId: z.string().optional()
 });
 
 export type RechnungsEmpfaenger = z.infer<typeof RechnungsEmpfaengerSchema>;

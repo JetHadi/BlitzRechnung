@@ -538,7 +538,7 @@ export const cacPartyTaxScheme: Transformation[] = [
 	// FIXME! It must be possible to specify FC instead!
 	{
 		type: 'string',
-		src: ['fixed:VA'],
+		src: ['cac:TaxScheme', 'cbc:ID'],
 		dest: ['ram:ID@schemeID'],
 		fxProfileMask: FX_MASK_MINIMUM,
 	},
@@ -547,13 +547,19 @@ export const cacPartyTaxScheme: Transformation[] = [
 export const cacAccountingSupplierParty: Transformation[] = [
 	{
 		type: 'array',
-		src: [],
+		src: ['cac:PartyIdentification'],
 		dest: [],
 		children: [
 			{
 				type: 'string',
-				src: ['cac:PartyIdentification', 'cbc:ID'],
+				src: ['cbc:ID'],
 				dest: ['ram:ID'],
+				fxProfileMask: FX_MASK_BASIC_WL,
+			},
+			{
+				type: 'string',
+				src: ['cbc:ID@schemeID'],
+				dest: ['ram:ID@schemeID'],
 				fxProfileMask: FX_MASK_BASIC_WL,
 			},
 		],

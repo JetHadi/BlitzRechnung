@@ -24,16 +24,17 @@ export class InvoiceService {
 		input: unknown,
 		options: InvoiceServiceOptions,
 	): Promise<string | Buffer> {
-		const invoice = this.validationService.validate(
-			'invoice data',
-			this.validator,
-			input,
-		);
+		// FIXME: Is it okay to remove validation?
+		// const invoice = this.validationService.validate(
+		// 	'invoice data',
+		// 	this.validator,
+		// 	input,
+		// );
 
 		const formatter = this.formatFactoryService.createFormatService(
 			options.format,
 		);
 
-		return formatter.generate(invoice, options);
+		return formatter.generate(input, options);
 	}
 }

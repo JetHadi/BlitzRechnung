@@ -2,7 +2,7 @@
 <script lang="ts">
 	import { cn } from '$lib/utils';
 
-	let { footerData = $bindable(), isInteractive = true, propaGateFrom = '' } = $props();
+	let { footerData = $bindable(), isInteractive = true, propaGateFrom = '', kleinunternehmer } = $props();
 </script>
 
 <div

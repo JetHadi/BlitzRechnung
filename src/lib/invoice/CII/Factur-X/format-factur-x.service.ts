@@ -1,3 +1,4 @@
+// für weitere Infos https://github.com/Hopding/pdf-lib/issues/1183#issuecomment-2593629148
 import type { EInvoiceFormat, InvoiceServiceOptions } from "$lib/invoice/types";
 import type { Invoice } from "$lib/invoice/UBL/invoice.interface";
 import { AFRelationship, PDFArray, PDFDict, PDFDocument, PDFHexString, PDFName, PDFNumber, PDFString } from "pdf-lib";
@@ -26,6 +27,8 @@ type InvoiceMeta = {
 	subject: string;
 };
 
+
+
 export class FormatFacturXService
 	extends FormatCIIService
 	implements EInvoiceFormat {
@@ -52,8 +55,12 @@ export class FormatFacturXService
 		await this.attachFacturX(pdfDoc, options, xml);
 		await this.createPDFA(pdfDoc, options, invoice);
 
-		return Buffer.from(await pdfDoc.save());
+		return Buffer.from(await pdfDoc.save({
+			useObjectStreams: false,
+
+		}));
 	}
+
 
 	private async attachFiles(pdfDoc: PDFDocument, options: InvoiceServiceOptions) {
 		for (const attachment of options.attachments) {
@@ -147,13 +154,22 @@ export class FormatFacturXService
 		pdfDoc.setModificationDate(now);
 		pdfDoc.setProducer(invoiceMeta.producer);
 		pdfDoc.setSubject(invoiceSubject);
-		pdfDoc.setTitle(`${invoiceCreator}: Invoice ${invoiceNumber}`);
+		pdfDoc.setTitle(`${invoiceCreator}: Rechnung ${invoiceNumber}`);
 
 		this.setTrailerInfoID(pdfDoc, invoiceMeta);
 		this.setOutputIntent(pdfDoc);
 		this.fixLinkAnnotations(pdfDoc);
 		this.setMarkInfo(pdfDoc);
 		this.setStructTreeRoot(pdfDoc);
+
+		pdfDoc.context.enumerateIndirectObjects().forEach(([ref, obj]) => {
+			if (obj instanceof PDFDict) {
+				const fontEntry = Array.from(obj.entries()).find(([key, value]) => value.toString().includes("Font"))
+				if (fontEntry) {
+					obj.set(PDFName.of("CIDToGIDMap"), PDFName.of("Identity"))
+				}
+			}
+		})
 
 		this.addMetadata(
 			pdfDoc,
@@ -205,21 +221,24 @@ export class FormatFacturXService
 		const profile = this.base64ToUint8Array(colourProfile);
 		const profileStream = pdfDoc.context.stream(profile, {
 			Length: profile.length,
+			N: 3 // WICHTIG für PDF/A-3B
 		});
-		const profileStreamRef = pdfDoc.context.register(profileStream);
 
 		const outputIntent = pdfDoc.context.obj({
 			Type: 'OutputIntent',
 			S: 'GTS_PDFA1',
-			OutputConditionIdentifier: PDFString.of('sRGB'),
-			DestOutputProfile: profileStreamRef,
+			OutputConditionIdentifier: PDFString.of('sRGB IEC61966-2.1'),
+			DestOutputProfile: pdfDoc.context.register(profileStream),
+			Info: PDFString.of('sRGB IEC61966-2.1'),
+			OutputCondition: PDFString.of('sRGB IEC61966-2.1')
 		});
-		const outputIntentRef = pdfDoc.context.register(outputIntent);
+
 		pdfDoc.catalog.set(
 			PDFName.of('OutputIntents'),
-			pdfDoc.context.obj([outputIntentRef]),
+			pdfDoc.context.obj([pdfDoc.context.register(outputIntent)])
 		);
 	}
+
 
 	private base64ToUint8Array(base64: string): Uint8Array {
 		const binaryString = atob(base64);
@@ -238,17 +257,21 @@ export class FormatFacturXService
 		pdfDoc: PDFDocument,
 		invoiceMeta: InvoiceMeta,
 	) {
-		const encoder = new TextEncoder();
-		const data = invoiceMeta.subject;
-		const hash = await crypto.subtle.digest('SHA-512', encoder.encode(data));
-		const hashArray = Array.from(new Uint8Array(hash));
-		const hashHex = hashArray
-			.map(b => b.toString(16).padStart(2, '0'))
-			.join('');
-		const permanent = PDFHexString.of(hashHex);
-		const changing = permanent;
-		pdfDoc.context.trailerInfo.ID = pdfDoc.context.obj([permanent, changing]);
+		// Browser-kompatible Zufallsbytes-Generierung
+		const randomBytes = new Uint8Array(16);
+		globalThis.crypto.getRandomValues(randomBytes);
+
+		const toHex = (bytes: Uint8Array) =>
+			Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+
+		const documentId = toHex(randomBytes);
+		const id = PDFHexString.of(documentId);
+
+		pdfDoc.context.trailerInfo.ID = pdfDoc.context.obj([id, id]);
 	}
+
+
+
 
 	private addXmpMeta(node: XMLBuilder, invoiceMeta: InvoiceMeta) {
 		this.addRdf(
@@ -311,7 +334,7 @@ export class FormatFacturXService
 				'rdf:about': '',
 			})
 			.ele('pdf:Producer')
-			.txt('gflohr/e-invoice-eu git+https://github.com/gflohr/e-invoice-eu')
+			.txt('https://Blitz-Rechnung.de')
 			.up()
 			.ele('pdf:PDFVersion')
 			.txt('1.7');
@@ -452,16 +475,16 @@ export class FormatFacturXService
 	}
 
 	private addMetadata(pdfDoc: PDFDocument, xmp: string) {
-		const metadataStream = pdfDoc.context.stream(xmp, {
+		const xmpBytes = new TextEncoder().encode('\uFEFF' + xmp);
+		const metadataStream = pdfDoc.context.stream(xmpBytes, {
 			Type: 'Metadata',
 			Subtype: 'XML',
-			Length: xmp.length,
+			Length: xmpBytes.length,
 		});
 
-		const metadataStreamRef = pdfDoc.context.register(metadataStream);
-
-		pdfDoc.catalog.set(PDFName.of('Metadata'), metadataStreamRef);
+		pdfDoc.catalog.set(PDFName.of('Metadata'), pdfDoc.context.register(metadataStream));
 	}
+
 
 	private async attachFacturX(
 		pdfDoc: PDFDocument,

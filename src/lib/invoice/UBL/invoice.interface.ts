@@ -1480,6 +1480,7 @@ export type SellerOrBankAssignedCreditorIdentifierIdentificationSchemeIdentifier
 			| '230'
 		)
 		| 'SEPA'
+		| 'SEL'
 	) &
 	string;
 /**
@@ -10841,7 +10842,7 @@ export interface SELLER {
 	'cac:Party': PARTY;
 }
 export interface PARTY {
-	'cbc:EndpointID': SellerElectronicAddress;
+	'cbc:EndpointID'?: SellerElectronicAddress;
 	'cbc:EndpointID@schemeID'?: SellerElectronicAddressIdentificationSchemeIdentifier;
 	'cac:PartyIdentification'?: PARTYIDENTIFICATION[];
 	'cac:PartyName'?: PARTYNAME;
@@ -10915,7 +10916,7 @@ export interface BUYER {
 	'cac:Party': PARTY1;
 }
 export interface PARTY1 {
-	'cbc:EndpointID': BuyerElectronicAddress;
+	'cbc:EndpointID'?: BuyerElectronicAddress;
 	'cbc:EndpointID@schemeID'?: BuyerElectronicAddressIdentificationSchemeIdentifier;
 	'cac:PartyIdentification'?: PARTYIDENTIFICATION1;
 	'cac:PartyName'?: PARTYNAME1;

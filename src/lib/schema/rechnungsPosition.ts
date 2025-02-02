@@ -2,7 +2,7 @@
 import { z } from "zod";
 
 export const RechnungsPositionSchema = z.object({
-  bezeichnung: z.string().min(1),      // BT-153 (Artikelname)
+  bezeichnung: z.string().min(1).max(120),      // BT-153 (Artikelname)
   anzahl: z.number().positive(),       // BT-129 (In Rechnung gestellte Menge)
   einheit: z.string().min(1),          // BT-130 (Code der Maßeinheit der in Rechnung gestellten Menge)
   einheitspreis: z.number().positive(), // BT-146 (Nettopreis des Artikels)

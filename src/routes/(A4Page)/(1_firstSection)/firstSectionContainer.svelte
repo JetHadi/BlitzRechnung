@@ -62,6 +62,18 @@
 				<span
 					>{formatToGermanDate(firstSectionData.rechnungsdatum)}</span
 				>
+				{#if firstSectionData.empfaenger_ustId}
+				<span>Kunden USt. ID:</span>
+				<span
+					>{firstSectionData.empfaenger_ustId}</span
+				>
+				{:else if firstSectionData.empfaenger_steuernummer}
+				<span>Kunden SteuerNr:</span>
+				<span
+					>{firstSectionData.empfaenger_steuernummer}</span
+				>
+				{/if}
+				
 			</div>
 		</div>
 	</div>
