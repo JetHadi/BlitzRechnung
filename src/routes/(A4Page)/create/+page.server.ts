@@ -19,13 +19,14 @@ import { footerContainerSchema } from "$lib/schema/5_footerContainer";
 //import { getUnitCode } from "$lib/utils";
 import { randomUUID } from "crypto";
 import { DefaultUBLInvoice, type BusinessTerms } from "$lib/invoice/UBL/createDefaults/defaultUBLInvoice";
+import { addDays } from "$lib/utils";
 
 export const load: PageServerLoad = async () => {
   const startTime = performance.now();
   console.log("🚀 Starting page load at:", new Date().toISOString());
 
   const headerForm = await superValidate(zod(headerContainerSchema));
-  const firstSectionForm = await superValidate(FirstSectionContainerDefaults, zod(firstSectionContainerSchema));
+  const firstSectionForm = await superValidate(zod(firstSectionContainerSchema));
   const secondSectionForm = await superValidate(SecondSectionContainerDefaults, zod(secondSectionContainerSchema));
   const mainSectionForm = await superValidate(MainSectionContainerDefaults, zod(mainSectionContainerSchema));
   const fourthSectionForm = await superValidate(FourthSectionContainerDefaults, zod(fourthSectionContainerSchema));
@@ -232,13 +233,6 @@ export const actions: Actions = {
       */
       const invoiceData = calculateAmounts(A4Form.data)
 
-      function addDays(date: Date, days: number): Date {
-        const newDate = new Date(date);
-        newDate.setDate(date.getDate() + days);
-        return newDate;
-      }
-
-
       const mappedBT: BusinessTerms = {
         BT_1: invoiceData.firstSectionForm.rechnungsnummer,
         BT_2: invoiceData.firstSectionForm.rechnungsdatum.toISOString().slice(0, 10),
@@ -285,7 +279,7 @@ export const actions: Actions = {
         // FIXME: Falls Zahlungsempfänger anders als Verkäufer ist, dann muss BT-59 angegeben werden.
         //BT_59: invoiceData.headerForm.absender_firma || invoiceData.headerForm.absender_name,
         // Zeitpunkt der Lieferung muss in DE mit angegeben werden, wenn keine genaue Angabe dann gilt Rechnungsdatum
-        BT_72: invoiceData.firstSectionForm.rechnungsdatum.toISOString().slice(0, 10),
+        BT_72: invoiceData.firstSectionForm.leistungsdatum.toISOString().slice(0, 10),
         // BT_59: invoiceData.headerForm.absender_firma || invoiceData.headerForm.absender_name,
         BT_106: invoiceData.calculatedAmounts.lineTotalAmount,
         BT_109: invoiceData.calculatedAmounts.taxBasisTotalAmount,

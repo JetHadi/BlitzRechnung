@@ -14,7 +14,7 @@ export const RechnungsAbsenderSchema = z.object({
     }),
 
     absender_firma: z.string(requiredField("Firmenname"))
-        .min(2, { message: "Firmenname muss mindestens 2 Zeichen lang sein" })
+        .min(1, { message: "Firmenname darf nicht leer sein" })
         .max(20, { message: "Firmenname darf maximal 20 Zeichen lang sein" }),
 
     absender_strasse: z.string(requiredField("Straße"))

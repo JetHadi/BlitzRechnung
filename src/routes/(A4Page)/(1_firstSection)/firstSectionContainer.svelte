@@ -1,6 +1,8 @@
 <!-- frontend\src\routes\(A4Page)\(1_firstSection)\A4FirstSection.svelte -->
 <script lang="ts">
 	import Logo from '$lib/components/Logo.svelte';
+	import { defaultRechnungsDaten } from '$lib/types/rechnungsDaten';
+	import { defaultRechnungsEmfpaenger } from '$lib/types/rechnungsEmpfaenger';
 	import { defaultRechnungsSender } from '$lib/types/rechnungsSender';
 	import { cn } from '$lib/utils';
 
@@ -48,19 +50,19 @@
 >
 	<div class="flex items-start justify-between">
 		<div class="text-left text-sm">
-			{firstSectionData.empfaenger_firma}<br />
-			{firstSectionData.empfaenger_strasse}<br />
-			{firstSectionData.empfaenger_plz}
-			{firstSectionData.empfaenger_ort}<br />
+			{firstSectionData.empfaenger_firma || defaultRechnungsEmfpaenger.empfaenger_firma}<br />
+			{firstSectionData.empfaenger_strasse || defaultRechnungsEmfpaenger.empfaenger_strasse }<br />
+			{firstSectionData.empfaenger_plz || defaultRechnungsEmfpaenger.empfaenger_plz}
+			{firstSectionData.empfaenger_ort || defaultRechnungsEmfpaenger.empfaenger_ort}<br />
 		</div>
 		<div class="rounded-sm bg-brand-gray/20 p-2 text-left text-sm">
 			<div class="grid grid-cols-[120px_1fr] gap-x-4">
 				<span>Rechnungsnummer:</span>
-				<span>{firstSectionData.rechnungsnummer}</span>
+				<span>{firstSectionData.rechnungsnummer || defaultRechnungsDaten.rechnungsnummer}</span>
 
 				<span>Rechnungsdatum:</span>
 				<span
-					>{formatToGermanDate(firstSectionData.rechnungsdatum)}</span
+					>{formatToGermanDate(firstSectionData.rechnungsdatum || defaultRechnungsDaten.rechnungsdatum)}</span
 				>
 				{#if firstSectionData.empfaenger_ustId}
 				<span>Kunden USt. ID:</span>
