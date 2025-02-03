@@ -1,8 +1,14 @@
 <!-- frontend\src\routes\(A4Page)\(1_firstSection)\A4FirstSection.svelte -->
 <script lang="ts">
+	import { defaultRechnungsSenderPayment } from '$lib/types/rechnungsSender';
 	import { cn } from '$lib/utils';
 
-	let { footerData = $bindable(), isInteractive = true, propaGateFrom = '', kleinunternehmer } = $props();
+	let {
+		footerData = $bindable(),
+		isInteractive = true,
+		propaGateFrom = '',
+		kleinunternehmer = false
+	} = $props();
 </script>
 
 <div
@@ -16,17 +22,25 @@
 		<div class="text-left text-sm">
 			<div class="grid grid-cols-[30px_1fr] gap-x-4">
 				<span>Bank:</span>
-				<span>{footerData.absender_bankname}</span>
+				<span
+					>{footerData.absender_bankname || defaultRechnungsSenderPayment.absender_bankname}</span
+				>
 
 				<span>IBAN:</span>
-				<span>{footerData.absender_iban}</span>
+				<span>{footerData.absender_iban || defaultRechnungsSenderPayment.absender_iban}</span>
 
 				<span>BIC:</span>
-				<span>{footerData.absender_bic}</span>
+				<span>{footerData.absender_bic || defaultRechnungsSenderPayment.absender_bic}</span>
 			</div>
 		</div>
 		<div class="text-left text-sm">
 			<div class="grid grid-cols-[80px_1fr] gap-x-4">
+				{#if !footerData.absender_steuernummer && !footerData.absender_ustId}
+					<span>USt.-ID: </span>
+					<span>{defaultRechnungsSenderPayment.absender_ustId}</span>
+					<span>Steuer-Nr.:</span>
+					<span>{defaultRechnungsSenderPayment.absender_steuernummer}</span>
+				{/if}
 				{#if footerData.absender_ustId}
 					<span>USt.-ID: </span>
 					<span>{footerData.absender_ustId}</span>

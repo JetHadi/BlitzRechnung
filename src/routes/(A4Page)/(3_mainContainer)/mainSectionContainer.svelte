@@ -4,7 +4,12 @@
 	import type { RechnungsPositionType } from '$lib/schema/rechnungsPosition';
 	import { cn } from '$lib/utils';
 
-	let { mainSectionData = $bindable(), isInteractive = true, propaGateFrom = '' } = $props();
+	let {
+		mainSectionData = $bindable(),
+		isInteractive = true,
+		propaGateFrom = '',
+		kleinunternehmer = false
+	} = $props();
 
 	// Format number as German currency
 	const formatCurrency = (value: number) => {
@@ -60,7 +65,7 @@
 	<Table.Root>
 		<Table.Header>
 			<Table.Row class="bg-muted/50">
-				<Table.Head class="p-2 w-[300px]">Bezeichnung</Table.Head>
+				<Table.Head class="w-[300px] p-2">Bezeichnung</Table.Head>
 				<Table.Head class="p-2 text-right">Anzahl</Table.Head>
 				<Table.Head class="p-2 text-right">Einheit</Table.Head>
 				<Table.Head class="p-2 text-right">Einheitspreis</Table.Head>
@@ -72,7 +77,7 @@
 		<Table.Body>
 			{#each mainSectionData.RechnungsPositionen as position}
 				<Table.Row class="pointer-events-none">
-					<Table.Cell class="p-2 max-w-[210px] break-words text-left font-medium"
+					<Table.Cell class="max-w-[210px] break-words p-2 text-left font-medium"
 						>{position.bezeichnung}</Table.Cell
 					>
 					<Table.Cell class="p-2 text-right">{position.anzahl}</Table.Cell>
@@ -99,8 +104,12 @@
 			<span class="text-right text-sm font-medium">Nettobetrag</span>
 			<span class="min-w-[120px] text-right text-sm">{formatCurrency(totalNetto)}</span>
 		</div>
-		<div class="grid grid-cols-[1fr_auto_auto] gap-4 px-4">
-			<div></div>
+		<div class="grid grid-cols-[1fr_auto_auto] gap-4 pr-4">
+			<div class="text-left text-xs font-ligth text-muted-foreground">
+				{#if kleinunternehmer}
+					Kein Ausweis von Umsatzsteuer, da Kleinunternehmer gemäß § 19 UStG
+				{/if}
+			</div>
 			<span class="text-right text-sm font-medium">Umsatzsteuer</span>
 			<span class="min-w-[120px] text-right text-sm">{formatCurrency(totalUst)}</span>
 		</div>

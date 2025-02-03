@@ -1,3 +1,4 @@
+//src/lib/schema/5_footerContainer.ts
 import type { z } from "zod";
 import { RechnungsAbsenderPaymenSchema } from "./rechnungsAbsender";
 

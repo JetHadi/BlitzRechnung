@@ -112,7 +112,11 @@
 			</Dialog.Root>
 
 			<Dialog.Root bind:open={mainSectionDialog}>
-				<Dialog.Trigger class="w-full"><MainSectionContainer bind:mainSectionData /></Dialog.Trigger
+				<Dialog.Trigger class="w-full"
+					><MainSectionContainer
+						bind:mainSectionData
+						kleinunternehmer={headerData.absender_kleinunternehmer}
+					/></Dialog.Trigger
 				>
 
 				<Dialog.Content class="max-h-[90vh] w-full overflow-hidden sm:max-w-[800px]">
@@ -149,6 +153,7 @@
 								bind:openDialog={fourthSectionDialog}
 								bind:fourthSectionForm
 								bind:fourthSectionData
+								kleinunternehmer={headerForm.data.absender_kleinunternehmer}
 							/>
 						</div>
 					</ScrollArea>
@@ -156,7 +161,12 @@
 			</Dialog.Root>
 		</div>
 		<Dialog.Root bind:open={openFooterDialog}>
-			<Dialog.Trigger class="w-full"><FooterContainer bind:footerData kleinunternehmer={headerForm.data.absender_kleinunternehmer}/></Dialog.Trigger>
+			<Dialog.Trigger class="w-full"
+				><FooterContainer
+					bind:footerData
+					kleinunternehmer={headerForm.data.absender_kleinunternehmer}
+				/></Dialog.Trigger
+			>
 			<Dialog.Content class="max-h-[90vh] w-full overflow-hidden sm:max-w-[800px]">
 				<ScrollArea>
 					<Dialog.Header>
@@ -164,7 +174,12 @@
 						<Dialog.Description>Passe die Einträge an</Dialog.Description>
 					</Dialog.Header>
 					<div class="p-4">
-						<FooterDialog bind:openDialog={openFooterDialog} bind:footerForm bind:footerData kleinunternehmer={headerForm.data.absender_kleinunternehmer}/>
+						<FooterDialog
+							bind:openDialog={openFooterDialog}
+							bind:footerForm
+							bind:footerData
+							kleinunternehmer={headerForm.data.absender_kleinunternehmer}
+						/>
 					</div>
 				</ScrollArea>
 			</Dialog.Content>
@@ -177,6 +192,10 @@
 			<MainSectionContainer {mainSectionData} {isInteractive} />
 			<FourthSectionContainer {fourthSectionData} {isInteractive} />
 		</div>
-		<FooterContainer {footerData} {isInteractive} kleinunternehmer={headerData.absender_kleinunternehmer}/>
+		<FooterContainer
+			{footerData}
+			{isInteractive}
+			kleinunternehmer={headerData.absender_kleinunternehmer}
+		/>
 	{/if}
 </div>

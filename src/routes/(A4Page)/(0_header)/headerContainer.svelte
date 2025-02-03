@@ -29,35 +29,42 @@
 	)}
 >
 	<div class="flex items-start justify-between">
-		{#if headerData.absender_logo === ''}
-			<div class="select-none opacity-0">
-				<!-- Invisible placeholder -->
-				<Logo />
-			</div>
-		{:else if headerData.absender_logo}
-			<img
-				src={headerData.absender_logo}
-				alt="Company Logo"
-				class="h-auto max-w-[160px] object-contain"
-			/>
-		{:else}
-			<Logo /> <!-- Fallback to default logo -->
-		{/if}
-
-		<div class="w-2/4 text-center">
-			<h1 class="text-2xl font-bold">Rechnung</h1>
+		<div class="w-1/3 text-left">
+			<h1 class="text-xl text-muted-foreground">Rechnung</h1>
+		</div>
+		<div class="w-1/3 text-center">
+			{#if headerData.absender_logo === ''}
+				<div class="select-none opacity-0">
+					<!-- Invisible placeholder -->
+					<Logo />
+				</div>
+			{:else if headerData.absender_logo}
+				<img
+					src={headerData.absender_logo}
+					alt="Company Logo"
+					class="h-auto max-w-[160px] object-contain"
+				/>
+			{:else}
+				<Logo /> <!-- Fallback to default logo -->
+			{/if}
 		</div>
 
 		<div class="w-1/4 text-left text-sm">
-			{headerData.absender_firma}<br />
-			{headerData.absender_strasse}<br />
-			{headerData.absender_plz}
-			{headerData.absender_ort}<br />
+			{headerData.absender_firma || defaultRechnungsSender.absender_firma}<br />
+			{headerData.absender_strasse || defaultRechnungsSender.absender_strasse}<br />
+			{headerData.absender_plz || defaultRechnungsSender.absender_plz}
+			{headerData.absender_ort || defaultRechnungsSender.absender_ort}<br />
 			{#if headerData.absender_telefon}
 				{headerData.absender_telefon}<br />
+			{:else if headerData.absender_telefon == ''}
+				<span></span>
+			{:else}
+				{defaultRechnungsSender.absender_telefon}<br />
 			{/if}
 			{#if headerData.absender_email}
 				{headerData.absender_email}<br />
+			{:else}
+				{defaultRechnungsSender.absender_email}<br />
 			{/if}
 			<!-- {#if headerData.absender_name != headerData.absender_firma}
       Ihre Kontaktperson:<br/>

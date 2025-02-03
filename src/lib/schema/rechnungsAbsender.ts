@@ -1,3 +1,4 @@
+// src/lib/schema/rechnungsAbsender.ts
 import { z } from 'zod';
 
 // Basis-Validierungsfunktionen für Wiederverwendung

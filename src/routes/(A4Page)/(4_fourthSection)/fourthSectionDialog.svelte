@@ -9,7 +9,8 @@
 	let {
 		fourthSectionForm = $bindable(),
 		fourthSectionData = $bindable(),
-		openDialog = $bindable()
+		openDialog = $bindable(),
+		kleinunternehmer
 	} = $props();
 
 	const form = superForm(fourthSectionForm, {
@@ -38,7 +39,7 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>Zusätzliche Informationen für den Empfänger eintragen:</Form.Label>
-				<Textarea {...props} bind:value={$formData.extraInvoiceInfoSecond} />
+				<Textarea {...props} bind:value={$formData.extraInvoiceInfoSecond} class="min-h-[160px]"/>
 			{/snippet}
 		</Form.Control>
 		<Form.Description />

@@ -1,12 +1,12 @@
 import type { RechnungsAbsenderPaymentType, RechnungsAbsenderType } from "$lib/schema/rechnungsAbsender";
 
 export const defaultRechnungsSender: RechnungsAbsenderType = {
-    absender_firma: 'Your Company Name',
-    absender_strasse: 'Street Address',
-    absender_ort: 'City',
+    absender_firma: 'Blitz-Rechnung',
+    absender_strasse: 'Am Wolkenfeld',
+    absender_ort: 'Donnerstadt',
     absender_plz: '12345',
     absender_telefon: '+49 (0)123 456789',
-    absender_email: 'contact@example.com',
+    absender_email: 'blitz-rechnung@info.de',
     absender_name: "", //TODO: AbsenderName ggf hier hinzufügen
     absender_kleinunternehmer: false
 };

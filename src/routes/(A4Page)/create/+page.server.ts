@@ -24,17 +24,19 @@ export const load: PageServerLoad = async () => {
   const startTime = performance.now();
   console.log("🚀 Starting page load at:", new Date().toISOString());
 
-  const headerForm = await superValidate(HeaderContainerDefaults, zod(headerContainerSchema));
+  const headerForm = await superValidate(zod(headerContainerSchema));
   const firstSectionForm = await superValidate(FirstSectionContainerDefaults, zod(firstSectionContainerSchema));
   const secondSectionForm = await superValidate(SecondSectionContainerDefaults, zod(secondSectionContainerSchema));
   const mainSectionForm = await superValidate(MainSectionContainerDefaults, zod(mainSectionContainerSchema));
   const fourthSectionForm = await superValidate(FourthSectionContainerDefaults, zod(fourthSectionContainerSchema));
-  const footerForm = await superValidate(FooterContainerDefaults, zod(footerContainerSchema));
+  const footerForm = await superValidate(zod(footerContainerSchema));
 
   const loadTime = performance.now() - startTime;
   console.log(`✨ Page load completed in ${loadTime.toFixed(2)}ms`);
 
-  return { headerForm: headerForm, firstSectionForm: firstSectionForm, secondSectionForm: secondSectionForm, mainSectionForm: mainSectionForm, fourthSectionForm: fourthSectionForm, footerForm: footerForm }
+  return {
+    headerForm: headerForm, firstSectionForm: firstSectionForm, secondSectionForm: secondSectionForm, mainSectionForm: mainSectionForm, fourthSectionForm: fourthSectionForm, footerForm: footerForm
+  }
 }
 
 const getUnitCode = (unit: string): string => {
@@ -254,7 +256,7 @@ export const actions: Actions = {
         BT_32: invoiceData.footerForm.absender_steuernummer,
         // sollte übermittelt werden, falls Kleinunternehmer-Regelung stattfindet
         // FIXME: add Kleinunternehmer Boolean to Form
-        BT_33: invoiceData.headerForm.absender_kleinunternehmer ? '„Kein Ausweis von Umsatzsteuer, da Kleinunternehmer gemäß § 19 UStG“' : undefined,
+        BT_33: invoiceData.headerForm.absender_kleinunternehmer ? 'Kein Ausweis von Umsatzsteuer, da Kleinunternehmer gemäß § 19 UStG' : undefined,
 
         BT_34: invoiceData.footerForm.absender_ustId ? {
           value: invoiceData.footerForm.absender_ustId,

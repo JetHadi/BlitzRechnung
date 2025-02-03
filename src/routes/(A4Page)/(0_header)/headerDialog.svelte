@@ -20,7 +20,10 @@
 		SPA: true,
 		invalidateAll: false, // Prevents full page reload
 		onSubmit({}) {
-			// console.log("from DialogHeader onSubmit:",headerForm.data.firma)
+			console.log('from DialogHeader onSubmit:', $formData);
+			if ($formData.absender_telefon== undefined) {
+				$formData.absender_telefon = '';
+			}
 		},
 		onUpdate({ form }) {
 			if (form.valid) {
@@ -82,7 +85,12 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label class="text-sm font-medium">Firma</Form.Label>
-					<Input {...props} bind:value={$formData.absender_firma} class="mt-1.5" />
+					<Input
+						{...props}
+						bind:value={$formData.absender_firma}
+						placeholder={defaultRechnungsSender.absender_firma}
+						class="mt-1.5"
+					/>
 				{/snippet}
 			</Form.Control>
 			<Form.Description class="mt-1 text-sm text-muted-foreground" />
@@ -94,7 +102,12 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label class="text-sm font-medium">Straße</Form.Label>
-					<Input {...props} bind:value={$formData.absender_strasse} class="mt-1.5" />
+					<Input
+						{...props}
+						bind:value={$formData.absender_strasse}
+						placeholder={defaultRechnungsSender.absender_strasse}
+						class="mt-1.5"
+					/>
 				{/snippet}
 			</Form.Control>
 			<Form.Description class="mt-1 text-sm text-muted-foreground" />
@@ -106,7 +119,12 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label class="text-sm font-medium">PLZ</Form.Label>
-					<Input {...props} bind:value={$formData.absender_plz} class="mt-1.5" />
+					<Input
+						{...props}
+						bind:value={$formData.absender_plz}
+						placeholder={defaultRechnungsSender.absender_plz}
+						class="mt-1.5"
+					/>
 				{/snippet}
 			</Form.Control>
 			<Form.Description class="mt-1 text-sm text-muted-foreground" />
@@ -117,7 +135,12 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label class="text-sm font-medium">Ort</Form.Label>
-					<Input {...props} bind:value={$formData.absender_ort} class="mt-1.5" />
+					<Input
+						{...props}
+						bind:value={$formData.absender_ort}
+						placeholder={defaultRechnungsSender.absender_ort}
+						class="mt-1.5"
+					/>
 				{/snippet}
 			</Form.Control>
 			<Form.Description class="mt-1 text-sm text-muted-foreground" />
@@ -129,7 +152,12 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label class="text-sm font-medium">Telefon</Form.Label>
-					<Input {...props} bind:value={$formData.absender_telefon} class="mt-1.5" />
+					<Input
+						{...props}
+						bind:value={$formData.absender_telefon}
+						placeholder={defaultRechnungsSender.absender_telefon}
+						class="mt-1.5"
+					/>
 				{/snippet}
 			</Form.Control>
 			<Form.Description class="mt-1 text-sm text-muted-foreground" />
@@ -140,7 +168,12 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label class="text-sm font-medium">Email</Form.Label>
-					<Input {...props} bind:value={$formData.absender_email} class="mt-1.5" />
+					<Input
+						{...props}
+						bind:value={$formData.absender_email}
+						placeholder={defaultRechnungsSender.absender_email}
+						class="mt-1.5"
+					/>
 				{/snippet}
 			</Form.Control>
 			<Form.Description class="mt-1 text-sm text-muted-foreground" />
