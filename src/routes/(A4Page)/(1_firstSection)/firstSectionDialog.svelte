@@ -105,6 +105,8 @@
 				if (leistungsdatumType == 'leistungsdatum') {
 					firstSectionData.leistungsZeitraumA = undefined;
 					firstSectionData.leistungsZeitraumB = undefined;
+				} else {
+					firstSectionData.leistungsdatum = undefined;
 				}
 				openDialog = false;
 			}
@@ -300,9 +302,7 @@
 							bind:value={rangeCalenderValue}
 							class="
 							rounded-md
-					  border
-					  [&_[data-selection-end]]:bg-black
-					  [&_[data-selection-start]]:bg-black"
+					  border"
 						/>
 					{/if}
 				{/snippet}
