@@ -51,7 +51,7 @@
 	<div class="flex items-start justify-between">
 		<div class="text-left text-sm">
 			{firstSectionData.empfaenger_firma || defaultRechnungsEmfpaenger.empfaenger_firma}<br />
-			{firstSectionData.empfaenger_strasse || defaultRechnungsEmfpaenger.empfaenger_strasse }<br />
+			{firstSectionData.empfaenger_strasse || defaultRechnungsEmfpaenger.empfaenger_strasse}<br />
 			{firstSectionData.empfaenger_plz || defaultRechnungsEmfpaenger.empfaenger_plz}
 			{firstSectionData.empfaenger_ort || defaultRechnungsEmfpaenger.empfaenger_ort}<br />
 		</div>
@@ -62,32 +62,36 @@
 
 				<span>Rechnungsdatum:</span>
 				<span
-					>{formatToGermanDate(firstSectionData.rechnungsdatum || defaultRechnungsDaten.rechnungsdatum)}</span
+					>{formatToGermanDate(
+						firstSectionData.rechnungsdatum || defaultRechnungsDaten.rechnungsdatum
+					)}</span
 				>
 
 				{#if firstSectionData.leistungsdatum}
+					{#if formatToGermanDate(firstSectionData.leistungsdatum) != formatToGermanDate(firstSectionData.rechnungsdatum)}
+						<span>Leistungsdatum:</span>
+						<span>{formatToGermanDate(firstSectionData.leistungsdatum)}</span>
+					{/if}
+				{:else if firstSectionData.leistungsZeitraumA}
+					<span>Leistungszeitraum:</span>
+					<span
+						>{formatToGermanDate(firstSectionData.leistungsZeitraumA)}-<br />{formatToGermanDate(
+							firstSectionData.leistungsZeitraumB
+						)}</span
+					>
+					<!-- {:else}
 				<span>Leistungsdatum:</span>
 				<span
-					>{formatToGermanDate(firstSectionData.leistungsdatum)}</span
-				>
-				{:else}
-				<span>Leistungszeitraum:</span>
-				<span
-					>{formatToGermanDate(firstSectionData.leistungsZeitraumA)}-<br/>{formatToGermanDate(firstSectionData.leistungsZeitraumB)}</span
-				>
+					>{formatToGermanDate(defaultRechnungsDaten.rechnungsdatum)}</span
+				> -->
 				{/if}
 				{#if firstSectionData.empfaenger_ustId}
-				<span>Kunden USt. ID:</span>
-				<span
-					>{firstSectionData.empfaenger_ustId}</span
-				>
+					<span>Kunden USt. ID:</span>
+					<span>{firstSectionData.empfaenger_ustId}</span>
 				{:else if firstSectionData.empfaenger_steuernummer}
-				<span>Kunden SteuerNr:</span>
-				<span
-					>{firstSectionData.empfaenger_steuernummer}</span
-				>
+					<span>Kunden SteuerNr:</span>
+					<span>{firstSectionData.empfaenger_steuernummer}</span>
 				{/if}
-
 			</div>
 		</div>
 	</div>

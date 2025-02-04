@@ -202,38 +202,6 @@
 			<Form.FieldErrors class="mt-1 text-sm text-destructive" />
 		</Form.Field>
 
-		<Form.Field {form} name="empfaenger_ustId">
-			<Form.Control>
-				{#snippet children({ props })}
-					<Form.Label class="text-sm font-medium">Kunden USt. ID</Form.Label>
-					<Input
-						{...props}
-						bind:value={$formData.empfaenger_ustId}
-						placeholder={defaultRechnungsEmfpaenger.empfaenger_ustId}
-						class="mt-1.5"
-					/>
-				{/snippet}
-			</Form.Control>
-			<Form.Description class="mt-1 text-sm text-muted-foreground" />
-			<Form.FieldErrors class="mt-1 text-sm text-destructive" />
-		</Form.Field>
-
-		<Form.Field {form} name="empfaenger_steuernummer">
-			<Form.Control>
-				{#snippet children({ props })}
-					<Form.Label class="text-sm font-medium">Kunden SteuerNr</Form.Label>
-					<Input
-						{...props}
-						bind:value={$formData.empfaenger_steuernummer}
-						placeholder={defaultRechnungsEmfpaenger.empfaenger_steuernummer}
-						class="mt-1.5"
-					/>
-				{/snippet}
-			</Form.Control>
-			<Form.Description class="mt-1 text-sm text-muted-foreground" />
-			<Form.FieldErrors class="mt-1 text-sm text-destructive" />
-		</Form.Field>
-
 		<Form.Field {form} name="rechnungsnummer">
 			<Form.Control>
 				{#snippet children({ props })}
@@ -261,6 +229,38 @@
 						bind:value={() =>
 							transform2String($formData.rechnungsdatum || defaultRechnungsDaten.rechnungsdatum),
 						(v) => handleDateChange(v, 'rechnungsdatum')}
+						class="mt-1.5"
+					/>
+				{/snippet}
+			</Form.Control>
+			<Form.Description class="mt-1 text-sm text-muted-foreground" />
+			<Form.FieldErrors class="mt-1 text-sm text-destructive" />
+		</Form.Field>
+
+		<Form.Field {form} name="empfaenger_ustId">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label class="text-sm font-medium">Kunden USt. ID</Form.Label>
+					<Input
+						{...props}
+						bind:value={$formData.empfaenger_ustId}
+						placeholder={defaultRechnungsEmfpaenger.empfaenger_ustId}
+						class="mt-1.5"
+					/>
+				{/snippet}
+			</Form.Control>
+			<Form.Description class="mt-1 text-sm text-muted-foreground" />
+			<Form.FieldErrors class="mt-1 text-sm text-destructive" />
+		</Form.Field>
+
+		<Form.Field {form} name="empfaenger_steuernummer">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label class="text-sm font-medium">Kunden SteuerNr</Form.Label>
+					<Input
+						{...props}
+						bind:value={$formData.empfaenger_steuernummer}
+						placeholder={defaultRechnungsEmfpaenger.empfaenger_steuernummer}
 						class="mt-1.5"
 					/>
 				{/snippet}
