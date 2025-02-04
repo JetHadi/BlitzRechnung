@@ -37,7 +37,7 @@
 	);
 
 	const start = firstSectionData.leistungsZeitraumA ? lDateA : today(getLocalTimeZone());
-	const end = firstSectionData.leistungsZeitraumB ? lDateB : today(getLocalTimeZone());
+	const end = firstSectionData.leistungsZeitraumB ? lDateB : start.add({ days: 7 });
 
 	let rangeCalenderValue = $state({
 		start,
@@ -99,7 +99,6 @@
 		},
 		onUpdate({ form }) {
 			if (form.valid) {
-
 				firstSectionData = { ...$formData };
 				firstSectionData.leistungsZeitraumA = rangeCalenderValue.start.toDate('America/New_York');
 				firstSectionData.leistungsZeitraumB = rangeCalenderValue.end.toDate('America/New_York');
@@ -135,7 +134,7 @@
 	propaGateFrom={'DialogFirstSection'}
 />
 
-<form method="POST" use:enhance class="mx-auto w-auto space-y-6 p-6">
+<form method="POST" use:enhance class="mx-auto w-auto space-y-2 p-6">
 	<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 		<Form.Field {form} name="empfaenger_firma">
 			<Form.Control>
@@ -273,8 +272,15 @@
 				{#snippet children({ props })}
 					<Form.Label class="text-sm font-medium">
 						<ToggleGroup.Root bind:value={leistungsdatumType} size="sm" type="single">
-							<ToggleGroup.Item value="leistungsdatum" class="h-6">Leistungsdatum</ToggleGroup.Item>
-							<ToggleGroup.Item value="leistungszeitraum" class="h-6"
+							<ToggleGroup.Item
+								value="leistungsdatum"
+								class="bg-background-alt data-[state=on]:text-brand-yellow-foreground h-6 transition-colors hover:bg-brand-yellow/20 data-[state=on]:bg-brand-yellow/20"
+							>
+								Leistungsdatum
+							</ToggleGroup.Item>
+							<ToggleGroup.Item
+								value="leistungszeitraum"
+								class="bg-background-alt data-[state=on]:text-brand-yellow-foreground h-6 transition-colors hover:bg-brand-yellow/20 data-[state=on]:bg-brand-yellow/20"
 								>Leistungszeitraum</ToggleGroup.Item
 							>
 						</ToggleGroup.Root>
@@ -288,10 +294,20 @@
 							class="mt-1.5"
 						/>
 					{:else}
-						<RangeCalendar bind:value={rangeCalenderValue} class="rounded-md border" />
+						<!-- [&:has([data-selected])]:bg-brand-yellow
+			[&:has([data-selected][data-outside-month])]:bg-brand-yellow/50  -->
+						<RangeCalendar
+							bind:value={rangeCalenderValue}
+							class="
+							rounded-md
+					  border
+					  [&_[data-selection-end]]:bg-black
+					  [&_[data-selection-start]]:bg-black"
+						/>
 					{/if}
 				{/snippet}
 			</Form.Control>
+
 			<Form.Description class="mt-1 text-sm text-muted-foreground" />
 			<Form.FieldErrors class="mt-1 text-sm text-destructive" />
 		</Form.Field>

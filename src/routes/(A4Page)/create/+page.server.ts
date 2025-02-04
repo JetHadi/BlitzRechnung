@@ -280,6 +280,8 @@ export const actions: Actions = {
         //BT_59: invoiceData.headerForm.absender_firma || invoiceData.headerForm.absender_name,
         // Zeitpunkt der Lieferung muss in DE mit angegeben werden, wenn keine genaue Angabe dann gilt Rechnungsdatum
         BT_72: invoiceData.firstSectionForm.leistungsdatum.toISOString().slice(0, 10),
+        BT_73: invoiceData.firstSectionForm.leistungsZeitraumA.toISOString().slice(0, 10),
+        BT_74: invoiceData.firstSectionForm.leistungsZeitraumB.toISOString().slice(0, 10),
         // BT_59: invoiceData.headerForm.absender_firma || invoiceData.headerForm.absender_name,
         BT_106: invoiceData.calculatedAmounts.lineTotalAmount,
         BT_109: invoiceData.calculatedAmounts.taxBasisTotalAmount,
