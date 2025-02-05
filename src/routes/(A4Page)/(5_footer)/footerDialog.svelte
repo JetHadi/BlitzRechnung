@@ -85,12 +85,7 @@
 	});
 </script>
 
-<FooterContainer
-	footerData={formDataCopy}
-	isInteractive={false}
-	propaGateFrom={'DialogFooter'}
-	kleinunternehmer
-/>
+<FooterContainer footerData={formDataCopy} isInteractive={false} propaGateFrom={'DialogFooter'} />
 <form method="POST" use:enhance>
 	<Form.Field {form} name="absender_bankname">
 		<Form.Control>

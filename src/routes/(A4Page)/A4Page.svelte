@@ -45,6 +45,10 @@
 	let fourthSectionDialog = $state(false);
 	let openFooterDialog = $state(false);
 
+	let kleinunternehmer = $derived(headerData.absender_kleinunternehmer);
+	$inspect(firstSectionData);
+	$inspect(firstSectionData.rechnungsdatum);
+
 	// let headerData = $state(headerForm.data)
 
 	$effect(() => {
@@ -139,7 +143,7 @@
 
 			<Dialog.Root bind:open={fourthSectionDialog}>
 				<Dialog.Trigger class="w-full"
-					><FourthSectionContainer bind:fourthSectionData /></Dialog.Trigger
+					><FourthSectionContainer bind:fourthSectionData faelligkeitsdatum={firstSectionData.faelligkeitsdatum} rechnungsdatum={firstSectionData.rechnungsdatum} absender_firma={headerData.absender_firma} /></Dialog.Trigger
 				>
 
 				<Dialog.Content class="max-h-[90vh] w-full overflow-hidden sm:max-w-[800px]">
@@ -153,20 +157,26 @@
 								bind:openDialog={fourthSectionDialog}
 								bind:fourthSectionForm
 								bind:fourthSectionData
-								kleinunternehmer={headerForm.data.absender_kleinunternehmer}
+								kleinunternehmer
 							/>
 						</div>
 					</ScrollArea>
 				</Dialog.Content>
 			</Dialog.Root>
 		</div>
+		<div>
+			<div class="font-ligth px-4 text-left text-xs text-muted-foreground">
+				{#if kleinunternehmer}
+					Kein Ausweis von Umsatzsteuer, da Kleinunternehmer gemäß § 19 UStG <br />
+				{:else if !firstSectionData.leistungsdatum || firstSectionData.leistungsdatum.toUTCString().slice(0, 16) ==  firstSectionData.rechnungsdatum.toUTCString().slice(0, 16)}
+					<span
+						>Sofern nicht anders angegeben, entspricht das Liefer-/Leistungsdatum dem Rechnungsdatum</span
+					>
+				{/if}
+			</div>
+		</div>
 		<Dialog.Root bind:open={openFooterDialog}>
-			<Dialog.Trigger class="w-full"
-				><FooterContainer
-					bind:footerData
-					kleinunternehmer={headerForm.data.absender_kleinunternehmer}
-				/></Dialog.Trigger
-			>
+			<Dialog.Trigger class="w-full"><FooterContainer bind:footerData /></Dialog.Trigger>
 			<Dialog.Content class="max-h-[90vh] w-full overflow-hidden sm:max-w-[800px]">
 				<ScrollArea>
 					<Dialog.Header>
@@ -178,7 +188,7 @@
 							bind:openDialog={openFooterDialog}
 							bind:footerForm
 							bind:footerData
-							kleinunternehmer={headerForm.data.absender_kleinunternehmer}
+							kleinunternehmer
 						/>
 					</div>
 				</ScrollArea>
@@ -189,13 +199,20 @@
 		<FirstSectionContainer {firstSectionData} {isInteractive} />
 		<div class="mt-20 w-full flex-grow">
 			<SecondSectionContainer {secondSectionData} {isInteractive} />
-			<MainSectionContainer {mainSectionData} {isInteractive} />
+			<MainSectionContainer {mainSectionData} {isInteractive} kleinunternehmer />
 			<FourthSectionContainer {fourthSectionData} {isInteractive} />
 		</div>
-		<FooterContainer
-			{footerData}
-			{isInteractive}
-			kleinunternehmer={headerData.absender_kleinunternehmer}
-		/>
+		<div>
+			<div class="font-ligth px-4 text-left text-xs text-muted-foreground">
+				{#if kleinunternehmer}
+					Kein Ausweis von Umsatzsteuer, da Kleinunternehmer gemäß § 19 UStG <br />
+				{:else if !firstSectionData.leistungsdatum}
+					<span
+						>Sofern nicht anders angegeben, entspricht das Liefer-/Leistungsdatum dem Rechnungsdatum</span
+					>
+				{/if}
+			</div>
+		</div>
+		<FooterContainer {footerData} {isInteractive} />
 	{/if}
 </div>

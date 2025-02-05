@@ -66,13 +66,7 @@
 						firstSectionData.rechnungsdatum || defaultRechnungsDaten.rechnungsdatum
 					)}</span
 				>
-
-				{#if firstSectionData.leistungsdatum}
-					{#if formatToGermanDate(firstSectionData.leistungsdatum) != formatToGermanDate(firstSectionData.rechnungsdatum)}
-						<span>Leistungsdatum:</span>
-						<span>{formatToGermanDate(firstSectionData.leistungsdatum)}</span>
-					{/if}
-				{:else if firstSectionData.leistungsZeitraumA}
+				{#if firstSectionData.leistungsZeitraumA}
 					<span>Leistungszeitraum:</span>
 					<span
 						>{formatToGermanDate(firstSectionData.leistungsZeitraumA)}-<br />{formatToGermanDate(
@@ -84,6 +78,11 @@
 				<span
 					>{formatToGermanDate(defaultRechnungsDaten.rechnungsdatum)}</span
 				> -->
+				{:else if firstSectionData.leistungsdatum}
+					{#if formatToGermanDate(firstSectionData.leistungsdatum) != formatToGermanDate(firstSectionData.rechnungsdatum)}
+						<span>Leistungsdatum:</span>
+						<span>{formatToGermanDate(firstSectionData.leistungsdatum)}</span>
+					{/if}
 				{/if}
 				{#if firstSectionData.empfaenger_ustId}
 					<span>Kunden USt. ID:</span>

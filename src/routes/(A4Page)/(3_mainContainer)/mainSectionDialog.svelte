@@ -6,7 +6,11 @@
 	import * as Form from '$lib/components/ui/form/';
 	import { Input } from '$lib/components/ui/input/';
 	import * as Table from '$lib/components/ui/table';
-	import { deafaultRechnungsPosition } from '$lib/types/rechnungsPositionDefaults';
+	import {
+		deafaultRechnungsPosition,
+		defaultRechnungsPositionEmpty,
+		RechnungsPositionEmpty
+	} from '$lib/types/rechnungsPositionDefaults';
 	import { Plus, Minus } from 'lucide-svelte';
 	import * as Select from '$lib/components/ui/select';
 	import Textarea from '$lib/components/ui/textarea/textarea.svelte';
@@ -27,6 +31,7 @@
 	};
 
 	let defaultRechnungsPosition = deafaultRechnungsPosition;
+	let defaultEmpty = $state(defaultRechnungsPositionEmpty);
 
 	let gesamt = $state((anzahl: number, einheitspreis: number) => {
 		return anzahl * einheitspreis;
@@ -50,23 +55,35 @@
 		}
 	});
 
-	const { form: formData, enhance } = form;
+	const { form: formData, enhance, errors } = form;
 
 	function addNewDefaultPosition() {
-		$formData.RechnungsPositionen = [...$formData.RechnungsPositionen, defaultRechnungsPosition];
+		$formData.RechnungsPositionen = [...$formData.RechnungsPositionen, defaultEmpty];
 	}
 
 	function removeLastAddedPosition() {
 		$formData.RechnungsPositionen = $formData.RechnungsPositionen.slice(0, -1);
 	}
-
+	// $inspect($formData.RechnungsPositionen.length);
+	$inspect($errors);
+	$inspect($errors.RechnungsPositionen?.['0']);
 	// $inspect(mainSectionData);
 	$effect(() => {
+		if ($formData.RechnungsPositionen.length == 0) {
+			console.log('empty');
+			addNewDefaultPosition();
+		}
+
 		if (kleinunternehmer) {
-			if (mainSectionData.RechnungsPositionen[0].bezeichnung == 'Premium Rechnung') {
+			if (mainSectionData.RechnungsPositionen[0]?.bezeichnung == '') {
 				$formData.RechnungsPositionen[0].ustProzent = 0;
 			}
-			defaultRechnungsPosition.ustProzent = 0;
+			defaultEmpty.ustProzent = 0;
+		} else {
+			if (mainSectionData.RechnungsPositionen[0]?.bezeichnung == '') {
+				$formData.RechnungsPositionen[0].ustProzent = 19;
+			}
+			defaultEmpty.ustProzent = 19;
 		}
 	});
 </script>
@@ -86,41 +103,48 @@
 				</Table.Row>
 			</Table.Header>
 			<Table.Body>
-				{#each $formData.RechnungsPositionen as position}
+				{#each $formData.RechnungsPositionen as position, index}
 					<Table.Row>
 						<Table.Cell class="w-min-[300px] px-1">
-							<Form.Field {form} name="{position}-bezeichnung">
+							<Form.Field {form} name="RechnungsPositionen[{index}].bezeichnung">
 								<Form.Control>
 									{#snippet children({ props })}
 										<Textarea
-											class="h-[40px] min-h-[40px] pt-2"
+											class={[
+												'h-[40px] min-h-[40px] pt-2',
+												$errors.RechnungsPositionen?.[index.toString()]?.bezeichnung &&
+													'border-2 border-red-500 focus:border-red-700'
+											]}
 											{...props}
 											bind:value={position.bezeichnung}
+											placeholder={defaultRechnungsPosition.bezeichnung}
 											contenteditable
 										/>
 									{/snippet}
 								</Form.Control>
-								<Form.FieldErrors />
 							</Form.Field>
 						</Table.Cell>
 						<Table.Cell class="p-1">
-							<Form.Field {form} name="{position}-anzahl">
+							<Form.Field {form} name="RechnungsPositionen[{index}].anzahl">
 								<Form.Control>
 									{#snippet children({ props })}
 										<Input
 											type="number"
 											{...props}
 											bind:value={position.anzahl}
-											class="text-right [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+											class={[
+												'text-right [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none',
+												$errors.RechnungsPositionen?.[index.toString()]?.anzahl &&
+													'border-2 border-red-500 focus:border-red-700'
+											]}
 										/>
 									{/snippet}
 								</Form.Control>
-								<Form.FieldErrors />
 							</Form.Field>
 						</Table.Cell>
 
 						<Table.Cell class="p-1">
-							<Form.Field {form} name="{position}-einheit">
+							<Form.Field {form} name="RechnungsPositionen[{index}].einheit">
 								<Form.Control>
 									{#snippet children({ props })}
 										<Select.Root type="single" {...props} bind:value={position.einheit}>
@@ -136,39 +160,44 @@
 										</Select.Root>
 									{/snippet}
 								</Form.Control>
-								<Form.FieldErrors />
 							</Form.Field>
 						</Table.Cell>
 
 						<Table.Cell class="p-1">
-							<Form.Field {form} name="{position}-einheitspreis">
+							<Form.Field {form} name="RechnungsPositionen[{index}].einheitspreis">
 								<Form.Control>
 									{#snippet children({ props })}
 										<Input
-											class="text-right [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+											class={[
+												'text-right [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none',
+												$errors.RechnungsPositionen?.[index.toString()]?.einheitspreis &&
+													'border-2 border-red-500 focus:border-red-700'
+											]}
 											type="number"
 											{...props}
 											bind:value={position.einheitspreis}
 										/>
 									{/snippet}
 								</Form.Control>
-								<Form.FieldErrors />
 							</Form.Field>
 						</Table.Cell>
 
 						<Table.Cell class="p-1">
-							<Form.Field {form} name="{position}-ustProzent">
+							<Form.Field {form} name="RechnungsPositionen[{index}].ustProzent">
 								<Form.Control>
 									{#snippet children({ props })}
 										<Input
 											type="number"
 											{...props}
 											bind:value={position.ustProzent}
-											class="text-right [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+											class={[
+												'text-right [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none',
+												$errors.RechnungsPositionen?.[index.toString()]?.ustProzent &&
+													'border-2 border-red-500 focus:border-red-700'
+											]}
 										/>
 									{/snippet}
 								</Form.Control>
-								<Form.FieldErrors />
 							</Form.Field>
 						</Table.Cell>
 

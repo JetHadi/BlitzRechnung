@@ -31,14 +31,23 @@ export const RechnungSchema = z.object({
         invalid_type_error: "Fälligkeitsdatum muss ein Datum sein"
     }).optional() // BT-9 (Fälligkeitsdatum der Zahlung)
 }).superRefine((data, ctx) => {
-    // Leistungsdatum should not be before Rechnungsdatum
-    if (data.leistungsdatum && data.leistungsdatum < data.rechnungsdatum) {
+    // Rechnungsdatum should not be before Leistungsdatum
+    if (data.leistungsdatum && data.leistungsdatum > data.rechnungsdatum) {
         ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: "Das Leistungsdatum kann nicht vor dem Rechnungsdatum liegen.",
+            message: "Das Leistungsdatum kann nicht nach dem Rechnungsdatum liegen.",
             path: ["leistungsdatum"]
         });
     }
+
+    if (data.leistungsZeitraumB && data.leistungsZeitraumB > data.rechnungsdatum) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Das Ende des Leistungszeitraum kann nicht nach dem Rechnungsdatum liegen.",
+            path: ["leistungsdatum"]
+        });
+    }
+
 
     // Fälligkeitsdatum should not be before Rechnungsdatum
     if (data.faelligkeitsdatum && data.faelligkeitsdatum < data.rechnungsdatum) {

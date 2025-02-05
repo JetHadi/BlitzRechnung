@@ -10,7 +10,9 @@
 	import HeaderContainer from './headerContainer.svelte';
 	import { headerContainerSchema } from '$lib/schema/0_headerContainer';
 	import { Checkbox } from '$lib/components/ui/checkbox';
+	import * as RadioGroup from '$lib/components/ui/radio-group';
 	import { Button } from '$lib/components/ui/button';
+	import { Label } from '$lib/components/ui/label';
 
 	// for local client storage
 	let { headerForm = $bindable(), headerData = $bindable(), openDialog = $bindable() } = $props();
@@ -21,14 +23,14 @@
 		invalidateAll: false, // Prevents full page reload
 		onSubmit({}) {
 			console.log('from DialogHeader onSubmit:', $formData);
-			if ($formData.absender_telefon== undefined) {
-				$formData.absender_telefon = '';
-			}
+			// if ($formData.absender_telefon == undefined) {
+			// 	$formData.absender_telefon = '';
+			// }
 		},
 		onUpdate({ form }) {
 			if (form.valid) {
-				headerForm.data = { ...$formData };
-				// console.log('from DialogHeader onUpdate: ', headerForm.data.firma);
+				headerData = { ...$formData };
+				console.log('from DialogHeader onUpdate: ', headerForm);
 				openDialog = false;
 			}
 		}
@@ -51,6 +53,24 @@
 	}
 
 	const { form: formData, enhance, errors } = form;
+
+	let kleinunternehmerValue = $state(headerData.absender_kleinunternehmer?.toString() || 'hidden');
+	$inspect(kleinunternehmerValue);
+	// $inspect(headerData.absender_kleinunternehmer)
+	$effect(() => {
+		if (kleinunternehmerValue == 'true') {
+			$formData.absender_kleinunternehmer = true;
+		}
+		if (kleinunternehmerValue == 'false') {
+			$formData.absender_kleinunternehmer = false;
+		}
+		if (kleinunternehmerValue == 'hidden') {
+			$formData.absender_kleinunternehmer = undefined;
+		}
+		// if (!headerData.absender_kleinunternehmer) {
+		// 	kleinunternehmerValue = 'hidden';
+		// }
+	});
 </script>
 
 <HeaderContainer headerData={$formData} isInteractive={false} propaGateFrom={'DialogHeader'} />
@@ -60,8 +80,25 @@
 		<Form.Field {form} name="absender_kleinunternehmer" class="col-span-full">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Checkbox {...props} bind:checked={$formData.absender_kleinunternehmer} class="mt-1.5" />
-					<Form.Label class="text-sm font-medium">Hier ankreuzen falls Kleinunternehmer</Form.Label>
+					<RadioGroup.Root bind:value={kleinunternehmerValue} class="flex items-center gap-4">
+						<Form.Label class="text-sm font-medium">Bist du Kleinunternehmer?*</Form.Label>
+						<div class="flex gap-4">
+							<div class="hidden">
+								<RadioGroup.Item value="hidden" id="r3" />
+								<Label for="r3"></Label>
+							</div>
+							<div class="flex items-center space-x-2">
+								<RadioGroup.Item value="false" id="r2" />
+								<Label for="r2">Nein</Label>
+							</div>
+							<div class="flex items-center space-x-2">
+								<RadioGroup.Item value="true" id="r1" />
+								<Label for="r1">Ja</Label>
+							</div>
+						</div>
+					</RadioGroup.Root>
+
+					<!-- <Checkbox {...props} bind:checked={$formData.absender_kleinunternehmer} class="mt-1.5" /> -->
 				{/snippet}
 			</Form.Control>
 			<Form.Description class="mt-1 text-sm text-muted-foreground" />
@@ -84,7 +121,7 @@
 		<Form.Field {form} name="absender_firma">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Form.Label class="text-sm font-medium">Firma</Form.Label>
+					<Form.Label class="text-sm font-medium">Firma*</Form.Label>
 					<Input
 						{...props}
 						bind:value={$formData.absender_firma}
@@ -101,7 +138,7 @@
 		<Form.Field {form} name="absender_strasse">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Form.Label class="text-sm font-medium">Straße</Form.Label>
+					<Form.Label class="text-sm font-medium">Straße*</Form.Label>
 					<Input
 						{...props}
 						bind:value={$formData.absender_strasse}
@@ -118,7 +155,7 @@
 		<Form.Field {form} name="absender_plz">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Form.Label class="text-sm font-medium">PLZ</Form.Label>
+					<Form.Label class="text-sm font-medium">PLZ*</Form.Label>
 					<Input
 						{...props}
 						bind:value={$formData.absender_plz}
@@ -134,7 +171,7 @@
 		<Form.Field {form} name="absender_ort">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Form.Label class="text-sm font-medium">Ort</Form.Label>
+					<Form.Label class="text-sm font-medium">Ort*</Form.Label>
 					<Input
 						{...props}
 						bind:value={$formData.absender_ort}
@@ -167,7 +204,7 @@
 		<Form.Field {form} name="absender_email">
 			<Form.Control>
 				{#snippet children({ props })}
-					<Form.Label class="text-sm font-medium">Email</Form.Label>
+					<Form.Label class="text-sm font-medium">Email*</Form.Label>
 					<Input
 						{...props}
 						bind:value={$formData.absender_email}

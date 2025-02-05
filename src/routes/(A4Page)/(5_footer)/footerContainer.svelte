@@ -7,7 +7,6 @@
 		footerData = $bindable(),
 		isInteractive = true,
 		propaGateFrom = '',
-		kleinunternehmer = false
 	} = $props();
 </script>
 

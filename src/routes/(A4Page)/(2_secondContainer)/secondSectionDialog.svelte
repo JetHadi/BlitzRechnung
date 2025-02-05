@@ -17,6 +17,7 @@
 		SPA: true,
 		invalidateAll: false, // Prevents full page reload
 		onUpdate({ form }) {
+			console.log(form)
 			if (form.valid) {
 				secondSectionData = { ...$formData };
 				openDialog = false;
@@ -38,7 +39,7 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>Zusätzliche Informationen für den Empfänger eintragen:</Form.Label>
-				<Textarea {...props} bind:value={$formData.extraInvoiceInfoFirst} />
+				<Textarea {...props} bind:value={$formData.extraInvoiceInfoFirst} class="h-[160px]"/>
 			{/snippet}
 		</Form.Control>
 		<Form.Description />

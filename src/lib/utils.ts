@@ -18,9 +18,27 @@ export function getUnitCode(germanLabel: string): string {
     return REVERSE_UNITS[germanLabel] || germanLabel;
 }
 
-
+// TODO: fix return type
 export function addDays(date: Date, days: number): Date {
+    if (!date) {
+        return undefined
+    }
     const newDate = new Date(date);
     newDate.setDate(date.getDate() + days);
     return newDate;
+}
+
+export function transformDate2String(dateObject: Date | string | null): string {
+    if (!dateObject) return '';
+
+    if (dateObject instanceof Date) {
+        return dateObject.toISOString().split('T')[0];
+    }
+
+    // If it's already a string in YYYY-MM-DD format, return it
+    if (typeof dateObject === 'string') {
+        return dateObject;
+    }
+
+    return '';
 }

@@ -2,13 +2,15 @@
 <script lang="ts">
 	import * as Table from '$lib/components/ui/table';
 	import type { RechnungsPositionType } from '$lib/schema/rechnungsPosition';
+	import { MainSectionContainerDefaults } from '$lib/types/3_mainSectionContainerDefaults';
+	import { deafaultRechnungsPosition } from '$lib/types/rechnungsPositionDefaults';
 	import { cn } from '$lib/utils';
 
 	let {
 		mainSectionData = $bindable(),
 		isInteractive = true,
 		propaGateFrom = '',
-		kleinunternehmer = false
+		kleinunternehmer
 	} = $props();
 
 	// Format number as German currency
@@ -53,6 +55,28 @@
 			maximumFractionDigits: 0
 		});
 	};
+
+	$inspect(totalNetto);
+
+	$effect(() => {
+		// if (mainSectionData.RechnungsPositionen.length == 0) {
+		// 	mainSectionData.RechnungsPositionen = MainSectionContainerDefaults.RechnungsPositionen;
+		// }
+
+		if (kleinunternehmer) {
+			if (mainSectionData.RechnungsPositionen[0]?.bezeichnung == 'Premium Rechnung') {
+				mainSectionData.RechnungsPositionen[0].ustProzent = 0;
+			}
+			deafaultRechnungsPosition.ustProzent = 0;
+			MainSectionContainerDefaults.RechnungsPositionen[0].ustProzent = 0;
+		} else {
+			deafaultRechnungsPosition.ustProzent = 19;
+			MainSectionContainerDefaults.RechnungsPositionen[0].ustProzent = 19;
+			if (mainSectionData.RechnungsPositionen[0]?.bezeichnung == 'Premium Rechnung') {
+				mainSectionData.RechnungsPositionen[0].ustProzent = deafaultRechnungsPosition.ustProzent;
+			}
+		}
+	});
 </script>
 
 <div
@@ -75,50 +99,88 @@
 			</Table.Row>
 		</Table.Header>
 		<Table.Body>
-			{#each mainSectionData.RechnungsPositionen as position}
-				<Table.Row class="pointer-events-none">
-					<Table.Cell class="max-w-[210px] break-words p-2 text-left font-medium"
-						>{position.bezeichnung}</Table.Cell
-					>
-					<Table.Cell class="p-2 text-right">{position.anzahl}</Table.Cell>
-					<Table.Cell class="p-2 text-right">{position.einheit}</Table.Cell>
-					<Table.Cell class="p-2 text-right">{formatCurrency(position.einheitspreis)}</Table.Cell>
-					<Table.Cell class="p-2 text-right">{position.ustProzent}</Table.Cell>
-					<Table.Cell class="p-2 text-right"
-						>{formatCurrency(
-							ust(position.ustProzent, gesamt(position.anzahl, position.einheitspreis))
-						)}</Table.Cell
-					>
-					<Table.Cell class="p-2 text-right font-medium"
-						>{formatCurrency(gesamt(position.anzahl, position.einheitspreis))}</Table.Cell
-					>
-				</Table.Row>
-			{/each}
+			{#if mainSectionData.RechnungsPositionen.length == 0}
+				{#each MainSectionContainerDefaults.RechnungsPositionen as position}
+					<Table.Row class="pointer-events-none">
+						<Table.Cell class="max-w-[210px] break-words p-2 text-left font-medium"
+							>{position.bezeichnung}</Table.Cell
+						>
+						<Table.Cell class="p-2 text-right">{position.anzahl}</Table.Cell>
+						<Table.Cell class="p-2 text-right">{position.einheit}</Table.Cell>
+						<Table.Cell class="p-2 text-right">{formatCurrency(position.einheitspreis)}</Table.Cell>
+						<Table.Cell class="p-2 text-right">{position.ustProzent}</Table.Cell>
+						<Table.Cell class="p-2 text-right"
+							>{formatCurrency(
+								ust(position.ustProzent, gesamt(position.anzahl, position.einheitspreis))
+							)}</Table.Cell
+						>
+						<Table.Cell class="p-2 text-right font-medium"
+							>{formatCurrency(gesamt(position.anzahl, position.einheitspreis))}</Table.Cell
+						>
+					</Table.Row>
+				{/each}
+			{:else}
+				{#each mainSectionData.RechnungsPositionen as position}
+					<Table.Row class="pointer-events-none">
+						<Table.Cell class="max-w-[210px] break-words p-2 text-left font-medium"
+							>{position.bezeichnung}</Table.Cell
+						>
+						<Table.Cell class="p-2 text-right">{position.anzahl}</Table.Cell>
+						<Table.Cell class="p-2 text-right">{position.einheit}</Table.Cell>
+						<Table.Cell class="p-2 text-right">{formatCurrency(position.einheitspreis)}</Table.Cell>
+						<Table.Cell class="p-2 text-right">{position.ustProzent}</Table.Cell>
+						<Table.Cell class="p-2 text-right"
+							>{formatCurrency(
+								ust(position.ustProzent, gesamt(position.anzahl, position.einheitspreis))
+							)}</Table.Cell
+						>
+						<Table.Cell class="p-2 text-right font-medium"
+							>{formatCurrency(gesamt(position.anzahl, position.einheitspreis))}</Table.Cell
+						>
+					</Table.Row>
+				{/each}
+			{/if}
 		</Table.Body>
 	</Table.Root>
 
 	<!-- Summary section -->
-	<div class="mt-4 space-y-2">
-		<div class="grid grid-cols-[1fr_auto_auto] gap-4 px-4">
-			<div></div>
-			<span class="text-right text-sm font-medium">Nettobetrag</span>
-			<span class="min-w-[120px] text-right text-sm">{formatCurrency(totalNetto)}</span>
-		</div>
-		<div class="grid grid-cols-[1fr_auto_auto] gap-4 pr-4">
-			<div class="text-left text-xs font-ligth text-muted-foreground">
-				{#if kleinunternehmer}
-					Kein Ausweis von Umsatzsteuer, da Kleinunternehmer gemäß § 19 UStG
-				{/if}
+	{#if mainSectionData.RechnungsPositionen.length == 0}
+		<div class="mt-4 space-y-2">
+			<div class="grid grid-cols-[1fr_auto_auto] gap-4 px-4">
+				<div></div>
+				<span class="text-right text-sm font-medium">Nettobetrag</span>
+				<span class="min-w-[120px] text-right text-sm">12,00€</span>
 			</div>
-			<span class="text-right text-sm font-medium">Umsatzsteuer</span>
-			<span class="min-w-[120px] text-right text-sm">{formatCurrency(totalUst)}</span>
+			<div class="grid grid-cols-[1fr_auto_auto] gap-4">
+				<span class="text-right text-sm font-medium">Umsatzsteuer</span>
+				<span class="min-w-[120px] text-right text-sm">{kleinunternehmer ? '0,00€' : '2,28€'}</span>
+			</div>
+			<div class="grid grid-cols-[1fr_auto_auto] gap-4 border-t px-4 pt-2">
+				<div></div>
+				<span class="text-right text-base font-semibold">Rechnungsbetrag</span>
+				<span class="min-w-[120px] text-right text-base font-semibold"
+					>{kleinunternehmer ? '12,00' : '14,28€'}</span
+				>
+			</div>
 		</div>
-		<div class="grid grid-cols-[1fr_auto_auto] gap-4 border-t px-4 pt-2">
-			<div></div>
-			<span class="text-right text-base font-semibold">Rechnungsbetrag</span>
-			<span class="min-w-[120px] text-right text-base font-semibold"
-				>{formatCurrency(totalRechnung)}</span
-			>
+	{:else}
+		<div class="mt-4 space-y-2">
+			<div class="grid grid-cols-[1fr_auto_auto] gap-4 px-4">
+				<div></div>
+				<span class="text-right text-sm font-medium">Nettobetrag</span>
+				<span class="min-w-[120px] text-right text-sm">{formatCurrency(totalNetto)}</span>
+			</div>
+			<div class="grid grid-cols-[1fr_auto_auto] gap-4">
+				<span class="text-right text-sm font-medium">Umsatzsteuer</span>
+				<span class="min-w-[120px] text-right text-sm">{formatCurrency(totalUst)}</span>
+			</div>
+			<div class="grid grid-cols-[1fr_auto_auto] gap-4 border-t px-4 pt-2">
+				<div></div>
+				<span class="text-right text-base font-semibold">Rechnungsbetrag</span>
+				<span class="min-w-[120px] text-right text-base font-semibold"
+					>{formatCurrency(totalRechnung)}</span
+				>
+			</div>
 		</div>
-	</div>
+	{/if}
 </div>

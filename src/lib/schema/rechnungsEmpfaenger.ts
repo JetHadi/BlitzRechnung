@@ -12,18 +12,18 @@ export const RechnungsEmpfaengerSchema = z.object({
         .max(200, { message: "Name der Ansprechperson darf maximal 200 Zeichen lang sein" }), // BT-44
 
     empfaenger_strasse: z.string(requiredField("Straße"))
-        .min(2, { message: "Straßenangabe muss mindestens 2 Zeichen lang sein" })
+        .min(1, { message: "Straßenangabe darf nicht leer sein" })
         .max(200, { message: "Straßenangabe darf maximal 200 Zeichen lang sein" }), // BT-50
 
     empfaenger_plz: z.string(requiredField("Postleitzahl"))
         .length(5, { message: "Postleitzahl muss genau 5 Zeichen lang sein" }), // BT-53
 
     empfaenger_ort: z.string(requiredField("Ort"))
-        .min(2, { message: "Ortsangabe muss mindestens 2 Zeichen lang sein" })
+        .min(2, { message: "Ortsangabe darf nicht leer sein" })
         .max(100, { message: "Ortsangabe darf maximal 100 Zeichen lang sein" }), // BT-52
 
     empfaenger_firma: z.string(requiredField("Handelsname"))
-        .min(1, { message: "Name des Käufers muss vorhanden sein" })
+        .min(1, { message: "Name des Käufers darf nicht leer sein" })
         .max(200, { message: "Name des Käufers darf maximal 200 Zeichen lang sein" }), // BT-45
 
     empfaenger_steuernummer: z.string()
@@ -37,22 +37,6 @@ export const RechnungsEmpfaengerSchema = z.object({
         .optional()
         .transform(val => val?.trim() || undefined)
 
-}).superRefine((val, ctx) => {
-    const hasSteuer = val.empfaenger_steuernummer !== undefined
-    const hasUst = val.empfaenger_ustId !== undefined
-
-    if (!hasSteuer && !hasUst) {
-        ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Mindestens eines der Felder muss angegeben werden",
-            path: ['empfaenger_steuernummer']
-        })
-        ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Mindestens eines der Felder muss angegeben werden",
-            path: ['empfaenger_ustId']
-        })
-    }
 })
 
 export type RechnungsEmpfaenger = z.infer<typeof RechnungsEmpfaengerSchema>;

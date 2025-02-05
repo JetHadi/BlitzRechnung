@@ -10,6 +10,7 @@
 		fourthSectionForm = $bindable(),
 		fourthSectionData = $bindable(),
 		openDialog = $bindable(),
+		faelligkeitsdatum = undefined,
 		kleinunternehmer
 	} = $props();
 
@@ -18,6 +19,7 @@
 		SPA: true,
 		invalidateAll: false, // Prevents full page reload
 		onUpdate({ form }) {
+			console.log(form)
 			if (form.valid) {
 				fourthSectionData = { ...$formData };
 				openDialog = false;
@@ -38,7 +40,7 @@
 	<Form.Field {form} name="extraInvoiceInfoSecond">
 		<Form.Control>
 			{#snippet children({ props })}
-				<Form.Label>Zusätzliche Informationen für den Empfänger eintragen:</Form.Label>
+				<Form.Label>Zusätzliche Informationen über die Rechnung für den Empfänger hier eintragen:</Form.Label>
 				<Textarea {...props} bind:value={$formData.extraInvoiceInfoSecond} class="min-h-[160px]"/>
 			{/snippet}
 		</Form.Control>
