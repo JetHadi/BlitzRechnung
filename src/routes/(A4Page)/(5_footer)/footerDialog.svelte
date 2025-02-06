@@ -30,7 +30,13 @@
 	} = $props();
 
 	// let $formData = $state(footerData);
-	let vatType = $state(footerData.absender_steuernummer ? 'Steuernummer' : (footerData.absender_steuernummer ? 'USt.-ID' : undefined));
+	let vatType = $state(
+		footerData.absender_steuernummer
+			? 'Steuernummer'
+			: footerData.absender_steuernummer
+				? 'USt.-ID'
+				: undefined
+	);
 	let hoveredVatType = $state<string | null>(null);
 
 	let vatInput = $state('');
@@ -60,7 +66,7 @@
 
 	const { form: formData, enhance } = form;
 
-	$inspect(vatType)
+	$inspect(vatType);
 
 	$effect(() => {
 		// if (iniitalLoad == 1) {
@@ -123,9 +129,11 @@
 							vatType === 'USt.-ID'
 								? (($formData.absender_steuernummer = undefined), ($formData.absender_ustId = v))
 								: (($formData.absender_ustId = undefined), ($formData.absender_steuernummer = v))}
-						placeholder={(vatType) ? (vatType == 'USt.-ID'
-							? defaultRechnungsSenderPayment.absender_ustId
-							: defaultRechnungsSenderPayment.absender_steuernummer) : ''}
+						placeholder={vatType
+							? vatType == 'USt.-ID'
+								? defaultRechnungsSenderPayment.absender_ustId
+								: defaultRechnungsSenderPayment.absender_steuernummer
+							: ''}
 					/>
 				{/snippet}
 			</Form.Control>
