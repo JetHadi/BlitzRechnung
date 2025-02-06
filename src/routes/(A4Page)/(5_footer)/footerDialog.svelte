@@ -33,7 +33,7 @@
 	let vatType = $state(
 		footerData.absender_steuernummer
 			? 'Steuernummer'
-			: footerData.absender_steuernummer
+			: footerData.absender_ustId
 				? 'USt.-ID'
 				: undefined
 	);
