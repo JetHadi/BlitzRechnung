@@ -3,11 +3,7 @@
 	import { defaultRechnungsSenderPayment } from '$lib/types/rechnungsSender';
 	import { cn } from '$lib/utils';
 
-	let {
-		footerData = $bindable(),
-		isInteractive = true,
-		propaGateFrom = '',
-	} = $props();
+	let { footerData = $bindable(), isInteractive = true, propaGateFrom = '' } = $props();
 </script>
 
 <div
@@ -19,18 +15,33 @@
 >
 	<div class="flex items-start justify-between border-t pt-4">
 		<div class="text-left text-sm">
-			<div class="grid grid-cols-[30px_1fr] gap-x-4">
-				<span>Bank:</span>
-				<span
-					>{footerData.absender_bankname || defaultRechnungsSenderPayment.absender_bankname}</span
-				>
+			{#if footerData.absender_iban}
+				<div class="grid grid-cols-[30px_1fr] gap-x-4">
+					{#if footerData.absender_bankname}
+						<span>Bank:</span>
+						<span>{footerData.absender_bankname}</span>
+					{/if}
 
-				<span>IBAN:</span>
-				<span>{footerData.absender_iban || defaultRechnungsSenderPayment.absender_iban}</span>
+					<span>IBAN:</span>
+					<span>{footerData.absender_iban}</span>
 
-				<span>BIC:</span>
-				<span>{footerData.absender_bic || defaultRechnungsSenderPayment.absender_bic}</span>
-			</div>
+					{#if footerData.absender_bic}
+						<span>BIC:</span>
+						<span>{footerData.absender_bic}</span>
+					{/if}
+				</div>
+			{:else}
+				<div class="grid grid-cols-[30px_1fr] gap-x-4">
+					<span>Bank:</span>
+					<span>{defaultRechnungsSenderPayment.absender_bankname}</span>
+
+					<span>IBAN:</span>
+					<span>{defaultRechnungsSenderPayment.absender_iban}</span>
+
+					<span>BIC:</span>
+					<span>{defaultRechnungsSenderPayment.absender_bic}</span>
+				</div>
+			{/if}
 		</div>
 		<div class="text-left text-sm">
 			<div class="grid grid-cols-[80px_1fr] gap-x-4">

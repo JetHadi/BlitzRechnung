@@ -19,6 +19,7 @@
 	import FooterContainer from './footerContainer.svelte';
 	import { footerContainerSchema, type FooterContainerType } from '$lib/schema/5_footerContainer';
 	import { derived } from 'svelte/store';
+	import * as ToggleGroup from '$lib/components/ui/toggle-group';
 
 	// for local client storage
 	let {
@@ -28,19 +29,12 @@
 		kleinunternehmer
 	} = $props();
 
-	let formDataCopy = $state(footerData);
+	// let $formData = $state(footerData);
+	let vatType = $state(footerData.absender_steuernummer ? 'Steuernummer' : (footerData.absender_steuernummer ? 'USt.-ID' : undefined));
+	let hoveredVatType = $state<string | null>(null);
 
-	let iniitalLoad = $state(0);
+	let vatInput = $state('');
 
-	let footerEmptyValues: FooterContainerType = {
-		absender_bankname: '',
-		absender_iban: '',
-		absender_bic: '',
-		absender_amtsgericht: '',
-		absender_hrb: '',
-		absender_steuernummer: undefined,
-		absender_ustId: undefined
-	};
 	const form = superForm(footerForm, {
 		SPA: true,
 		validators: zodClient(footerContainerSchema),
@@ -48,11 +42,10 @@
 		resetForm: false,
 		onSubmit({}) {
 			console.log('from DialogFooter onSubmit:', $formData);
-			if ($formData.absender_steuernummer == '') {
+			console.log(vatType);
+			if (vatType == 'USt.-ID') {
 				$formData.absender_steuernummer = undefined;
-			}
-			console.log($formData.absender_steuernummer);
-			if ($formData.absender_ustId == '') {
+			} else {
 				$formData.absender_ustId = undefined;
 			}
 		},
@@ -67,6 +60,8 @@
 
 	const { form: formData, enhance } = form;
 
+	$inspect(vatType)
+
 	$effect(() => {
 		// if (iniitalLoad == 1) {
 		// 	$formData.absender_bankname = '';
@@ -76,71 +71,122 @@
 		// 	$formData.absender_steuernummer = '';
 		// 	iniitalLoad++;
 		// }
-
-		if (kleinunternehmer) {
-			$formData.absender_ustId = '';
-		} else {
-			$formData.absender_steuernummer = '';
-		}
+		// if (vatType === 'USt.-ID') {
+		// 	$formData.absender_ustId = vatInput;
+		// 	$formData.absender_steuernummer = '';
+		// } else {
+		// 	$formData.absender_steuernummer = vatInput;
+		// 	$formData.absender_ustId = '';
+		// }
+		// if (kleinunternehmer) {
+		// 	$formData.absender_ustId = '';
+		// } else {
+		// 	$formData.absender_steuernummer = '';
+		// }
 	});
 </script>
 
-<FooterContainer footerData={formDataCopy} isInteractive={false} propaGateFrom={'DialogFooter'} />
+<FooterContainer footerData={$formData} isInteractive={false} propaGateFrom={'DialogFooter'} />
 <form method="POST" use:enhance>
-	<Form.Field {form} name="absender_bankname">
-		<Form.Control>
-			{#snippet children({ props })}
-				<Form.Label>Bankname</Form.Label>
-				<Input
-					{...props}
-					bind:value={$formData.absender_bankname}
-					placeholder={defaultRechnungsSenderPayment.absender_bankname}
-					oninput={(e) => {
-						formDataCopy.absender_bankname = $formData.absender_bankname;
-					}}
-				/>
-			{/snippet}
-		</Form.Control>
-		<Form.Description />
-		<Form.FieldErrors />
-	</Form.Field>
+	<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+		<Form.Field {form} name={vatType == 'USt.-ID' ? 'absender_ustId' : 'absender_steuernummer'}>
+			<Form.Control>
+				{#snippet children({ props })}
+					<ToggleGroup.Root bind:value={vatType} size="sm" type="single">
+						<ToggleGroup.Item
+							value="USt.-ID"
+							class="bg-background-alt data-[state=on]:text-brand-yellow-foreground h-6 transition-colors hover:bg-brand-yellow/20 data-[state=on]:bg-brand-yellow/20"
+							onmouseover={() => (hoveredVatType = 'USt.-ID')}
+							onmouseleave={() => (hoveredVatType = null)}
+						>
+							<Form.Label>
+								USt.-ID{#if (vatType === 'USt.-ID' && (!hoveredVatType || hoveredVatType === 'USt.-ID')) || (hoveredVatType === 'USt.-ID' && vatType !== 'USt.-ID')}*{/if}
+							</Form.Label>
+						</ToggleGroup.Item>
+						<ToggleGroup.Item
+							value="Steuernummer"
+							class="bg-background-alt data-[state=on]:text-brand-yellow-foreground h-6 transition-colors hover:bg-brand-yellow/20 data-[state=on]:bg-brand-yellow/20"
+							onmouseover={() => (hoveredVatType = 'Steuernummer')}
+							onmouseleave={() => (hoveredVatType = null)}
+						>
+							<Form.Label>
+								Steuernummer{#if (vatType === 'Steuernummer' && (!hoveredVatType || hoveredVatType === 'Steuernummer')) || (hoveredVatType === 'Steuernummer' && vatType !== 'Steuernummer')}*{/if}
+							</Form.Label>
+						</ToggleGroup.Item>
+					</ToggleGroup.Root>
 
-	<Form.Field {form} name="absender_iban">
-		<Form.Control>
-			{#snippet children({ props })}
-				<Form.Label>IBAN</Form.Label>
-				<Input
-					{...props}
-					bind:value={$formData.absender_iban}
-					placeholder={defaultRechnungsSenderPayment.absender_iban}
-					oninput={(e) => {
-						formDataCopy.absender_iban = $formData.absender_iban;
-					}}
-				/>
-			{/snippet}
-		</Form.Control>
-		<Form.Description />
-		<Form.FieldErrors />
-	</Form.Field>
+					<Input
+						{...props}
+						bind:value={() =>
+							vatType === 'USt.-ID' ? $formData.absender_ustId : $formData.absender_steuernummer,
+						(v) =>
+							vatType === 'USt.-ID'
+								? (($formData.absender_steuernummer = undefined), ($formData.absender_ustId = v))
+								: (($formData.absender_ustId = undefined), ($formData.absender_steuernummer = v))}
+						placeholder={(vatType) ? (vatType == 'USt.-ID'
+							? defaultRechnungsSenderPayment.absender_ustId
+							: defaultRechnungsSenderPayment.absender_steuernummer) : ''}
+					/>
+				{/snippet}
+			</Form.Control>
+			<Form.Description />
+			<Form.FieldErrors />
+		</Form.Field>
 
-	<Form.Field {form} name="absender_bic">
-		<Form.Control>
-			{#snippet children({ props })}
-				<Form.Label>BIC</Form.Label>
-				<Input
-					{...props}
-					bind:value={$formData.absender_bic}
-					placeholder={defaultRechnungsSenderPayment.absender_bic}
-					oninput={(e) => {
-						formDataCopy.absender_bic = $formData.absender_bic;
-					}}
-				/>
-			{/snippet}
-		</Form.Control>
-		<Form.Description />
-		<Form.FieldErrors />
-	</Form.Field>
-	<!--TODO: Add Prefix like DE etc here 
+		<Form.Field {form} name="absender_iban">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label>IBAN*</Form.Label>
+					<Input
+						{...props}
+						bind:value={$formData.absender_iban}
+						placeholder={defaultRechnungsSenderPayment.absender_iban}
+						oninput={(e) => {
+							$formData.absender_iban = $formData.absender_iban;
+						}}
+					/>
+				{/snippet}
+			</Form.Control>
+			<Form.Description />
+			<Form.FieldErrors />
+		</Form.Field>
+
+		<Form.Field {form} name="absender_bankname">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label>Bankname</Form.Label>
+					<Input
+						{...props}
+						bind:value={$formData.absender_bankname}
+						placeholder={defaultRechnungsSenderPayment.absender_bankname}
+						oninput={(e) => {
+							$formData.absender_bankname = $formData.absender_bankname;
+						}}
+					/>
+				{/snippet}
+			</Form.Control>
+			<Form.Description />
+			<Form.FieldErrors />
+		</Form.Field>
+
+		<Form.Field {form} name="absender_bic">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label>BIC</Form.Label>
+					<Input
+						{...props}
+						bind:value={$formData.absender_bic}
+						placeholder={defaultRechnungsSenderPayment.absender_bic}
+						oninput={(e) => {
+							$formData.absender_bic = $formData.absender_bic;
+						}}
+					/>
+				{/snippet}
+			</Form.Control>
+			<Form.Description />
+			<Form.FieldErrors />
+		</Form.Field>
+		<!--TODO: Add Prefix like DE etc here 
 	<Form.Field {form} name="absender_ustId">
 		<Form.Control>
 			{#snippet children({ props })}
@@ -161,49 +207,8 @@
 		<Form.FieldErrors />
 	</Form.Field>
 	-->
-	<Form.Field {form} name="absender_ustId">
-		<Form.Control>
-			{#snippet children({ props })}
-				<Form.Label>USt.-ID</Form.Label>
-				<Input
-					{...props}
-					bind:value={$formData.absender_ustId}
-					placeholder={defaultRechnungsSenderPayment.absender_ustId}
-					oninput={(e: any) => {
-						if (e.target.value == '') {
-							$formData.absender_ustId = undefined;
-						} else {
-							formDataCopy.absender_ustId = $formData.absender_ustId;
-						}
-					}}
-				/>
-			{/snippet}
-		</Form.Control>
-		<Form.Description />
-		<Form.FieldErrors />
-	</Form.Field>
-
-	<Form.Field {form} name="absender_steuernummer">
-		<Form.Control>
-			{#snippet children({ props })}
-				<Form.Label>Steuernummer</Form.Label>
-				<Input
-					{...props}
-					bind:value={$formData.absender_steuernummer}
-					placeholder={defaultRechnungsSenderPayment.absender_steuernummer}
-					oninput={(e: any) => {
-						if (e.target.value == '') {
-							$formData.absender_steuernummer = undefined;
-						} else {
-							formDataCopy.absender_steuernummer = $formData.absender_steuernummer;
-						}
-					}}
-				/>
-			{/snippet}
-		</Form.Control>
-		<Form.Description />
-		<Form.FieldErrors />
-	</Form.Field>
-
-	<Form.Button>Submit</Form.Button>
+	</div>
+	<div class="mt-2 flex justify-end">
+		<Form.Button class="w-full md:w-auto">Submit</Form.Button>
+	</div>
 </form>
