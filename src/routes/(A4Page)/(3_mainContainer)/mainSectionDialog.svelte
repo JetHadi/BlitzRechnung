@@ -112,7 +112,7 @@
 										<Textarea
 											class={[
 												'h-[40px] min-h-[40px] pt-2',
-												$errors.RechnungsPositionen?.[index.toString()]?.bezeichnung &&
+												$errors.RechnungsPositionen?.[index]?.bezeichnung &&
 													'border-2 border-red-500 focus:border-red-700'
 											]}
 											{...props}
@@ -134,7 +134,7 @@
 											bind:value={position.anzahl}
 											class={[
 												'text-right [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none',
-												$errors.RechnungsPositionen?.[index.toString()]?.anzahl &&
+												$errors.RechnungsPositionen?.[index]?.anzahl &&
 													'border-2 border-red-500 focus:border-red-700'
 											]}
 										/>
@@ -170,7 +170,7 @@
 										<Input
 											class={[
 												'text-right [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none',
-												$errors.RechnungsPositionen?.[index.toString()]?.einheitspreis &&
+												$errors.RechnungsPositionen?.[index]?.einheitspreis &&
 													'border-2 border-red-500 focus:border-red-700'
 											]}
 											type="number"
@@ -192,7 +192,7 @@
 											bind:value={position.ustProzent}
 											class={[
 												'text-right [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none',
-												$errors.RechnungsPositionen?.[index.toString()]?.ustProzent &&
+												$errors.RechnungsPositionen?.[index]?.ustProzent &&
 													'border-2 border-red-500 focus:border-red-700'
 											]}
 										/>

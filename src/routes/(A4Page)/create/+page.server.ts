@@ -232,7 +232,7 @@ export const actions: Actions = {
       XML creation process
       */
       const invoiceData = calculateAmounts(A4Form.data)
-
+      const taxId = invoiceData.footerForm.absender_ustId || invoiceData.footerForm.absender_steuernummer;
       const mappedBT: BusinessTerms = {
         BT_1: invoiceData.firstSectionForm.rechnungsnummer,
         BT_2: invoiceData.firstSectionForm.rechnungsdatum.toISOString().slice(0, 10),
@@ -242,8 +242,8 @@ export const actions: Actions = {
         // FIXME: Der Benutzer sollte den Hinweis bekommen, dass hier die juristisch eingetragene Person als Absendername (BT-27) angegeben werden muss
         BT_27: invoiceData.headerForm.absender_firma || invoiceData.headerForm.absender_name,
         // FIXME: Verkäuferkennung korrekt erstellen -- Vorlage wäre BLITZ-{steuernummer_bereinigt}-KU
-        BT_29: invoiceData.footerForm.absender_steuernummer ? {
-          value: `BLITZ-${(invoiceData.footerForm.absender_steuernummer.replace(/\D/g, ''))}-KU`,
+        BT_29: taxId ? {
+          value: `BLITZ-${taxId.replace(/[ \/]/g, '')}-KU`,
           schemeID: "SEL"
         } : undefined,
         BT_31: invoiceData.footerForm.absender_ustId,

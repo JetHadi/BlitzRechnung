@@ -46,15 +46,22 @@ export const RechnungsAbsenderSchema = z.object({
 
 export const RechnungsAbsenderPaymenSchema = z.object({
     absender_steuernummer: z.string()
-        .min(10, { message: "Steuernummer muss min 10 Zeichen haben" })
-        .max(13, { message: "Steuernummer darf maximal 13 Zeichen haben" })
         .optional()
-        .transform(val => val?.trim() || undefined),
+        .transform(val => val?.trim().replace(/\s/g, '') || undefined) // Leerzeichen entfernen
+        .refine(val => !val || /^[0-9\/]+$/.test(val), {
+            message: "Darf nur Zahlen und/oder Schrägstriche enthalten"
+        })
+        .refine(val => !val || (val.length >= 10 && val.length <= 13), {
+            message: "Muss zwischen 10-13 Zeichen lang sein"
+        }),
 
     absender_ustId: z.string()
-        .length(11, { message: "Die Umsatzsteuer-ID hat genau 11 Zeichen und beginnt mit DE" })
         .optional()
-        .transform(val => val?.trim() || undefined),
+        .transform(val => val?.trim().replace(/\s/g, '') || undefined) // Leerzeichen entfernen
+        .refine(val => !val || /^DE[a-zA-Z0-9]{9}$/.test(val), {
+            message: "Muss mit DE beginnen und genau 11 alphanumerische Zeichen haben"
+        }),
+
 
     absender_bankname: z.string(requiredField("Bankname"))
         .max(100, { message: "Bankname darf maximal 100 Zeichen lang sein" }),

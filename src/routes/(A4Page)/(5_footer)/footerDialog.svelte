@@ -122,6 +122,7 @@
 					</ToggleGroup.Root>
 
 					<Input
+						disabled={(vatType == '') ? true : false}
 						{...props}
 						bind:value={() =>
 							vatType === 'USt.-ID' ? $formData.absender_ustId : $formData.absender_steuernummer,

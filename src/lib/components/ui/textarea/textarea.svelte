@@ -2,6 +2,7 @@
 	import type { WithElementRef, WithoutChildren } from "bits-ui";
 	import type { HTMLTextareaAttributes } from "svelte/elements";
 	import { cn } from "$lib/utils.js";
+	import autosize from 'svelte-autosize';
 
 	let {
 		ref = $bindable(null),
@@ -19,4 +20,5 @@
 	)}
 	bind:value
 	{...restProps}
+	use:autosize
 ></textarea>
