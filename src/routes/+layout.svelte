@@ -5,14 +5,14 @@
 	import Footer from '$lib/components/Footer.svelte';
 </script>
 
-<div class="grid min-h-screen bg-gray-100 print:bg-white">
-	<div class="no-print m-auto w-full">
+<div class="flex min-h-screen flex-col bg-gray-100 print:bg-white">
+	<div class="no-print sticky top-0 z-[50] m-auto w-full">
 		<Header />
 	</div>
-	<main class="container m-auto px-8 py-8">
+	<main class="container m-auto flex-grow px-8 py-8">
 		{@render children()}
 	</main>
-	<div class="no-print m-auto w-full">
+	<div class="no-print z-[50] m-auto mt-auto w-full">
 		<Footer />
 	</div>
 </div>

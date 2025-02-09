@@ -5,11 +5,14 @@
 	import { superForm } from 'sveltekit-superforms';
 	import { date, isValid } from 'zod';
 	import { onDestroy } from 'svelte';
+	import { mount, unmount } from 'svelte';
+	import { slide, fly } from 'svelte/transition';
 
 	let { data } = $props();
 
 	const isInteractive = true;
 
+	let isSubmitted = $state(false);
 	let localSubmitObject = $state(data);
 
 	let localHeaderFormObject = $state(data.headerForm);
@@ -50,6 +53,7 @@
 			// 		console.log('❌ Submission failed', result.data);
 			// 	}
 			// };
+			isSubmitted = true;
 		},
 		onResult({ result }) {
 			const timestamp = new Date().toISOString();
@@ -95,7 +99,7 @@
 
 	let downloadUrl = $state('');
 
-	let isAllValid = $state(false);
+	let isAllValid = true;
 
 	$inspect(isAllValid);
 	// $inspect(localHeaderFormObject)
@@ -123,26 +127,31 @@
 </script>
 
 <div class="flex items-start gap-4">
-	<div class="mx-auto aspect-[1/1.4142] w-full max-w-[210mm] bg-white shadow-lg print:shadow-none">
-		<div class="print-container box-border flex h-full w-full flex-col p-6">
-			<A4Page
-				bind:isAllValid
-				{isInteractive}
-				bind:headerForm={localHeaderFormObject}
-				bind:headerData={localHeaderFormObject.data}
-				bind:firstSectionForm={localFirstSectionFormObject}
-				bind:firstSectionData={localFirstSectionFormObject.data}
-				bind:secondSectionForm={localSecondSectionFormObject}
-				bind:secondSectionData={localSecondSectionFormObject.data}
-				bind:mainSectionForm={localMainSectionObject}
-				bind:mainSectionData={localMainSectionObject.data}
-				bind:fourthSectionForm={localFourthSectionObject}
-				bind:fourthSectionData={localFourthSectionObject.data}
-				bind:footerForm={localFooterFormObject}
-				bind:footerData={localFooterFormObject.data}
-			></A4Page>
+	{#if !isSubmitted}
+		<div
+			class="mx-auto aspect-[1/1.4142] w-full max-w-[210mm] bg-white shadow-lg print:shadow-none"
+			transition:fly={{ x: 200 }}
+		>
+			<div class="print-container box-border flex h-full w-full flex-col p-6">
+				<A4Page
+					bind:isAllValid
+					{isInteractive}
+					bind:headerForm={localHeaderFormObject}
+					bind:headerData={localHeaderFormObject.data}
+					bind:firstSectionForm={localFirstSectionFormObject}
+					bind:firstSectionData={localFirstSectionFormObject.data}
+					bind:secondSectionForm={localSecondSectionFormObject}
+					bind:secondSectionData={localSecondSectionFormObject.data}
+					bind:mainSectionForm={localMainSectionObject}
+					bind:mainSectionData={localMainSectionObject.data}
+					bind:fourthSectionForm={localFourthSectionObject}
+					bind:fourthSectionData={localFourthSectionObject.data}
+					bind:footerForm={localFooterFormObject}
+					bind:footerData={localFooterFormObject.data}
+				></A4Page>
+			</div>
 		</div>
-	</div>
+	{/if}
 </div>
 <div class="no-print">
 	<!-- non-print group fixed bottom-28 right-4 z-10 mx-auto h-[calc(100vh-13rem)] cursor-pointer rounded-lg border
@@ -153,7 +162,7 @@
 	<form
 		method="POST"
 		use:enhance
-		class="non-print group fixed top-48 z-10 right-10 mx-auto rounded-lg border
+		class="non-print group fixed right-10 top-48 z-10 mx-auto rounded-lg border
 	border-transparent
 	p-8
 	transition-all
@@ -165,33 +174,31 @@
 			type="submit"
 			class="flex h-full w-full items-center justify-center transition-all duration-300 ease-in-out"
 		>
-			{#if $delayed}<LoaderCircle
-					size={100}
-					strokeWidth={1.5}
-					class="
+			<div
+				class="group-hover:opacity-100' flex h-20 w-20 cursor-pointer flex-col items-center justify-center rounded-lg border-4 p-1 transition-all duration-300 ease-in-out
+	  
+	   {isAllValid
+					? 'border-brand-gray bg-brand-yellow/50 text-brand-gray group-hover:scale-110'
+					: 'border-gray-400 text-gray-400 opacity-30'}"
+			>
+				{#if $delayed}<LoaderCircle
+						size={100}
+						strokeWidth={1.5}
+						class="
 				animate-spin
 			   transition-all duration-300 
 			   ease-in-out 
-			   {isAllValid
-						? 'text-brand-yellow opacity-40 group-hover:scale-150 group-hover:text-brand-yellow group-hover:opacity-100'
-						: 'text-gray-400 opacity-40 '}"
-				/>
-			{:else}
-				<div
-					class="cursor-pointer group-hover:opacity-100' flex h-20 w-20 flex-col items-center justify-center rounded-lg border-4 p-1 transition-all duration-300 ease-in-out
-				  
-				   {isAllValid
-						? 'border-brand-gray bg-brand-yellow/50 text-brand-gray group-hover:scale-150'
-						: 'border-gray-400 text-gray-400 opacity-30'}"
-				>
+			   {isAllValid ? 'text-brand-yellow opacity-40' : 'text-gray-400 opacity-40 '}"
+					/>
+				{:else}
 					<ArrowRight
 						size={100}
 						strokeWidth={1.5}
 						class="
 				   {isAllValid ? 'text-brand-gray' : 'text-gray-400 opacity-40'}"
 					/>
-				</div>
-			{/if}
+				{/if}
+			</div>
 		</button>
 		{#if downloadUrl}
 			<a
@@ -206,9 +213,6 @@
 		{/if}
 	</form>
 </div>
-
-<!-- 
- -->
 
 <style lang="postcss">
 	@media print {
