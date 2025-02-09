@@ -63,7 +63,7 @@
 		start,
 		end
 	});
-	$inspect(firstSectionData);
+	//$inspect(firstSectionData);
 	// $inspect(transform2String(firstSectionData.faelligkeitsdatum) != transform2String(addDays(firstSectionData.rechnungsdatum, 30)))
 	// $inspect(firstSectionData.faelligkeitsdatum)
 	// $inspect(addDays(firstSectionData.rechnungsdatum, 30))

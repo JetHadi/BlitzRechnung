@@ -10,10 +10,7 @@
 		rechnungsdatum = undefined,
 		absender_firma = undefined
 	} = $props();
-
-	$inspect(faelligkeitsdatum);
-	$inspect(absender_firma);
-
+	
 	$effect(() => {
 		if (faelligkeitsdatum instanceof Date && absender_firma) {
 			let faelligkeitsVermerk = '';

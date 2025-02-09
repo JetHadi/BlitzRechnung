@@ -56,7 +56,7 @@
 	const { form: formData, enhance, errors } = form;
 
 	let kleinunternehmerValue = $state(headerData.absender_kleinunternehmer?.toString() || 'hidden');
-	$inspect(kleinunternehmerValue);
+	//$inspect(kleinunternehmerValue);
 	// $inspect(headerData.absender_kleinunternehmer)
 	$effect(() => {
 		if (kleinunternehmerValue == 'true') {

@@ -65,8 +65,8 @@
 		$formData.RechnungsPositionen = $formData.RechnungsPositionen.slice(0, -1);
 	}
 	// $inspect($formData.RechnungsPositionen.length);
-	$inspect($errors);
-	$inspect($errors.RechnungsPositionen?.['0']);
+	// $inspect($errors);
+	// $inspect($errors.RechnungsPositionen?.['0']);
 	// $inspect(mainSectionData);
 	$effect(() => {
 		if ($formData.RechnungsPositionen.length == 0) {

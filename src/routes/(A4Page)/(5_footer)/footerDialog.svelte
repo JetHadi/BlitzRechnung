@@ -77,7 +77,7 @@
 	const { form: formData, enhance } = form;
 
 	$inspect($formData.absender_kennung);
-
+	
 	let autKennung = $derived($formData.absender_steuernummer ? `BLITZ-` + $formData.absender_steuernummer?.replace(/[ \/]/g, '') + `-KU` : '')
 
 	$effect(() => {

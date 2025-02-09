@@ -56,7 +56,7 @@
 		});
 	};
 
-	$inspect(totalNetto);
+	//$inspect(totalNetto);
 
 	$effect(() => {
 		// if (mainSectionData.RechnungsPositionen.length == 0) {
