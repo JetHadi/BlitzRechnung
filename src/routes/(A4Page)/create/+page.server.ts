@@ -53,7 +53,6 @@ const getUnitCode = (unit: string): string => {
   return unitMapping[unit] || 'C62'; // default to C62 if unit not found
 };
 
-
 // FIXME: add correct data type for calculate Amounts
 const calculateAmounts = (data: any) => {
   const positions = data.mainSectionForm.RechnungsPositionen.map((pos: { einheit: string; }) => ({
@@ -231,7 +230,12 @@ export const actions: Actions = {
       /*
       XML creation process
       */
+      const extraInfos: string[] = []
       const invoiceData = calculateAmounts(A4Form.data)
+      const kleinunternehmerInfo = invoiceData.headerForm.absender_kleinunternehmer ? extraInfos.push('Kein Ausweis von Umsatzsteuer, da Kleinunternehmer gemäß § 19 UStG ') : undefined;
+      if (!invoiceData.firstSectionForm.leistungsdatum || invoiceData.firstSectionForm.leistungsdatum?.toISOString().slice(0, 10) == invoiceData.firstSectionForm.rechnungsdatum.toISOString().slice(0, 10)) {
+        extraInfos.push('Sofern nicht anders angegeben, entspricht das Liefer-/Leistungsdatum dem Rechnungsdatum')
+      }
       const taxId = invoiceData.footerForm.absender_ustId || invoiceData.footerForm.absender_steuernummer;
       const mappedBT: BusinessTerms = {
         BT_1: invoiceData.firstSectionForm.rechnungsnummer,
@@ -239,6 +243,11 @@ export const actions: Actions = {
         BT_3: "380", // TODO: maybe have a look at other BT-3 values if necessary
         BT_5: "EUR",
         BT_9: invoiceData.firstSectionForm.faelligkeitsdatum?.toISOString().slice(0, 10) || addDays(invoiceData.firstSectionForm.rechnungsdatum, 30).toISOString().slice(0, 10),
+        BT_22: [
+          invoiceData.secondSectionForm.extraInvoiceInfoFirst,
+          invoiceData.fourthSectionForm.extraInvoiceInfoSecond,
+          ...extraInfos
+        ].filter(Boolean) as string[],
         // FIXME: Der Benutzer sollte den Hinweis bekommen, dass hier die juristisch eingetragene Person als Absendername (BT-27) angegeben werden muss
         BT_27: invoiceData.headerForm.absender_firma || invoiceData.headerForm.absender_name,
         // FIXME: Verkäuferkennung korrekt erstellen -- Vorlage wäre BLITZ-{steuernummer_bereinigt}-KU

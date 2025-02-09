@@ -124,38 +124,35 @@
 				{isInteractive}
 				bind:headerForm={localHeaderFormObject}
 				bind:headerData={localHeaderFormObject.data}
-
 				bind:firstSectionForm={localFirstSectionFormObject}
 				bind:firstSectionData={localFirstSectionFormObject.data}
-				
 				bind:secondSectionForm={localSecondSectionFormObject}
 				bind:secondSectionData={localSecondSectionFormObject.data}
-				
 				bind:mainSectionForm={localMainSectionObject}
 				bind:mainSectionData={localMainSectionObject.data}
-				
 				bind:fourthSectionForm={localFourthSectionObject}
 				bind:fourthSectionData={localFourthSectionObject.data}
-				
 				bind:footerForm={localFooterFormObject}
 				bind:footerData={localFooterFormObject.data}
 			></A4Page>
 		</div>
 	</div>
 </div>
-<form method="POST" use:enhance>
-	<button type="submit">Submit</button>
-	{#if $delayed}<LoaderCircle class="animate-spin" />{/if}
-</form>
-{#if downloadUrl}
-	<a
-		href={downloadUrl}
-		download="invoice.pdf"
-		class="inline-flex items-center rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-	>
-		Download Invoice
-	</a>
-{/if}
+<div class="no-print">
+	<form method="POST" use:enhance>
+		<button type="submit">Submit</button>
+		{#if $delayed}<LoaderCircle class="animate-spin" />{/if}
+	</form>
+	{#if downloadUrl}
+		<a
+			href={downloadUrl}
+			download="invoice.pdf"
+			class="inline-flex items-center rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+		>
+			Download Invoice
+		</a>
+	{/if}
+</div>
 
 <!-- 
 <form
@@ -212,7 +209,7 @@
 
 		nav,
 		footer,
-		.non-print {
+		.no-print {
 			display: none !important;
 		}
 	}

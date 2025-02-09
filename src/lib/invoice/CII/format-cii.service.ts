@@ -1178,10 +1178,18 @@ export const ublInvoice: Transformation = {
 			fxProfileMask: FX_MASK_MINIMUM,
 		},
 		{
-			type: 'string',
+			type: 'array',
 			src: ['cbc:Note'],
-			dest: ['rsm:ExchangedDocument', 'ram:IncludedNote', 'ram:Content'],
-			fxProfileMask: FX_MASK_BASIC_WL,
+			dest: ['rsm:ExchangedDocument', 'ram:IncludedNote'],
+			children: [
+				{
+					type: 'string',
+					src: ['.'],
+					dest: ['ram:Content'],
+					fxProfileMask: FX_MASK_BASIC_WL,
+
+				}
+			]
 		},
 		{
 			type: 'object',
@@ -1608,6 +1616,11 @@ export class FormatCIIService
 					}
 					break;
 				case 'string':
+					if (transformation.dest.includes('ram:Content')) {
+						console.log('DEBUGGING cbc:Note:');
+						console.log('  src:', src);
+						console.log('  childDestPath:', childDestPath);
+					}
 					if (this.fxProfile & transformation.fxProfileMask) {
 						this.vivifyDest(
 							dest,

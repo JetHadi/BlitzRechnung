@@ -46,12 +46,16 @@
 	let openFooterDialog = $state(false);
 
 	let kleinunternehmer = $derived(headerData.absender_kleinunternehmer);
+	
 	$inspect(firstSectionData);
 	$inspect(firstSectionData.rechnungsdatum);
 
 	// let headerData = $state(headerForm.data)
 
 	$effect(() => {
+		// if (kleinunternehmer){
+		// 	footerForm.extraInfoThird
+		// }
 		// console.log(origin, 'header-Form', headerForm);
 		// console.log(origin, 'header-Data', headerData);
 		// console.log(origin, 'first-Section-Form', firstSectionForm);
@@ -143,7 +147,12 @@
 
 			<Dialog.Root bind:open={fourthSectionDialog}>
 				<Dialog.Trigger class="w-full"
-					><FourthSectionContainer bind:fourthSectionData faelligkeitsdatum={firstSectionData.faelligkeitsdatum} rechnungsdatum={firstSectionData.rechnungsdatum} absender_firma={headerData.absender_firma} /></Dialog.Trigger
+					><FourthSectionContainer
+						bind:fourthSectionData
+						faelligkeitsdatum={firstSectionData.faelligkeitsdatum}
+						rechnungsdatum={firstSectionData.rechnungsdatum}
+						absender_firma={headerData.absender_firma}
+					/></Dialog.Trigger
 				>
 
 				<Dialog.Content class="max-h-[90vh] w-full overflow-hidden sm:max-w-[800px]">
@@ -168,7 +177,9 @@
 			<div class="font-ligth px-4 text-left text-xs text-muted-foreground">
 				{#if kleinunternehmer}
 					Kein Ausweis von Umsatzsteuer, da Kleinunternehmer gemäß § 19 UStG <br />
-				{:else if !firstSectionData.leistungsdatum || firstSectionData.leistungsdatum.toUTCString().slice(0, 16) ==  firstSectionData.rechnungsdatum.toUTCString().slice(0, 16)}
+				{:else if !firstSectionData.leistungsdatum || firstSectionData.leistungsdatum
+						.toUTCString()
+						.slice(0, 16) == firstSectionData.rechnungsdatum.toUTCString().slice(0, 16)}
 					<span
 						>Sofern nicht anders angegeben, entspricht das Liefer-/Leistungsdatum dem Rechnungsdatum</span
 					>
@@ -206,7 +217,7 @@
 			<div class="font-ligth px-4 text-left text-xs text-muted-foreground">
 				{#if kleinunternehmer}
 					Kein Ausweis von Umsatzsteuer, da Kleinunternehmer gemäß § 19 UStG <br />
-				{:else if !firstSectionData.leistungsdatum}
+				{:else if !firstSectionData.leistungsdatum || firstSectionData.leistungsdatum.toUTCString().slice(0, 16) == firstSectionData.rechnungsdatum.toUTCString().slice(0, 16)}
 					<span
 						>Sofern nicht anders angegeben, entspricht das Liefer-/Leistungsdatum dem Rechnungsdatum</span
 					>

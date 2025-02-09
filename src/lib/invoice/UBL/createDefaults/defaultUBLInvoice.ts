@@ -20,7 +20,7 @@ export interface BusinessTerms {
     BT_18?: string,
     BT_19?: string,
     BT_20?: string,
-    BT_22?: string,
+    BT_22?: string[],
     BT_23?: string,
     BT_24?: string,
     BT_25?: string,
@@ -199,7 +199,7 @@ export class DefaultUBLInvoice {
                 'cbc:IssueDate': params.BT_2,
                 'cbc:DueDate': params.BT_9,
                 'cbc:InvoiceTypeCode': params.BT_3,
-                //FIXME: in rsm sind hier mehrere Values erlaubt welche dann einfach aufgeteilt werden. (BT-21)
+                //FIXME: in rsm sind hier mehrere Values erlaubt welche dann einfach aufgeteilt werden. (BT-21) -- fix schema not allowed to take in string[]
                 'cbc:Note': params.BT_22,
                 'cbc:TaxPointDate': params.BT_7,
                 'cbc:DocumentCurrencyCode': params.BT_5,
