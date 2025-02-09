@@ -36,7 +36,7 @@
 	propaGateFrom={'DialogFirstSection'}
 />
 
-<form method="POST" use:enhance>
+<form method="POST" use:enhance class="mx-auto w-full p-1">
 	<Form.Field {form} name="extraInvoiceInfoSecond">
 		<Form.Control>
 			{#snippet children({ props })}

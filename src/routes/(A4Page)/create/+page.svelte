@@ -55,7 +55,7 @@
 			const timestamp = new Date().toISOString();
 			console.log(`🔄 Form updated at: ${timestamp}`);
 			if (result.type === 'success') {
-				console.log('Download URL:', result.data?.downloadUrl); // FIXME: result.data? undefined alternative result
+				//console.log('Download URL:', result.data?.downloadUrl);
 				if (result.data?.fileData) {
 					// Clean up previous blob URL if it exists
 					if (downloadUrl) URL.revokeObjectURL(downloadUrl);

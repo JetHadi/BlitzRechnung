@@ -62,7 +62,6 @@ export const RechnungsAbsenderPaymenSchema = z.object({
             message: "Muss mit DE beginnen und genau 11 alphanumerische Zeichen haben"
         }),
 
-
     absender_bankname: z.string(requiredField("Bankname"))
         .max(100, { message: "Bankname darf maximal 100 Zeichen lang sein" }),
 
@@ -72,6 +71,8 @@ export const RechnungsAbsenderPaymenSchema = z.object({
 
     absender_bic: z.string(requiredField("BIC"))
         .max(11, { message: "BIC darf maximal 11 Zeichen lang sein" }),
+
+    absender_kennung: z.string().optional(),
 
     absender_amtsgericht: z.string(requiredField("Amtsgericht"))
         .max(100, { message: "Amtsgericht darf maximal 100 Zeichen lang sein" }),

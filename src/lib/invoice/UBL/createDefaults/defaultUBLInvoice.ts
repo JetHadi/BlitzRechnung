@@ -199,7 +199,6 @@ export class DefaultUBLInvoice {
                 'cbc:IssueDate': params.BT_2,
                 'cbc:DueDate': params.BT_9,
                 'cbc:InvoiceTypeCode': params.BT_3,
-                //FIXME: in rsm sind hier mehrere Values erlaubt welche dann einfach aufgeteilt werden. (BT-21) -- fix schema not allowed to take in string[]
                 'cbc:Note': params.BT_22,
                 'cbc:TaxPointDate': params.BT_7,
                 'cbc:DocumentCurrencyCode': params.BT_5,
@@ -246,7 +245,6 @@ export class DefaultUBLInvoice {
                     BT_5: params.BT_5
                 }),
 
-                // FIXME: Can be array -- How do I create that with different values for the BT ??????????
                 'cac:InvoiceLine': this.createInvoiceLine({
                     BT_5: params.BT_5,
                     BT_126: params.BT_126,
@@ -416,7 +414,6 @@ export class DefaultUBLInvoice {
                         'cbc:IdentificationCode': params.BT_40
                     }
                 },
-                // FIXME: Verkäufer kann maximal 2 angeben = Steuernummer und Umsatzsteueridentifikations-Nnummer -- hier ähnlich zu InvoiceLine auch ein Object mapping machen
                 'cac:PartyTaxScheme': (params.BT_31 || params.BT_32) ? [{
                     'cbc:CompanyID': params.BT_31 || params.BT_32 || '' ,
                     'cac:TaxScheme': {
@@ -437,7 +434,6 @@ export class DefaultUBLInvoice {
         };
     }
 
-    // FIXME: implement correct schemdeID
     private createAccountingCustomerParty(params:
         {
             BT_55: BuyerCountryCode,  // Country IdentificationCode
@@ -505,7 +501,6 @@ export class DefaultUBLInvoice {
 
     private createPayeeParty(params:
         {
-            // FIXME: Falls der Zahlungsempfänger anders als Verkäufer ist, dann muss BT_59 gesetzt werden bei CII
             BT_59: string,
             BT_60?: { value: string, schemeID?: PayeeOrBankAssignedCreditorIdentifierIdentificationSchemeIdentifier },
             BT_61?: { value: string, schemeID?: PayeeLegalRegistrationIdentifierIdentificationSchemeIdentifier },

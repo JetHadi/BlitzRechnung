@@ -215,7 +215,7 @@
 	propaGateFrom={'DialogFirstSection'}
 />
 
-<form method="POST" use:enhance class="mx-auto w-auto space-y-2 p-6">
+<form method="POST" use:enhance class="mx-auto w-full p-6">
 	<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 		<Form.Field {form} name="empfaenger_firma">
 			<Form.Control>
@@ -330,11 +330,7 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label class="text-sm font-medium">Rechnungsnummer*</Form.Label>
-					<Input
-						{...props}
-						bind:value={$formData.rechnungsnummer}
-						class="mt-1.5"
-					/>
+					<Input {...props} bind:value={$formData.rechnungsnummer} class="mt-1.5" />
 				{/snippet}
 			</Form.Control>
 			<Form.Description class="mt-1 text-sm text-muted-foreground" />

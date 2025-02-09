@@ -53,7 +53,6 @@ const getUnitCode = (unit: string): string => {
   return unitMapping[unit] || 'C62'; // default to C62 if unit not found
 };
 
-// FIXME: add correct data type for calculate Amounts
 const calculateAmounts = (data: any) => {
   const positions = data.mainSectionForm.RechnungsPositionen.map((pos: { einheit: string; }) => ({
     ...pos,
@@ -237,6 +236,10 @@ export const actions: Actions = {
         extraInfos.push('Sofern nicht anders angegeben, entspricht das Liefer-/Leistungsdatum dem Rechnungsdatum')
       }
       const taxId = invoiceData.footerForm.absender_ustId || invoiceData.footerForm.absender_steuernummer;
+      // FIXME: Premium User können hier die Kennung selber setzen keine Default Kennung.
+      if (!invoiceData.footerForm.absender_ustId) {
+        extraInfos.push('Systemkennung: Diese Rechnung trägt die Verkäuferkennung ' + invoiceData.footerForm.absender_kennung)
+      }
       const mappedBT: BusinessTerms = {
         BT_1: invoiceData.firstSectionForm.rechnungsnummer,
         BT_2: invoiceData.firstSectionForm.rechnungsdatum.toISOString().slice(0, 10),
@@ -248,19 +251,16 @@ export const actions: Actions = {
           invoiceData.fourthSectionForm.extraInvoiceInfoSecond,
           ...extraInfos
         ].filter(Boolean) as string[],
-        // FIXME: Der Benutzer sollte den Hinweis bekommen, dass hier die juristisch eingetragene Person als Absendername (BT-27) angegeben werden muss
         BT_27: invoiceData.headerForm.absender_firma || invoiceData.headerForm.absender_name,
-        // FIXME: Verkäuferkennung korrekt erstellen -- Vorlage wäre BLITZ-{steuernummer_bereinigt}-KU
-        BT_29: taxId ? {
-          value: `BLITZ-${taxId.replace(/[ \/]/g, '')}-KU`,
+        // DOKU: Verkäuferkennung notwendig wegen BR-CO-26
+        BT_29: invoiceData.footerForm.absender_kennung ? {
+          value: invoiceData.footerForm.absender_kennung,
           schemeID: "SEL"
         } : undefined,
         BT_31: invoiceData.footerForm.absender_ustId,
         BT_32: invoiceData.footerForm.absender_steuernummer,
-        // sollte übermittelt werden, falls Kleinunternehmer-Regelung stattfindet
-        // FIXME: add Kleinunternehmer Boolean to Form
         BT_33: invoiceData.headerForm.absender_kleinunternehmer ? 'Kein Ausweis von Umsatzsteuer, da Kleinunternehmer gemäß § 19 UStG' : undefined,
-
+        // Entweder muss BT-34 vorhanden sein (UST.ID), wenn nicht dann muss BT-29 angegeben werden.
         BT_34: invoiceData.footerForm.absender_ustId ? {
           value: invoiceData.footerForm.absender_ustId,
           schemeID: "9930"
@@ -269,7 +269,6 @@ export const actions: Actions = {
         BT_37: invoiceData.headerForm.absender_ort,
         BT_38: invoiceData.headerForm.absender_plz,
         BT_40: "DE",
-        // FIXME: Der Benutzer sollte eindeutig zwischen Firmenname und Kontaktperson unterscheiden
         BT_41: invoiceData.headerForm.absender_name || undefined,
         BT_42: invoiceData.headerForm.absender_telefon,
         BT_43: invoiceData.headerForm.absender_email,
@@ -285,8 +284,9 @@ export const actions: Actions = {
         BT_52: invoiceData.firstSectionForm.empfaenger_ort,
         BT_53: invoiceData.firstSectionForm.empfaenger_plz,
         BT_55: "DE",
-        // FIXME: Falls Zahlungsempfänger anders als Verkäufer ist, dann muss BT-59 angegeben werden.
+        // TODO: Falls Zahlungsempfänger anders als Verkäufer ist, dann muss BT-59 angegeben werden.
         //BT_59: invoiceData.headerForm.absender_firma || invoiceData.headerForm.absender_name,
+
         // Zeitpunkt der Lieferung muss in DE mit angegeben werden, wenn keine genaue Angabe dann gilt Rechnungsdatum
         BT_72: invoiceData.firstSectionForm.leistungsdatum?.toISOString().slice(0, 10) || invoiceData.firstSectionForm.rechnungsdatum.toISOString().slice(0, 10),
         BT_73: invoiceData.firstSectionForm.leistungsZeitraumA?.toISOString().slice(0, 10),
@@ -329,7 +329,7 @@ export const actions: Actions = {
 
 
       // create invoice
-      // FIXME: create correct xml or pdf download link
+      // TODO: create correct xml (X-Rechnung only) or pdf download link
       const createInvoiceResponse = await event.fetch('/api/create-invoice/Factur-X-EN16931', {
         method: 'POST',
         body: formData

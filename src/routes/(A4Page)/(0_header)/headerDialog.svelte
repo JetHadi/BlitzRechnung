@@ -13,6 +13,7 @@
 	import * as RadioGroup from '$lib/components/ui/radio-group';
 	import { Button } from '$lib/components/ui/button';
 	import { Label } from '$lib/components/ui/label';
+	import BuyPremium from '$lib/components/buyPremium.svelte';
 
 	// for local client storage
 	let { headerForm = $bindable(), headerData = $bindable(), openDialog = $bindable() } = $props();
@@ -75,7 +76,7 @@
 
 <HeaderContainer headerData={$formData} isInteractive={false} propaGateFrom={'DialogHeader'} />
 
-<form method="POST" use:enhance class="mx-auto max-w-2xl space-y-6 p-6">
+<form method="POST" use:enhance class="mx-auto w-full p-6">
 	<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 		<Form.Field {form} name="absender_kleinunternehmer" class="col-span-full">
 			<Form.Control>
@@ -222,8 +223,8 @@
 			<Form.Control>
 				{#snippet children({ props })}
 					<Form.Label class="text-sm font-medium">
-						<b class="font-bold text-brand-yellow"> Premium Funktion - </b> jetzt freischalten für
-						nur 4€ pro Monat
+						<BuyPremium />
+
 						<br />
 						<span class=" text-brand-gray/30"
 							>Logo hochladen - <button

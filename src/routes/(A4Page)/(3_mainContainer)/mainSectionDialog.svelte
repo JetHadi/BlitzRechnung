@@ -89,7 +89,7 @@
 </script>
 
 <form method="POST" use:enhance>
-	<div class="rounded-md border-y">
+	<div class="border-y">
 		<Table.Root>
 			<Table.Header>
 				<Table.Row class="bg-muted/50">

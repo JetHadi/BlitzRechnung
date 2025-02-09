@@ -45,10 +45,17 @@
 	let fourthSectionDialog = $state(false);
 	let openFooterDialog = $state(false);
 
-	let kleinunternehmer = $derived(headerData.absender_kleinunternehmer);
-	
-	$inspect(firstSectionData);
-	$inspect(firstSectionData.rechnungsdatum);
+	const kleinunternehmer = $derived(headerData.absender_kleinunternehmer);
+
+	// const taxId = $derived.by(() => {
+	// 	(footerData.absender_ustId || footerData.absender_steuernummer)?.replace(/[ \/]/g, '');
+	//});
+	const verkauferKennung = $derived(
+		footerData.absender_kennung || footerData.absender_steuernummer?.replace(/[ \/]/g, '')
+	);
+
+	//$inspect(firstSectionData);
+	//$inspect(firstSectionData.rechnungsdatum);
 
 	// let headerData = $state(headerForm.data)
 
@@ -69,13 +76,11 @@
 			<Dialog.Trigger class="w-full"><HeaderContainer bind:headerData /></Dialog.Trigger>
 
 			<Dialog.Content class="max-h-[92vh] w-full overflow-y-auto sm:max-w-[800px]">
-				<ScrollArea>
-					<Dialog.Header>
-						<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
-						<Dialog.Description>Passe die Einträge an</Dialog.Description>
-					</Dialog.Header>
-					<HeaderDialog bind:openDialog={openHeaderDialog} bind:headerForm bind:headerData />
-				</ScrollArea>
+				<Dialog.Header>
+					<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
+					<Dialog.Description>Passe die Einträge an</Dialog.Description>
+				</Dialog.Header>
+				<HeaderDialog bind:openDialog={openHeaderDialog} bind:headerForm bind:headerData />
 			</Dialog.Content>
 		</Dialog.Root>
 
@@ -102,20 +107,16 @@
 					><SecondSectionContainer bind:secondSectionData /></Dialog.Trigger
 				>
 
-				<Dialog.Content class="max-h-[90vh] w-full overflow-hidden sm:max-w-[800px]">
-					<ScrollArea>
-						<Dialog.Header>
-							<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
-							<Dialog.Description>Passe die Einträge an</Dialog.Description>
-						</Dialog.Header>
-						<div class="p-1">
-							<SecondSectionDialog
-								bind:openDialog={secondSectionDialog}
-								bind:secondSectionForm
-								bind:secondSectionData
-							/>
-						</div>
-					</ScrollArea>
+				<Dialog.Content class="max-h-[90vh] w-full overflow-y-auto sm:max-w-[800px]">
+					<Dialog.Header>
+						<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
+						<Dialog.Description>Passe die Einträge an</Dialog.Description>
+					</Dialog.Header>
+					<SecondSectionDialog
+						bind:openDialog={secondSectionDialog}
+						bind:secondSectionForm
+						bind:secondSectionData
+					/>
 				</Dialog.Content>
 			</Dialog.Root>
 
@@ -127,21 +128,19 @@
 					/></Dialog.Trigger
 				>
 
-				<Dialog.Content class="max-h-[90vh] w-full overflow-hidden sm:max-w-[800px]">
-					<ScrollArea>
-						<Dialog.Header>
-							<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
-							<Dialog.Description>Passe die Einträge an</Dialog.Description>
-						</Dialog.Header>
-						<div class="w-auto p-1">
-							<MainSectionDialog
-								bind:openDialog={mainSectionDialog}
-								bind:mainSectionForm
-								bind:mainSectionData
-								kleinunternehmer={headerData.absender_kleinunternehmer}
-							/>
-						</div>
-					</ScrollArea>
+				<Dialog.Content class="max-h-[90vh] w-full overflow-y-auto sm:max-w-[800px]">
+					<Dialog.Header>
+						<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
+						<Dialog.Description>Passe die Einträge an</Dialog.Description>
+					</Dialog.Header>
+					<div class="w-auto p-1">
+						<MainSectionDialog
+							bind:openDialog={mainSectionDialog}
+							bind:mainSectionForm
+							bind:mainSectionData
+							kleinunternehmer={headerData.absender_kleinunternehmer}
+						/>
+					</div>
 				</Dialog.Content>
 			</Dialog.Root>
 
@@ -155,7 +154,7 @@
 					/></Dialog.Trigger
 				>
 
-				<Dialog.Content class="max-h-[90vh] w-full overflow-hidden sm:max-w-[800px]">
+				<Dialog.Content class="max-h-[90vh] w-full overflow-y-auto sm:max-w-[800px]">
 					<ScrollArea>
 						<Dialog.Header>
 							<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
@@ -182,27 +181,28 @@
 						.slice(0, 16) == firstSectionData.rechnungsdatum.toUTCString().slice(0, 16)}
 					<span
 						>Sofern nicht anders angegeben, entspricht das Liefer-/Leistungsdatum dem Rechnungsdatum</span
-					>
+					><br />
+				{/if}
+				{#if !footerData.absender_ustId && verkauferKennung}
+					<span>
+						Systemkennung: Diese Rechnung trägt die Verkäuferkennung {verkauferKennung}.
+					</span>
 				{/if}
 			</div>
 		</div>
 		<Dialog.Root bind:open={openFooterDialog}>
 			<Dialog.Trigger class="w-full"><FooterContainer bind:footerData /></Dialog.Trigger>
-			<Dialog.Content class="max-h-[90vh] w-full overflow-hidden sm:max-w-[800px]">
-				<ScrollArea>
-					<Dialog.Header>
-						<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
-						<Dialog.Description>Passe die Einträge an</Dialog.Description>
-					</Dialog.Header>
-					<div class="p-4">
-						<FooterDialog
-							bind:openDialog={openFooterDialog}
-							bind:footerForm
-							bind:footerData
-							kleinunternehmer
-						/>
-					</div>
-				</ScrollArea>
+			<Dialog.Content class="max-h-[90vh] w-full overflow-y-auto sm:max-w-[800px]">
+				<Dialog.Header>
+					<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
+					<Dialog.Description>Passe die Einträge an</Dialog.Description>
+				</Dialog.Header>
+				<FooterDialog
+					bind:openDialog={openFooterDialog}
+					bind:footerForm
+					bind:footerData
+					kleinunternehmer
+				/>
 			</Dialog.Content>
 		</Dialog.Root>
 	{:else}
@@ -217,10 +217,17 @@
 			<div class="font-ligth px-4 text-left text-xs text-muted-foreground">
 				{#if kleinunternehmer}
 					Kein Ausweis von Umsatzsteuer, da Kleinunternehmer gemäß § 19 UStG <br />
-				{:else if !firstSectionData.leistungsdatum || firstSectionData.leistungsdatum.toUTCString().slice(0, 16) == firstSectionData.rechnungsdatum.toUTCString().slice(0, 16)}
+				{:else if !firstSectionData.leistungsdatum || firstSectionData.leistungsdatum
+						.toUTCString()
+						.slice(0, 16) == firstSectionData.rechnungsdatum.toUTCString().slice(0, 16)}
 					<span
 						>Sofern nicht anders angegeben, entspricht das Liefer-/Leistungsdatum dem Rechnungsdatum</span
-					>
+					><br />
+				{/if}
+				{#if !footerData.absender_ustId && verkauferKennung}
+					<span>
+						Systemkennung: Diese Rechnung trägt die Verkäuferkennung {verkauferKennung}.
+					</span>
 				{/if}
 			</div>
 		</div>
