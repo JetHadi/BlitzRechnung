@@ -9,7 +9,8 @@
 	let {
 		secondSectionForm = $bindable(),
 		secondSectionData = $bindable(),
-		openDialog = $bindable()
+		openDialog = $bindable(),
+		isValid = $bindable(false)
 	} = $props();
 
 	const form = superForm(secondSectionForm, {
@@ -17,10 +18,13 @@
 		SPA: true,
 		invalidateAll: false, // Prevents full page reload
 		onUpdate({ form }) {
-			console.log(form)
+			console.log(form);
 			if (form.valid) {
 				secondSectionData = { ...$formData };
 				openDialog = false;
+				isValid = true;
+			} else {
+				isValid = false;
 			}
 		}
 	});
@@ -39,7 +43,7 @@
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label>Zusätzliche Informationen für den Empfänger eintragen:</Form.Label>
-				<Textarea {...props} bind:value={$formData.extraInvoiceInfoFirst} class="h-[160px]"/>
+				<Textarea {...props} bind:value={$formData.extraInvoiceInfoFirst} class="h-[160px]" />
 			{/snippet}
 		</Form.Control>
 		<Form.Description />

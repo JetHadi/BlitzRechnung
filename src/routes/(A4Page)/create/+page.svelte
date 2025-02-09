@@ -1,9 +1,9 @@
 <!-- frontend/src/routes/(A4Page)/create/+page.svelte -->
 <script lang="ts">
-	import { LoaderCircle, SquareArrowRight } from 'lucide-svelte';
+	import { ArrowRight, LoaderCircle, SquareArrowRight } from 'lucide-svelte';
 	import A4Page from '../A4Page.svelte';
 	import { superForm } from 'sveltekit-superforms';
-	import { date } from 'zod';
+	import { date, isValid } from 'zod';
 	import { onDestroy } from 'svelte';
 
 	let { data } = $props();
@@ -95,6 +95,11 @@
 
 	let downloadUrl = $state('');
 
+	let isAllValid = $state(false);
+
+	$inspect(isAllValid);
+	// $inspect(localHeaderFormObject)
+
 	$effect(() => {
 		// if (objectForm?.downloadUrl) {
 		//     downloadUrl = $form.downloadUrl;
@@ -121,6 +126,7 @@
 	<div class="mx-auto aspect-[1/1.4142] w-full max-w-[210mm] bg-white shadow-lg print:shadow-none">
 		<div class="print-container box-border flex h-full w-full flex-col p-6">
 			<A4Page
+				bind:isAllValid
 				{isInteractive}
 				bind:headerForm={localHeaderFormObject}
 				bind:headerData={localHeaderFormObject.data}
@@ -139,49 +145,70 @@
 	</div>
 </div>
 <div class="no-print">
-	<form method="POST" use:enhance>
-		<button type="submit">Submit</button>
-		{#if $delayed}<LoaderCircle class="animate-spin" />{/if}
-	</form>
-	{#if downloadUrl}
-		<a
-			href={downloadUrl}
-			download="invoice.pdf"
-			class="inline-flex items-center rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-		>
-			Download Invoice
-		</a>
-	{/if}
-</div>
-
-<!-- 
-<form
-	method="POST"
-	use:enhance
-	class="non-print group fixed bottom-28 right-4 z-10 mx-auto h-[calc(100vh-13rem)] cursor-pointer rounded-lg border
+	<!-- non-print group fixed bottom-28 right-4 z-10 mx-auto h-[calc(100vh-13rem)] cursor-pointer rounded-lg border
+	border-transparent
+	p-8
+	transition-all
+	duration-200 -->
+	<form
+		method="POST"
+		use:enhance
+		class="non-print group fixed top-48 z-10 right-10 mx-auto rounded-lg border
 	border-transparent
 	p-8
 	transition-all
 	duration-200
-	hover:border-gray-200
-	hover:bg-gray-50/50"
->
-	<button
-		type="submit"
-		class="flex h-full w-full items-center justify-center transition-all duration-300 ease-in-out"
+	{isAllValid ? 'hoverable' : ''}"
 	>
-		<SquareArrowRight
-			size={130}
-			strokeWidth={1.5}
-			class="group-hover:text-primary text-gray-400 
-				   opacity-40 transition-all 
-				   duration-300 
-				   ease-in-out 
-				   group-hover:scale-150 
-				   group-hover:opacity-100"
-		/>
-	</button>
-</form> -->
+		<button
+			disabled={!isAllValid}
+			type="submit"
+			class="flex h-full w-full items-center justify-center transition-all duration-300 ease-in-out"
+		>
+			{#if $delayed}<LoaderCircle
+					size={100}
+					strokeWidth={1.5}
+					class="
+				animate-spin
+			   transition-all duration-300 
+			   ease-in-out 
+			   {isAllValid
+						? 'text-brand-yellow opacity-40 group-hover:scale-150 group-hover:text-brand-yellow group-hover:opacity-100'
+						: 'text-gray-400 opacity-40 '}"
+				/>
+			{:else}
+				<div
+					class="cursor-pointer group-hover:opacity-100' flex h-20 w-20 flex-col items-center justify-center rounded-lg border-4 p-1 transition-all duration-300 ease-in-out
+				  
+				   {isAllValid
+						? 'border-brand-gray bg-brand-yellow/50 text-brand-gray group-hover:scale-150'
+						: 'border-gray-400 text-gray-400 opacity-30'}"
+				>
+					<ArrowRight
+						size={100}
+						strokeWidth={1.5}
+						class="
+				   {isAllValid ? 'text-brand-gray' : 'text-gray-400 opacity-40'}"
+					/>
+				</div>
+			{/if}
+		</button>
+		{#if downloadUrl}
+			<a
+				href={downloadUrl}
+				download="invoice.pdf"
+				class="inline-flex items-center rounded bg-blue-500 px-4 py-2 text-white {isAllValid
+					? 'hover:bg-blue-600'
+					: ''}"
+			>
+				Download Invoice
+			</a>
+		{/if}
+	</form>
+</div>
+
+<!-- 
+ -->
 
 <style lang="postcss">
 	@media print {

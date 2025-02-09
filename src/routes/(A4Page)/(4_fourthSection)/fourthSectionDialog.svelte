@@ -11,7 +11,8 @@
 		fourthSectionData = $bindable(),
 		openDialog = $bindable(),
 		faelligkeitsdatum = undefined,
-		kleinunternehmer
+		kleinunternehmer,
+		isValid = $bindable(false)
 	} = $props();
 
 	const form = superForm(fourthSectionForm, {
@@ -19,10 +20,13 @@
 		SPA: true,
 		invalidateAll: false, // Prevents full page reload
 		onUpdate({ form }) {
-			console.log(form)
+			console.log(form);
 			if (form.valid) {
 				fourthSectionData = { ...$formData };
 				openDialog = false;
+				isValid = true;
+			} else {
+				isValid = false;
 			}
 		}
 	});
@@ -40,8 +44,10 @@
 	<Form.Field {form} name="extraInvoiceInfoSecond">
 		<Form.Control>
 			{#snippet children({ props })}
-				<Form.Label>Zusätzliche Informationen über die Rechnung für den Empfänger hier eintragen:</Form.Label>
-				<Textarea {...props} bind:value={$formData.extraInvoiceInfoSecond} class="min-h-[160px]"/>
+				<Form.Label
+					>Zusätzliche Informationen über die Rechnung für den Empfänger hier eintragen:</Form.Label
+				>
+				<Textarea {...props} bind:value={$formData.extraInvoiceInfoSecond} class="min-h-[160px]" />
 			{/snippet}
 		</Form.Control>
 		<Form.Description />

@@ -30,7 +30,8 @@
 		footerForm = $bindable(),
 		footerData = $bindable(),
 		openDialog = $bindable(),
-		kleinunternehmer
+		kleinunternehmer,
+		isValid = $bindable(false)
 	} = $props();
 
 	// let $formData = $state(footerData);
@@ -51,8 +52,6 @@
 		invalidateAll: false, // Prevents full page reload
 		resetForm: false,
 		onSubmit({}) {
-			console.log('from DialogFooter onSubmit:', $formData);
-			console.log(vatType);
 			if (vatType == 'USt.-ID') {
 				$formData.absender_steuernummer = undefined;
 				if (!$formData.absender_kennung) {
@@ -61,24 +60,29 @@
 			} else {
 				$formData.absender_ustId = undefined;
 				if (!$formData.absender_kennung) {
-					$formData.absender_kennung = autKennung
+					$formData.absender_kennung = autKennung;
 				}
 			}
 		},
 		onUpdate({ form }) {
 			if (form.valid) {
 				footerForm.data = { ...$formData };
-				console.log('from DialogFooter onUpdate: ', footerForm.data);
+				//console.log('from DialogFooter onUpdate: ', footerForm.data);
 				openDialog = false;
+				isValid = true;
+			} else {
+				isValid = false;
 			}
 		}
 	});
 
 	const { form: formData, enhance } = form;
 
-	$inspect($formData.absender_kennung);
-	
-	let autKennung = $derived($formData.absender_steuernummer ? `BLITZ-` + $formData.absender_steuernummer?.replace(/[ \/]/g, '') + `-KU` : '')
+	let autKennung = $derived(
+		$formData.absender_steuernummer
+			? `BLITZ-` + $formData.absender_steuernummer?.replace(/[ \/]/g, '') + `-KU`
+			: ''
+	);
 
 	$effect(() => {
 		// if (iniitalLoad == 1) {
@@ -229,7 +233,7 @@
 						</Tooltip.Provider>
 					</Form.Label>
 
-						<!-- FIXME:  Premium funktion zum entfernen von disabled-->
+					<!-- FIXME:  Premium funktion zum entfernen von disabled-->
 					<Input
 						{...props}
 						disabled

@@ -16,14 +16,14 @@
 	import BuyPremium from '$lib/components/buyPremium.svelte';
 
 	// for local client storage
-	let { headerForm = $bindable(), headerData = $bindable(), openDialog = $bindable() } = $props();
+	let { headerForm = $bindable(), headerData = $bindable(), openDialog = $bindable(), isValid = $bindable(false) } = $props();
 
 	const form = superForm(headerForm, {
 		validators: zodClient(headerContainerSchema),
 		SPA: true,
 		invalidateAll: false, // Prevents full page reload
 		onSubmit({}) {
-			console.log('from DialogHeader onSubmit:', $formData);
+			//console.log('from DialogHeader onSubmit:', $formData);
 			// if ($formData.absender_telefon == undefined) {
 			// 	$formData.absender_telefon = '';
 			// }
@@ -31,8 +31,11 @@
 		onUpdate({ form }) {
 			if (form.valid) {
 				headerData = { ...$formData };
-				console.log('from DialogHeader onUpdate: ', headerForm);
+				//console.log('from DialogHeader onUpdate: ', headerForm);
 				openDialog = false;
+				isValid = true
+			} else{
+				isValid = false
 			}
 		}
 	});
@@ -49,7 +52,7 @@
 	};
 
 	function removeLogo() {
-		console.log('Remove BUtton');
+		//console.log('Remove BUtton');
 		$formData.absender_logo = '';
 	}
 

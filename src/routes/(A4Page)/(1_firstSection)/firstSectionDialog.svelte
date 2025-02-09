@@ -31,7 +31,8 @@
 	let {
 		firstSectionForm = $bindable(),
 		firstSectionData = $bindable(),
-		openDialog = $bindable()
+		openDialog = $bindable(),
+		isValid = $bindable(false)
 	} = $props();
 
 	let leistungsdatumType = $state(
@@ -146,6 +147,9 @@
 				firstSectionData = { ...$formData };
 
 				openDialog = false;
+				isValid = true;
+			} else {
+				isValid = false;
 			}
 		}
 	});

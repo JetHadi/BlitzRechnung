@@ -19,7 +19,8 @@
 		mainSectionForm = $bindable(),
 		mainSectionData = $bindable(),
 		openDialog = $bindable(),
-		kleinunternehmer
+		kleinunternehmer,
+		isValid = $bindable(false)
 	} = $props();
 
 	// Format number as German currency
@@ -51,6 +52,9 @@
 			if (form.valid) {
 				mainSectionData = { ...$formData };
 				openDialog = false;
+				isValid = true;
+			} else {
+				isValid = false;
 			}
 		}
 	});
