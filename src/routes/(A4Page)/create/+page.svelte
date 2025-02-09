@@ -6,14 +6,15 @@
 	import { date, isValid } from 'zod';
 	import { onDestroy } from 'svelte';
 	import { mount, unmount } from 'svelte';
-	import { slide, fly } from 'svelte/transition';
+	import { slide, fly, scale } from 'svelte/transition';
+	import { backIn, quintOut } from 'svelte/easing';
 
-	let { data } = $props();
-
-	const isInteractive = true;
+	let { data, amountWaiters = 6 } = $props();
 
 	let isSubmitted = $state(false);
+	let isInteractive = $state(true);
 	let localSubmitObject = $state(data);
+	
 
 	let localHeaderFormObject = $state(data.headerForm);
 	let localFirstSectionFormObject = $state(data.firstSectionForm);
@@ -53,7 +54,8 @@
 			// 		console.log('❌ Submission failed', result.data);
 			// 	}
 			// };
-			isSubmitted = true;
+			isSubmitted = !isSubmitted;
+			isInteractive = !isInteractive;
 		},
 		onResult({ result }) {
 			const timestamp = new Date().toISOString();
@@ -81,7 +83,7 @@
 		}
 	});
 
-	const { form: formData, enhance, delayed } = objectForm;
+	const { form: formData, enhance, delayed, submitting } = objectForm;
 
 	const origin = 'Main';
 	let count = $state(0);
@@ -101,7 +103,6 @@
 
 	let isAllValid = true;
 
-	$inspect(isAllValid);
 	// $inspect(localHeaderFormObject)
 
 	$effect(() => {
@@ -126,33 +127,52 @@
 	});
 </script>
 
-<div class="flex items-start gap-4">
-	{#if !isSubmitted}
+<div class="relative flex-col items-center">
+	{#if isSubmitted}
 		<div
-			class="mx-auto aspect-[1/1.4142] w-full max-w-[210mm] bg-white shadow-lg print:shadow-none"
-			transition:fly={{ x: 200 }}
+			class="absolute left-1/2 top-[5%] -translate-x-1/2 transform rounded-md border-4 p-4 transition-all duration-300 {isSubmitted
+				? 'scale-150'
+				: ''}"
 		>
-			<div class="print-container box-border flex h-full w-full flex-col p-6">
-				<A4Page
-					bind:isAllValid
-					{isInteractive}
-					bind:headerForm={localHeaderFormObject}
-					bind:headerData={localHeaderFormObject.data}
-					bind:firstSectionForm={localFirstSectionFormObject}
-					bind:firstSectionData={localFirstSectionFormObject.data}
-					bind:secondSectionForm={localSecondSectionFormObject}
-					bind:secondSectionData={localSecondSectionFormObject.data}
-					bind:mainSectionForm={localMainSectionObject}
-					bind:mainSectionData={localMainSectionObject.data}
-					bind:fourthSectionForm={localFourthSectionObject}
-					bind:fourthSectionData={localFourthSectionObject.data}
-					bind:footerForm={localFooterFormObject}
-					bind:footerData={localFooterFormObject.data}
-				></A4Page>
+			<div class="">
+				<LoaderCircle
+					size={24}
+					strokeWidth={1.5}
+					class="
+                    duration-3000
+                    animate-spin text-brand-yellow transition-all"
+				/>
+				Deine Rechnung ist in der Warteschlange. Es sind noch {amountWaiters} vor dir. <br/>
+				Jetzt mit <strong class="text-brand-yellow">Premium</strong> Warteschlange überspringen und direkt ans Ziel kommen.
 			</div>
 		</div>
 	{/if}
+
+	<div
+		class="mx-auto aspect-[1/1.4142] w-full max-w-[210mm] bg-white shadow-lg transition-all duration-300 print:shadow-none
+            {isSubmitted ? 'scale-50' : ''}"
+	>
+		<div class="print-container box-border flex h-full w-full flex-col p-6">
+			<A4Page
+				bind:isAllValid
+				{isInteractive}
+				bind:headerForm={localHeaderFormObject}
+				bind:headerData={localHeaderFormObject.data}
+				bind:firstSectionForm={localFirstSectionFormObject}
+				bind:firstSectionData={localFirstSectionFormObject.data}
+				bind:secondSectionForm={localSecondSectionFormObject}
+				bind:secondSectionData={localSecondSectionFormObject.data}
+				bind:mainSectionForm={localMainSectionObject}
+				bind:mainSectionData={localMainSectionObject.data}
+				bind:fourthSectionForm={localFourthSectionObject}
+				bind:fourthSectionData={localFourthSectionObject.data}
+				bind:footerForm={localFooterFormObject}
+				bind:footerData={localFooterFormObject.data}
+			/>
+		</div>
+	</div>
 </div>
+
 <div class="no-print">
 	<!-- non-print group fixed bottom-28 right-4 z-10 mx-auto h-[calc(100vh-13rem)] cursor-pointer rounded-lg border
 	border-transparent
@@ -178,7 +198,7 @@
 				class="group-hover:opacity-100' flex h-20 w-20 cursor-pointer flex-col items-center justify-center rounded-lg border-4 p-1 transition-all duration-300 ease-in-out
 	  
 	   {isAllValid
-					? 'border-brand-gray bg-brand-yellow/50 text-brand-gray group-hover:scale-110'
+					? 'border-brand-gray bg-brand-yellow text-brand-gray group-hover:scale-110'
 					: 'border-gray-400 text-gray-400 opacity-30'}"
 			>
 				{#if $delayed}<LoaderCircle

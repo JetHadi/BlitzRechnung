@@ -12,7 +12,7 @@
 <div
 	class="flex h-20 w-20 flex-col items-center justify-center rounded-lg border-4 p-1
            {isComplete
-		? 'border-brand-gray text-brand-gray bg-brand-yellow/50'
+		? 'border--brand-gray text-brand-gray bg-brand-yellow'
 		: 'border-gray-400 text-gray-400 opacity-30'}"
 >
 	{#if isComplete}

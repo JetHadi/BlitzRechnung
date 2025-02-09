@@ -277,7 +277,7 @@
 	{:else}
 		<HeaderContainer {headerData} {isInteractive} />
 		<FirstSectionContainer {firstSectionData} {isInteractive} />
-		<div class="mt-20 w-full flex-grow">
+		<div class="w-full flex-grow">
 			<SecondSectionContainer {secondSectionData} {isInteractive} />
 			<MainSectionContainer {mainSectionData} {isInteractive} kleinunternehmer />
 			<FourthSectionContainer {fourthSectionData} {isInteractive} />
