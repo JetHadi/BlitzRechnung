@@ -25,12 +25,12 @@ export const load: PageServerLoad = async () => {
   const startTime = performance.now();
   console.log("🚀 Starting page load at:", new Date().toISOString());
 
-  const headerForm = await superValidate(zod(headerContainerSchema));
-  const firstSectionForm = await superValidate(zod(firstSectionContainerSchema));
+  const headerForm = await superValidate(HeaderContainerDefaults, zod(headerContainerSchema));
+  const firstSectionForm = await superValidate(FirstSectionContainerDefaults, zod(firstSectionContainerSchema));
   const secondSectionForm = await superValidate(SecondSectionContainerDefaults, zod(secondSectionContainerSchema));
-  const mainSectionForm = await superValidate(zod(mainSectionContainerSchema));
+  const mainSectionForm = await superValidate(MainSectionContainerDefaults, zod(mainSectionContainerSchema));
   const fourthSectionForm = await superValidate(FourthSectionContainerDefaults, zod(fourthSectionContainerSchema));
-  const footerForm = await superValidate(zod(footerContainerSchema));
+  const footerForm = await superValidate(FooterContainerDefaults, zod(footerContainerSchema));
 
   const loadTime = performance.now() - startTime;
   console.log(`✨ Page load completed in ${loadTime.toFixed(2)}ms`);

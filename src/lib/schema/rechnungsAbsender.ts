@@ -11,7 +11,7 @@ export const RechnungsAbsenderSchema = z.object({
     absender_kleinunternehmer: z.boolean({
         required_error: "Kleinunternehmerstatus muss angegeben werden",
         invalid_type_error: "Kleinunternehmerstatus muss wahr/falsch sein"
-    }).default(undefined), //TODO: fix type error
+    }).default(false), //TODO: fix type error
 
     absender_firma: z.string(requiredField("Firmenname"))
         .min(1, { message: "Firmenname darf nicht leer sein" })

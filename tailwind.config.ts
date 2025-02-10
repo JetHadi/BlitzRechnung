@@ -92,11 +92,36 @@ const config: Config = {
 					"0%,70%,100%": { opacity: "1" },
 					"20%,50%": { opacity: "0" },
 				},
+				zap: {
+					'0%, 100%': {
+						opacity: '1',
+						filter: 'brightness(1)',
+						transform: 'scale(1)'
+					},
+					'15%, 40%': {
+						filter: 'brightness(1.3) drop-shadow(0 0 2px #FFD43A)',
+						transform: 'scale(1.08)'
+					},
+					'25%, 50%': {
+						filter: 'brightness(1.5) drop-shadow(0 0 3px #FFD43A)',
+						transform: 'scale(1.12)'
+					},
+					'60%, 75%': {
+						filter: 'brightness(1.2) drop-shadow(0 0 1px #FFD43A)',
+						transform: 'scale(1.04)'
+					},
+					'76%, 100%': {
+						filter: 'brightness(1)',
+						transform: 'scale(1)'
+					}
+				}
 			},
 			animation: {
 				"accordion-down": "accordion-down 0.2s ease-out",
 				"accordion-up": "accordion-up 0.2s ease-out",
 				"caret-blink": "caret-blink 1.25s ease-out infinite",
+				zap: 'zap 0.3s ease-in-out'
+
 			},
 		},
 	},

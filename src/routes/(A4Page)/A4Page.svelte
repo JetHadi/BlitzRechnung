@@ -2,6 +2,7 @@
 	import A4FormCheckmarks from '$lib/components/A4FormCheckmarks.svelte';
 	import Header from '$lib/components/Header.svelte';
 	import * as Dialog from '$lib/components/ui/dialog';
+	import { fade } from 'svelte/transition';
 	import HeaderContainer from './(0_header)/headerContainer.svelte';
 	import HeaderDialog from './(0_header)/headerDialog.svelte';
 	import FirstSectionContainer from './(1_firstSection)/firstSectionContainer.svelte';
@@ -14,10 +15,15 @@
 	import FourthSectionDialog from './(4_fourthSection)/fourthSectionDialog.svelte';
 	import FooterContainer from './(5_footer)/footerContainer.svelte';
 	import FooterDialog from './(5_footer)/footerDialog.svelte';
+	import { isValid } from 'zod';
+	import { innerWidth, innerHeight } from 'svelte/reactivity/window';
+
+	//TODO: fix type problem of isSubmitted
 
 	let {
 		isAllValid = $bindable(),
 		isInteractive = false,
+		isSubmitted = false,
 
 		headerForm = $bindable(),
 		headerData = $bindable(),
@@ -37,6 +43,18 @@
 		footerForm = $bindable(),
 		footerData = $bindable()
 	} = $props();
+
+	let headerHeight = $state(0);
+	let firstSectionHeight = $state(0);
+
+	let middleSectionHeight = $state(0);
+
+	let secondSectionHeight = $state(0);
+	let mainSectionHeight = $state(0);
+	let fourthSectionHeight = $state(0);
+	let extraInfoHeight = $state(0);
+
+	let footerHeight = $state(0);
 
 	const origin = 'A4Page';
 	let openHeaderDialog = $state(false);
@@ -97,13 +115,19 @@
 	});
 </script>
 
-<div class="relative flex h-full w-full flex-col">
-	{#if isInteractive}
-		<div>
-			<div class="absolute -left-32 z-[10]">
-				<!-- Adjust right offset as needed -->
-				<A4FormCheckmarks fieldFilled={fieldFilled_Header} fieldMandatory={5} />
-			</div>
+{#if !isSubmitted}
+	<div class="relative flex h-full w-full flex-col">
+		<div bind:clientHeight={headerHeight}>
+			{#if headerHeight != 0}
+				<div
+					transition:fade
+					class="absolute -left-20 z-[10]"
+					style="height: {1.01 * headerHeight}px"
+				>
+					<!-- Adjust right offset as needed -->
+					<A4FormCheckmarks fieldFilled={fieldFilled_Header} fieldMandatory={5} start={true} />
+				</div>
+			{/if}
 			<Dialog.Root bind:open={openHeaderDialog}>
 				<Dialog.Trigger class="w-full"><HeaderContainer bind:headerData /></Dialog.Trigger>
 
@@ -121,11 +145,17 @@
 				</Dialog.Content>
 			</Dialog.Root>
 		</div>
-		<div>
-			<div class="absolute -left-32 z-[10]">
-				<!-- Adjust right offset as needed -->
-				<A4FormCheckmarks fieldFilled={fieldFilled_FirstSection} fieldMandatory={6} />
-			</div>
+		<div bind:clientHeight={firstSectionHeight}>
+			{#if firstSectionHeight != 0}
+				<div
+					transition:fade
+					class="absolute -left-20 z-[10]"
+					style="height: {firstSectionHeight}px"
+				>
+					<!-- Adjust right offset as needed -->
+					<A4FormCheckmarks fieldFilled={fieldFilled_FirstSection} fieldMandatory={6} />
+				</div>
+			{/if}
 			<Dialog.Root bind:open={openFirstSectionDialog}>
 				<Dialog.Trigger class="w-full"
 					><FirstSectionContainer bind:firstSectionData /></Dialog.Trigger
@@ -146,12 +176,18 @@
 			</Dialog.Root>
 		</div>
 
-		<div class="w-full flex-grow">
-			<div>
-				<div class="absolute -left-32 z-[10] translate-y-1/2">
-					<!-- Adjust right offset as needed -->
-					<A4FormCheckmarks fieldFilled={fieldFilled_SecondSection} fieldMandatory={1} />
-				</div>
+		<div class="w-full flex-grow" bind:clientHeight={middleSectionHeight}>
+			<div bind:clientHeight={secondSectionHeight}>
+				{#if secondSectionHeight != 0}
+					<div
+						transition:fade
+						class="absolute -left-20 z-[10]"
+						style="height: {1.01 * secondSectionHeight}px"
+					>
+						<!-- Adjust right offset as needed -->
+						<A4FormCheckmarks fieldFilled={fieldFilled_SecondSection} fieldMandatory={1} />
+					</div>
+				{/if}
 				<Dialog.Root bind:open={secondSectionDialog}>
 					<Dialog.Trigger class="w-full"
 						><SecondSectionContainer bind:secondSectionData /></Dialog.Trigger
@@ -171,11 +207,17 @@
 					</Dialog.Content>
 				</Dialog.Root>
 			</div>
-			<div>
-				<div class="absolute -left-32 z-[10] translate-y-1/2">
-					<!-- Adjust right offset as needed -->
-					<A4FormCheckmarks fieldFilled={fieldFilled_MainSection} fieldMandatory={1} />
-				</div>
+			<div bind:clientHeight={mainSectionHeight}>
+				{#if mainSectionHeight != 0}
+					<div
+						transition:fade
+						class="absolute -left-20 z-[10]"
+						style="height: {1.01 * mainSectionHeight}px"
+					>
+						<!-- Adjust right offset as needed -->
+						<A4FormCheckmarks fieldFilled={fieldFilled_MainSection} fieldMandatory={1} />
+					</div>
+				{/if}
 				<Dialog.Root bind:open={mainSectionDialog}>
 					<Dialog.Trigger class="w-full"
 						><MainSectionContainer
@@ -201,11 +243,20 @@
 					</Dialog.Content>
 				</Dialog.Root>
 			</div>
-			<div>
-				<div class="absolute -left-32 z-[10] translate-y-1/2">
-					<!-- Adjust right offset as needed -->
-					<A4FormCheckmarks fieldFilled={fieldFilled_FourthSection} fieldMandatory={1} />
-				</div>
+			<div bind:clientHeight={fourthSectionHeight}>
+				{#if fourthSectionHeight != 0}
+					<div
+						transition:fade
+						class="absolute -left-20 z-[10]"
+						style="height: {1.01 *
+							(middleSectionHeight -
+								(secondSectionHeight + mainSectionHeight) +
+								extraInfoHeight)}px"
+					>
+						<!-- Adjust right offset as needed -->
+						<A4FormCheckmarks fieldFilled={fieldFilled_FourthSection} fieldMandatory={1} />
+					</div>
+				{/if}
 				<Dialog.Root bind:open={fourthSectionDialog}>
 					<Dialog.Trigger class="w-full"
 						><FourthSectionContainer
@@ -217,24 +268,24 @@
 					>
 
 					<Dialog.Content class="max-h-[90vh] w-full overflow-y-auto sm:max-w-[800px]">
-							<Dialog.Header>
-								<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
-								<Dialog.Description>Passe die Einträge an</Dialog.Description>
-							</Dialog.Header>
-							<div class="p-4">
-								<FourthSectionDialog
-									bind:openDialog={fourthSectionDialog}
-									bind:fourthSectionForm
-									bind:fourthSectionData
-									kleinunternehmer
-									bind:isValid={isFourthSectionValid}
-								/>
-							</div>
+						<Dialog.Header>
+							<Dialog.Title>Inhalt bearbeiten</Dialog.Title>
+							<Dialog.Description>Passe die Einträge an</Dialog.Description>
+						</Dialog.Header>
+						<div class="p-4">
+							<FourthSectionDialog
+								bind:openDialog={fourthSectionDialog}
+								bind:fourthSectionForm
+								bind:fourthSectionData
+								kleinunternehmer
+								bind:isValid={isFourthSectionValid}
+							/>
+						</div>
 					</Dialog.Content>
 				</Dialog.Root>
 			</div>
 		</div>
-		<div>
+		<div bind:clientHeight={extraInfoHeight}>
 			<div class="font-ligth px-4 text-left text-xs text-muted-foreground">
 				{#if kleinunternehmer}
 					Kein Ausweis von Umsatzsteuer, da Kleinunternehmer gemäß § 19 UStG <br />
@@ -252,11 +303,22 @@
 				{/if}
 			</div>
 		</div>
-		<div>
-			<div class="translate-y-1/8 absolute -left-32 z-[10]">
-				<!-- Adjust right offset as needed -->
-				<A4FormCheckmarks fieldFilled={fieldFilled_Footer} fieldMandatory={2} />
-			</div>
+		<div bind:clientHeight={footerHeight}>
+			{#if footerHeight != 0}
+				<div
+					transition:fade
+					class="absolute -left-20 z-[10]"
+					style="height: {1.01 * footerHeight}px"
+				>
+					<!-- Adjust right offset as needed -->
+					<A4FormCheckmarks
+						fieldFilled={fieldFilled_Footer}
+						fieldMandatory={2}
+						end={true}
+						{isAllValid}
+					/>
+				</div>
+			{/if}
 			<Dialog.Root bind:open={openFooterDialog}>
 				<Dialog.Trigger class="w-full"><FooterContainer bind:footerData /></Dialog.Trigger>
 				<Dialog.Content class="max-h-[90vh] w-full overflow-y-auto sm:max-w-[800px]">
@@ -274,7 +336,9 @@
 				</Dialog.Content>
 			</Dialog.Root>
 		</div>
-	{:else}
+	</div>
+{:else}
+	<div class="relative flex h-full w-full flex-col">
 		<HeaderContainer {headerData} {isInteractive} />
 		<FirstSectionContainer {firstSectionData} {isInteractive} />
 		<div class="w-full flex-grow">
@@ -301,5 +365,5 @@
 			</div>
 		</div>
 		<FooterContainer {footerData} {isInteractive} />
-	{/if}
-</div>
+	</div>
+{/if}

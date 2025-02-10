@@ -8,13 +8,14 @@
 	import { mount, unmount } from 'svelte';
 	import { slide, fly, scale } from 'svelte/transition';
 	import { backIn, quintOut } from 'svelte/easing';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import Progress from '$lib/components/ui/progress/progress.svelte';
 
 	let { data, amountWaiters = 6 } = $props();
 
 	let isSubmitted = $state(false);
 	let isInteractive = $state(true);
 	let localSubmitObject = $state(data);
-	
 
 	let localHeaderFormObject = $state(data.headerForm);
 	let localFirstSectionFormObject = $state(data.firstSectionForm);
@@ -54,8 +55,8 @@
 			// 		console.log('❌ Submission failed', result.data);
 			// 	}
 			// };
-			isSubmitted = !isSubmitted;
-			isInteractive = !isInteractive;
+			isSubmitted = true;
+			isInteractive = false;
 		},
 		onResult({ result }) {
 			const timestamp = new Date().toISOString();
@@ -101,11 +102,15 @@
 
 	let downloadUrl = $state('');
 
-	let isAllValid = true;
+	let isAllValid = $state(false);
 
 	// $inspect(localHeaderFormObject)
 
 	$effect(() => {
+		if (isAllValid) {
+			console.log('All is Valid');
+			isInteractive = false;
+		}
 		// if (objectForm?.downloadUrl) {
 		//     downloadUrl = $form.downloadUrl;
 		// }
@@ -128,10 +133,10 @@
 </script>
 
 <div class="relative flex-col items-center">
-	{#if isSubmitted}
+	{#if $submitting}
 		<div
-			class="absolute left-1/2 top-[5%] -translate-x-1/2 transform rounded-md border-4 p-4 transition-all duration-300 {isSubmitted
-				? 'scale-150'
+			class="no-print absolute left-1/2 top-[5%] -translate-x-1/2 transform rounded-md border-4 p-4 transition-all duration-300 {$submitting
+				? 'scale-125'
 				: ''}"
 		>
 			<div class="">
@@ -142,96 +147,66 @@
                     duration-3000
                     animate-spin text-brand-yellow transition-all"
 				/>
-				Deine Rechnung ist in der Warteschlange. Es sind noch {amountWaiters} vor dir. <br/>
-				Jetzt mit <strong class="text-brand-yellow">Premium</strong> Warteschlange überspringen und direkt ans Ziel kommen.
+				Deine Rechnung ist in der Warteschlange. Es sind noch {amountWaiters} vor dir. <br />
+				Jetzt mit <strong class="text-brand-yellow">Premium</strong> Warteschlange überspringen und direkt
+				ans Ziel kommen.
 			</div>
 		</div>
 	{/if}
-
-	<div
-		class="mx-auto aspect-[1/1.4142] w-full max-w-[210mm] bg-white shadow-lg transition-all duration-300 print:shadow-none
-            {isSubmitted ? 'scale-50' : ''}"
-	>
-		<div class="print-container box-border flex h-full w-full flex-col p-6">
-			<A4Page
-				bind:isAllValid
-				{isInteractive}
-				bind:headerForm={localHeaderFormObject}
-				bind:headerData={localHeaderFormObject.data}
-				bind:firstSectionForm={localFirstSectionFormObject}
-				bind:firstSectionData={localFirstSectionFormObject.data}
-				bind:secondSectionForm={localSecondSectionFormObject}
-				bind:secondSectionData={localSecondSectionFormObject.data}
-				bind:mainSectionForm={localMainSectionObject}
-				bind:mainSectionData={localMainSectionObject.data}
-				bind:fourthSectionForm={localFourthSectionObject}
-				bind:fourthSectionData={localFourthSectionObject.data}
-				bind:footerForm={localFooterFormObject}
-				bind:footerData={localFooterFormObject.data}
-			/>
-		</div>
-	</div>
-</div>
-
-<div class="no-print">
-	<!-- non-print group fixed bottom-28 right-4 z-10 mx-auto h-[calc(100vh-13rem)] cursor-pointer rounded-lg border
-	border-transparent
-	p-8
-	transition-all
-	duration-200 -->
-	<form
-		method="POST"
-		use:enhance
-		class="non-print group fixed right-10 top-48 z-10 mx-auto rounded-lg border
-	border-transparent
-	p-8
-	transition-all
-	duration-200
-	{isAllValid ? 'hoverable' : ''}"
-	>
-		<button
-			disabled={!isAllValid}
-			type="submit"
-			class="flex h-full w-full items-center justify-center transition-all duration-300 ease-in-out"
+	<div class="mx-auto max-w-[210mm] transition-all duration-500 {$submitting ? 'scale-75' : ''}">
+		<div
+			class="aspect-[1/1.4142] w-full bg-white shadow-lg print:shadow-noe
+           "
 		>
-			<div
-				class="group-hover:opacity-100' flex h-20 w-20 cursor-pointer flex-col items-center justify-center rounded-lg border-4 p-1 transition-all duration-300 ease-in-out
-	  
-	   {isAllValid
-					? 'border-brand-gray bg-brand-yellow text-brand-gray group-hover:scale-110'
-					: 'border-gray-400 text-gray-400 opacity-30'}"
-			>
-				{#if $delayed}<LoaderCircle
-						size={100}
-						strokeWidth={1.5}
-						class="
+			<div class="print-container box-border flex h-full w-full flex-col p-6">
+				<A4Page
+					bind:isAllValid
+					{isInteractive}
+					{isSubmitted}
+					bind:headerForm={localHeaderFormObject}
+					bind:headerData={localHeaderFormObject.data}
+					bind:firstSectionForm={localFirstSectionFormObject}
+					bind:firstSectionData={localFirstSectionFormObject.data}
+					bind:secondSectionForm={localSecondSectionFormObject}
+					bind:secondSectionData={localSecondSectionFormObject.data}
+					bind:mainSectionForm={localMainSectionObject}
+					bind:mainSectionData={localMainSectionObject.data}
+					bind:fourthSectionForm={localFourthSectionObject}
+					bind:fourthSectionData={localFourthSectionObject.data}
+					bind:footerForm={localFooterFormObject}
+					bind:footerData={localFooterFormObject.data}
+				/>
+			</div>
+		</div>
+		<div class="no-print mt-4">
+			<form method="POST" use:enhance>
+				<Button disabled={!isAllValid} class="w-full" type="submit"
+					>{!isAllValid ? 'Bitte füllen Sie alle Felder aus' : 'Jetzt Rechnung erstellen'}</Button
+				>
+			</form>
+			{#if $delayed}<LoaderCircle
+					size={100}
+					strokeWidth={1.5}
+					class="
 				animate-spin
 			   transition-all duration-300 
 			   ease-in-out 
 			   {isAllValid ? 'text-brand-yellow opacity-40' : 'text-gray-400 opacity-40 '}"
-					/>
-				{:else}
-					<ArrowRight
-						size={100}
-						strokeWidth={1.5}
-						class="
-				   {isAllValid ? 'text-brand-gray' : 'text-gray-400 opacity-40'}"
-					/>
-				{/if}
-			</div>
-		</button>
-		{#if downloadUrl}
-			<a
-				href={downloadUrl}
-				download="invoice.pdf"
-				class="inline-flex items-center rounded bg-blue-500 px-4 py-2 text-white {isAllValid
-					? 'hover:bg-blue-600'
-					: ''}"
-			>
-				Download Invoice
-			</a>
-		{/if}
-	</form>
+				/>
+			{/if}
+			{#if downloadUrl}
+				<a
+					href={downloadUrl}
+					download="invoice.pdf"
+					class="inline-flex items-center rounded bg-blue-500 px-4 py-2 text-white {isAllValid
+						? 'hover:bg-blue-600'
+						: ''}"
+				>
+					Download Invoice
+				</a>
+			{/if}
+		</div>
+	</div>
 </div>
 
 <style lang="postcss">

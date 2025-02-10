@@ -22,10 +22,11 @@
 </script>
 
 <div class="flex items-start gap-4">
-	<div class="mx-auto aspect-[1/1.4142] w-full max-w-[210mm] bg-white shadow-lg print:shadow-none">
+	<div class="mx-auto aspect-[1/1.4142] w-full max-w-[210mm] bg-white">
 		<div class="print-container box-border flex h-full w-full flex-col p-6">
 			<A4Page
 				{isInteractive}
+				isSubmitted={true}
 				headerForm={localHeaderFormObject}
 				headerData={localHeaderFormObject.data}
 
@@ -74,7 +75,7 @@
 
 		nav,
 		footer,
-		.non-print {
+		.no-print {
 			display: none !important;
 		}
 	}
