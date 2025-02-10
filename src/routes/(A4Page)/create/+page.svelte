@@ -6,16 +6,20 @@
 	import { date, isValid } from 'zod';
 	import { onDestroy } from 'svelte';
 	import { mount, unmount } from 'svelte';
-	import { slide, fly, scale } from 'svelte/transition';
+	import { slide, fly, scale, fade } from 'svelte/transition';
 	import { backIn, quintOut } from 'svelte/easing';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Progress from '$lib/components/ui/progress/progress.svelte';
 
-	let { data, amountWaiters = 6 } = $props();
+	let { data } = $props();
 
 	let isSubmitted = $state(false);
 	let isInteractive = $state(true);
 	let localSubmitObject = $state(data);
+
+	let waiters = $state(data.waiters);
+	let queueWaitTime = $derived((waiters.reduce((sum, current) => sum + current, 0)/1000));
+	let currentWaiters = $state<number[]>();
 
 	let localHeaderFormObject = $state(data.headerForm);
 	let localFirstSectionFormObject = $state(data.firstSectionForm);
@@ -23,13 +27,34 @@
 	let localMainSectionObject = $state(data.mainSectionForm);
 	let localFourthSectionObject = $state(data.fourthSectionForm);
 	let localFooterFormObject = $state(data.footerForm);
+	let startTime: number = $state(0)
+	let submitDuration: number = $state(0)
+
+	async function processWaiters(waiters: number[]) {
+		isSubmitted = true;
+		isInteractive = false;
+
+		let localWaiters = [...waiters];
+		window.scrollTo({
+			top: 0,
+			behavior: 'smooth' // Enables smooth scrolling
+		});
+
+		while (localWaiters.length > 0) {
+			await new Promise((resolve) => setTimeout(resolve, localWaiters[0]));
+			localWaiters = localWaiters.slice(1);
+			currentWaiters = localWaiters;
+			console.log('Remaining delays:', currentWaiters);
+		}
+		submit();
+	}
 
 	const objectForm = superForm(localSubmitObject, {
 		delayMs: 500,
 		timeoutMs: 8000,
 		dataType: 'json',
 		onSubmit({ formData, cancel, jsonData }) {
-			const startTime = performance.now();
+			startTime = performance.now();
 			console.log(`🟦 Submit started at: ${new Date().toISOString()}`);
 			// localSubmitObject.headerForm = { ...localHeaderFormObject };
 			// localSubmitObject.firstSectionForm = { ...localFirstSectionFormObject };
@@ -46,7 +71,7 @@
 			console.log(submissionData);
 
 			// return async ({ result, update }) => {
-			// 	const submitDuration = performance.now() - startTime;
+			// 	
 			// 	console.log(`🟨 Form submission took: ${submitDuration.toFixed(2)}ms`);
 
 			// 	if (result.type === 'success') {
@@ -55,10 +80,9 @@
 			// 		console.log('❌ Submission failed', result.data);
 			// 	}
 			// };
-			isSubmitted = true;
-			isInteractive = false;
 		},
 		onResult({ result }) {
+			submitDuration = ((performance.now() - startTime)/1000);
 			const timestamp = new Date().toISOString();
 			console.log(`🔄 Form updated at: ${timestamp}`);
 			if (result.type === 'success') {
@@ -84,10 +108,9 @@
 		}
 	});
 
-	const { form: formData, enhance, delayed, submitting } = objectForm;
+	const { form: formData, enhance, delayed, submitting, submit } = objectForm;
 
 	const origin = 'Main';
-	let count = $state(0);
 
 	function createSubmissionData() {
 		return {
@@ -107,10 +130,6 @@
 	// $inspect(localHeaderFormObject)
 
 	$effect(() => {
-		if (isAllValid) {
-			console.log('All is Valid');
-			isInteractive = false;
-		}
 		// if (objectForm?.downloadUrl) {
 		//     downloadUrl = $form.downloadUrl;
 		// }
@@ -132,30 +151,62 @@
 	});
 </script>
 
-<div class="relative flex-col items-center">
-	{#if $submitting}
-		<div
-			class="no-print absolute left-1/2 top-[5%] -translate-x-1/2 transform rounded-md border-4 p-4 transition-all duration-300 {$submitting
-				? 'scale-125'
-				: ''}"
-		>
-			<div class="">
+<div class="relative mx-auto max-w-[210mm] flex-col items-center">
+	{#if isSubmitted}
+		<div class="duration-3000 mb-4 rounded-md border-4 bg-white p-4 transition-all print:hidden">
+			<div class="flex items-center gap-3">
 				<LoaderCircle
-					size={24}
+					size={40}
 					strokeWidth={1.5}
-					class="
-                    duration-3000
-                    animate-spin text-brand-yellow transition-all"
+					class="transition-duration-3000 {$delayed
+						? 'animate-spin text-brand-yellow'
+						: 'text-brand-gray/50'}"
 				/>
-				Deine Rechnung ist in der Warteschlange. Es sind noch {amountWaiters} vor dir. <br />
-				Jetzt mit <strong class="text-brand-yellow">Premium</strong> Warteschlange überspringen und direkt
-				ans Ziel kommen.
+				{#if (!downloadUrl && !$delayed)}
+					<div class="flex w-full flex-col items-center gap-1">
+						<p class="text-gray-700 dark:text-gray-300">Deine Rechnung ist in der Warteschlange.</p>
+						<p>Es sind noch <strong>{currentWaiters?.length ?? '??'}</strong> vor dir.</p>
+						<p class="text-gray-700 dark:text-gray-300">
+							Jetzt mit <strong class="font-medium text-brand-yellow">Premium</strong> Warteschlange
+							überspringen und direkt ans Ziel kommen.
+						</p>
+					</div>
+				{:else if (!downloadUrl && $delayed)}
+					<div class="flex w-full flex-col items-center gap-1">
+						<p class="text-gray-700 dark:text-gray-300">Deine Rechnung wird erstellt.</p>
+						<p class="text-gray-700 dark:text-gray-300">
+							Jetzt mit <strong class="font-medium text-brand-yellow">Premium</strong> Warteschlange
+							überspringen und direkt ans Ziel kommen.
+						</p>
+					</div>
+				{:else}
+					<div class="flex w-full flex-col items-center gap-1">
+						<p><strong class="font-medium text-brand-yellow">Fertig</strong></p>
+						<p class="text-gray-700 dark:text-gray-300">Die Warteschlange dauerte {queueWaitTime.toFixed(1)} Sekunden</p>
+						<p class="text-gray-700 dark:text-gray-300">
+							Deine Rechnung wurde blitzschnell erstellt in {submitDuration.toFixed(1)} Sekunden.
+						</p>
+						<p class="text-gray-700 dark:text-gray-300">
+							Jetzt mit <strong class="font-medium text-brand-yellow">Premium</strong> {((1-submitDuration/queueWaitTime)*100).toFixed(0)}% schneller
+							sein und die Warteschlange überspringen.
+						</p>
+					</div>
+				{/if}
 			</div>
 		</div>
+		{#if downloadUrl}
+			<Button
+				href={downloadUrl}
+				download="invoice.pdf"
+				class="w-full rounded-md bg-brand-yellow p-4 text-brand-gray hover:bg-brand-yellow/90"
+			>
+				Hier herunterladen
+			</Button>
+		{/if}
 	{/if}
-	<div class="mx-auto max-w-[210mm] transition-all duration-500 {$submitting ? 'scale-75' : ''}">
+	<div class="transition-all duration-500 {isSubmitted ? '-mt-20 scale-75' : ''}">
 		<div
-			class="aspect-[1/1.4142] w-full bg-white shadow-lg print:shadow-noe
+			class="print:shadow-noe aspect-[1/1.4142] w-full bg-white shadow-lg
            "
 		>
 			<div class="print-container box-border flex h-full w-full flex-col p-6">
@@ -178,35 +229,18 @@
 				/>
 			</div>
 		</div>
-		<div class="no-print mt-4">
-			<form method="POST" use:enhance>
-				<Button disabled={!isAllValid} class="w-full" type="submit"
-					>{!isAllValid ? 'Bitte füllen Sie alle Felder aus' : 'Jetzt Rechnung erstellen'}</Button
-				>
-			</form>
-			{#if $delayed}<LoaderCircle
-					size={100}
-					strokeWidth={1.5}
-					class="
-				animate-spin
-			   transition-all duration-300 
-			   ease-in-out 
-			   {isAllValid ? 'text-brand-yellow opacity-40' : 'text-gray-400 opacity-40 '}"
-				/>
-			{/if}
-			{#if downloadUrl}
-				<a
-					href={downloadUrl}
-					download="invoice.pdf"
-					class="inline-flex items-center rounded bg-blue-500 px-4 py-2 text-white {isAllValid
-						? 'hover:bg-blue-600'
-						: ''}"
-				>
-					Download Invoice
-				</a>
-			{/if}
+			<div class="no-print mt-4">
+				<form method="POST" use:enhance>
+					<Button
+						disabled={!isAllValid || isSubmitted}
+						class="w-full {isSubmitted ? 'hidden' : ''}"
+						type="button"
+						onclick={() => processWaiters(waiters)}
+						>{!isAllValid ? 'Bitte füllen Sie alle Felder aus' : 'Jetzt Rechnung erstellen'}</Button
+					>
+				</form>
+			</div>
 		</div>
-	</div>
 </div>
 
 <style lang="postcss">

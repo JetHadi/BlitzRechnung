@@ -19,7 +19,7 @@ import { footerContainerSchema } from "$lib/schema/5_footerContainer";
 //import { getUnitCode } from "$lib/utils";
 import { randomUUID } from "crypto";
 import { DefaultUBLInvoice, type BusinessTerms } from "$lib/invoice/UBL/createDefaults/defaultUBLInvoice";
-import { addDays } from "$lib/utils";
+import { addDays, getRandomArbitrary, getRandomIntInclusive } from "$lib/utils";
 
 export const load: PageServerLoad = async () => {
   const startTime = performance.now();
@@ -35,8 +35,17 @@ export const load: PageServerLoad = async () => {
   const loadTime = performance.now() - startTime;
   console.log(`✨ Page load completed in ${loadTime.toFixed(2)}ms`);
 
+  const minWaitTime = 2500; 
+  const maxWaitTime = 3000;
+  const amountWaiters = getRandomIntInclusive(3,9)
+  const waitingTimes = []
+  for (let i = 0; i < amountWaiters; i++) {
+    waitingTimes.push(getRandomIntInclusive(minWaitTime,maxWaitTime))
+  }
+
   return {
-    headerForm: headerForm, firstSectionForm: firstSectionForm, secondSectionForm: secondSectionForm, mainSectionForm: mainSectionForm, fourthSectionForm: fourthSectionForm, footerForm: footerForm
+    headerForm: headerForm, firstSectionForm: firstSectionForm, secondSectionForm: secondSectionForm, mainSectionForm: mainSectionForm, fourthSectionForm: fourthSectionForm, footerForm: footerForm,
+    waiters: waitingTimes
   }
 }
 
