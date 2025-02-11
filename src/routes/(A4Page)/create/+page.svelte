@@ -10,6 +10,7 @@
 	import { backIn, quintOut } from 'svelte/easing';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import Progress from '$lib/components/ui/progress/progress.svelte';
+	import RegisterForm from '../../signup/registerForm.svelte';
 
 	let { data } = $props();
 
@@ -18,7 +19,7 @@
 	let localSubmitObject = $state(data);
 
 	let waiters = $state(data.waiters);
-	let queueWaitTime = $derived((waiters.reduce((sum, current) => sum + current, 0)/1000));
+	let queueWaitTime = $derived(waiters.reduce((sum, current) => sum + current, 0) / 1000);
 	let currentWaiters = $state<number[]>();
 
 	let localHeaderFormObject = $state(data.headerForm);
@@ -27,8 +28,8 @@
 	let localMainSectionObject = $state(data.mainSectionForm);
 	let localFourthSectionObject = $state(data.fourthSectionForm);
 	let localFooterFormObject = $state(data.footerForm);
-	let startTime: number = $state(0)
-	let submitDuration: number = $state(0)
+	let startTime: number = $state(0);
+	let submitDuration: number = $state(0);
 
 	async function processWaiters(waiters: number[]) {
 		isSubmitted = true;
@@ -71,7 +72,7 @@
 			console.log(submissionData);
 
 			// return async ({ result, update }) => {
-			// 	
+			//
 			// 	console.log(`🟨 Form submission took: ${submitDuration.toFixed(2)}ms`);
 
 			// 	if (result.type === 'success') {
@@ -82,7 +83,7 @@
 			// };
 		},
 		onResult({ result }) {
-			submitDuration = ((performance.now() - startTime)/1000);
+			submitDuration = (performance.now() - startTime) / 1000;
 			const timestamp = new Date().toISOString();
 			console.log(`🔄 Form updated at: ${timestamp}`);
 			if (result.type === 'success') {
@@ -162,7 +163,7 @@
 						? 'animate-spin text-brand-yellow'
 						: 'text-brand-gray/50'}"
 				/>
-				{#if (!downloadUrl && !$delayed)}
+				{#if !downloadUrl && !$delayed}
 					<div class="flex w-full flex-col items-center gap-1">
 						<p class="text-gray-700 dark:text-gray-300">Deine Rechnung ist in der Warteschlange.</p>
 						<p>Es sind noch <strong>{currentWaiters?.length ?? '??'}</strong> vor dir.</p>
@@ -171,7 +172,7 @@
 							überspringen und direkt ans Ziel kommen.
 						</p>
 					</div>
-				{:else if (!downloadUrl && $delayed)}
+				{:else if !downloadUrl && $delayed}
 					<div class="flex w-full flex-col items-center gap-1">
 						<p class="text-gray-700 dark:text-gray-300">Deine Rechnung wird erstellt.</p>
 						<p class="text-gray-700 dark:text-gray-300">
@@ -182,26 +183,40 @@
 				{:else}
 					<div class="flex w-full flex-col items-center gap-1">
 						<p><strong class="font-medium text-brand-yellow">Fertig</strong></p>
-						<p class="text-gray-700 dark:text-gray-300">Die Warteschlange dauerte {queueWaitTime.toFixed(1)} Sekunden</p>
+						<p class="text-gray-700 dark:text-gray-300">
+							Die Warteschlange dauerte {queueWaitTime.toFixed(1)} Sekunden
+						</p>
 						<p class="text-gray-700 dark:text-gray-300">
 							Deine Rechnung wurde blitzschnell erstellt in {submitDuration.toFixed(1)} Sekunden.
 						</p>
 						<p class="text-gray-700 dark:text-gray-300">
-							Jetzt mit <strong class="font-medium text-brand-yellow">Premium</strong> {((1-submitDuration/queueWaitTime)*100).toFixed(0)}% schneller
-							sein und die Warteschlange überspringen.
+							Jetzt mit <strong class="font-medium text-brand-yellow">Premium</strong>
+							{((1 - submitDuration / queueWaitTime) * 100).toFixed(0)}% schneller sein und die
+							Warteschlange überspringen.
 						</p>
 					</div>
 				{/if}
 			</div>
 		</div>
+		<RegisterForm />
 		{#if downloadUrl}
-			<Button
-				href={downloadUrl}
-				download="invoice.pdf"
-				class="w-full rounded-md bg-brand-yellow p-4 text-brand-gray hover:bg-brand-yellow/90"
-			>
-				Hier herunterladen
-			</Button>
+			<div class="flex flex-row space-x-2">
+				<Button
+					href={downloadUrl}
+					download="invoice.pdf"
+					class="w-full rounded-md bg-brand-yellow p-4 text-white hover:bg-brand-yellow/90"
+				>
+					Hier herunterladen
+				</Button>
+				<Button
+					href="/create"
+					data-sveltekit-reload
+					type="button"
+					class="w-full rounded-md p-4 text-white hover:bg-brand-blue/90"
+				>
+					neue Rechnung erstellen
+				</Button>
+			</div>
 		{/if}
 	{/if}
 	<div class="transition-all duration-500 {isSubmitted ? '-mt-20 scale-75' : ''}">
@@ -229,18 +244,18 @@
 				/>
 			</div>
 		</div>
-			<div class="no-print mt-4">
-				<form method="POST" use:enhance>
-					<Button
-						disabled={!isAllValid || isSubmitted}
-						class="w-full {isSubmitted ? 'hidden' : ''}"
-						type="button"
-						onclick={() => processWaiters(waiters)}
-						>{!isAllValid ? 'Bitte füllen Sie alle Felder aus' : 'Jetzt Rechnung erstellen'}</Button
-					>
-				</form>
-			</div>
+		<div class="no-print mt-4">
+			<form method="POST" use:enhance>
+				<Button
+					disabled={!isAllValid || isSubmitted}
+					class="w-full {isSubmitted ? 'hidden' : ''}"
+					type="button"
+					onclick={() => processWaiters(waiters)}
+					>{!isAllValid ? 'Bitte füllen Sie alle Felder aus' : 'Jetzt Rechnung erstellen'}</Button
+				>
+			</form>
 		</div>
+	</div>
 </div>
 
 <style lang="postcss">
