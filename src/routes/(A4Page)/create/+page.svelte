@@ -1,6 +1,6 @@
 <!-- frontend/src/routes/(A4Page)/create/+page.svelte -->
 <script lang="ts">
-	import { ArrowRight, LoaderCircle, SquareArrowRight } from 'lucide-svelte';
+	import { ArrowRight, FileDown, LoaderCircle, SquareArrowRight } from 'lucide-svelte';
 	import A4Page from '../A4Page.svelte';
 	import { superForm } from 'sveltekit-superforms';
 	import { date, isValid } from 'zod';
@@ -9,8 +9,8 @@
 	import { slide, fly, scale, fade } from 'svelte/transition';
 	import { backIn, quintOut } from 'svelte/easing';
 	import Button from '$lib/components/ui/button/button.svelte';
-	import Progress from '$lib/components/ui/progress/progress.svelte';
-	import RegisterForm from '../../signup/registerForm.svelte';
+	import PremiumAd from '../../signup/PremiumAd.svelte';
+	import RegisterForm from '../../registerForm.svelte';
 
 	let { data } = $props();
 
@@ -30,6 +30,8 @@
 	let localFooterFormObject = $state(data.footerForm);
 	let startTime: number = $state(0);
 	let submitDuration: number = $state(0);
+
+	let selectedPlan = $state('');
 
 	async function processWaiters(waiters: number[]) {
 		isSubmitted = true;
@@ -153,16 +155,11 @@
 </script>
 
 <div class="relative mx-auto max-w-[210mm] flex-col items-center">
-	{#if isSubmitted}
-		<div class="duration-3000 mb-4 rounded-md border-4 bg-white p-4 transition-all print:hidden">
-			<div class="flex items-center gap-3">
-				<LoaderCircle
-					size={40}
-					strokeWidth={1.5}
-					class="transition-duration-3000 {$delayed
-						? 'animate-spin text-brand-yellow'
-						: 'text-brand-gray/50'}"
-				/>
+	{#if !isSubmitted}
+		<div transition:fade class="mb-4 flex flex-col space-y-4 print:hidden">
+			<div
+				class="duration-3000 flex items-center gap-3 rounded-md border-2 border-brand-gray bg-white p-4 transition-all"
+			>
 				{#if !downloadUrl && !$delayed}
 					<div class="flex w-full flex-col items-center gap-1">
 						<p class="text-gray-700 dark:text-gray-300">Deine Rechnung ist in der Warteschlange.</p>
@@ -187,7 +184,9 @@
 							Die Warteschlange dauerte {queueWaitTime.toFixed(1)} Sekunden
 						</p>
 						<p class="text-gray-700 dark:text-gray-300">
-							Deine Rechnung wurde blitzschnell erstellt in {submitDuration.toFixed(1)} Sekunden.
+							Deine Rechnung wurde blitzschnell erstellt in <strong
+								>{submitDuration.toFixed(1)} Sekunden</strong
+							>.
 						</p>
 						<p class="text-gray-700 dark:text-gray-300">
 							Jetzt mit <strong class="font-medium text-brand-yellow">Premium</strong>
@@ -197,65 +196,83 @@
 					</div>
 				{/if}
 			</div>
-		</div>
-		<RegisterForm />
-		{#if downloadUrl}
-			<div class="flex flex-row space-x-2">
+			<div transition:fade class="flex flex-row space-x-2">
 				<Button
+					disabled={downloadUrl ? false : true}
+					href={downloadUrl ? '/create' : ''}
+					data-sveltekit-reload
+					class="w-full rounded-md p-4 text-white"
+				>
+					neue Rechnung erstellen
+				</Button>
+				<Button
+					disabled={downloadUrl ? false : true}
 					href={downloadUrl}
 					download="invoice.pdf"
 					class="w-full rounded-md bg-brand-yellow p-4 text-white hover:bg-brand-yellow/90"
 				>
+					{#if !downloadUrl}
+						<LoaderCircle
+							strokeWidth={1.5}
+							class="transition-duration-3000 {$delayed ? 'animate-spin' : 'text-brand-gray/50'}"
+						/>
+					{:else}
+						<FileDown />
+					{/if}
 					Hier herunterladen
 				</Button>
-				<Button
-					href="/create"
-					data-sveltekit-reload
-					type="button"
-					class="w-full rounded-md p-4 text-white hover:bg-brand-blue/90"
-				>
-					neue Rechnung erstellen
-				</Button>
 			</div>
-		{/if}
+			<!-- {#if currentWaiters} -->
+				<PremiumAd bind:selectedPlan />
+			<!-- {/if} -->
+		</div>
 	{/if}
-	<div class="transition-all duration-500 {isSubmitted ? '-mt-20 scale-75' : ''}">
-		<div
-			class="print:shadow-noe aspect-[1/1.4142] w-full bg-white shadow-lg
+	{#if selectedPlan}
+		<div transition:fade>
+			<RegisterForm
+				bind:headerForm={localHeaderFormObject}
+				bind:headerData={localHeaderFormObject.data}
+			/>
+		</div>
+	{:else}
+		<div transition:fade class="transition-all duration-500 {isSubmitted ? '-mt-20 scale-75' : ''}">
+			<div
+				class="print:shadow-noe aspect-[1/1.4142] w-full bg-white shadow-lg
            "
-		>
-			<div class="print-container box-border flex h-full w-full flex-col p-6">
-				<A4Page
-					bind:isAllValid
-					{isInteractive}
-					{isSubmitted}
-					bind:headerForm={localHeaderFormObject}
-					bind:headerData={localHeaderFormObject.data}
-					bind:firstSectionForm={localFirstSectionFormObject}
-					bind:firstSectionData={localFirstSectionFormObject.data}
-					bind:secondSectionForm={localSecondSectionFormObject}
-					bind:secondSectionData={localSecondSectionFormObject.data}
-					bind:mainSectionForm={localMainSectionObject}
-					bind:mainSectionData={localMainSectionObject.data}
-					bind:fourthSectionForm={localFourthSectionObject}
-					bind:fourthSectionData={localFourthSectionObject.data}
-					bind:footerForm={localFooterFormObject}
-					bind:footerData={localFooterFormObject.data}
-				/>
+			>
+				<div class="print-container box-border flex h-full w-full flex-col p-6">
+					<A4Page
+						bind:isAllValid
+						{isInteractive}
+						{isSubmitted}
+						bind:headerForm={localHeaderFormObject}
+						bind:headerData={localHeaderFormObject.data}
+						bind:firstSectionForm={localFirstSectionFormObject}
+						bind:firstSectionData={localFirstSectionFormObject.data}
+						bind:secondSectionForm={localSecondSectionFormObject}
+						bind:secondSectionData={localSecondSectionFormObject.data}
+						bind:mainSectionForm={localMainSectionObject}
+						bind:mainSectionData={localMainSectionObject.data}
+						bind:fourthSectionForm={localFourthSectionObject}
+						bind:fourthSectionData={localFourthSectionObject.data}
+						bind:footerForm={localFooterFormObject}
+						bind:footerData={localFooterFormObject.data}
+					/>
+				</div>
+			</div>
+			<div class="no-print mt-4">
+				<form method="POST" use:enhance>
+					<Button
+						disabled={!isAllValid || isSubmitted}
+						class="w-full {isSubmitted ? 'hidden' : ''}"
+						type="button"
+						onclick={() => processWaiters(waiters)}
+						>{!isAllValid ? 'Bitte füllen Sie alle Felder aus' : 'Jetzt Rechnung erstellen'}</Button
+					>
+				</form>
 			</div>
 		</div>
-		<div class="no-print mt-4">
-			<form method="POST" use:enhance>
-				<Button
-					disabled={!isAllValid || isSubmitted}
-					class="w-full {isSubmitted ? 'hidden' : ''}"
-					type="button"
-					onclick={() => processWaiters(waiters)}
-					>{!isAllValid ? 'Bitte füllen Sie alle Felder aus' : 'Jetzt Rechnung erstellen'}</Button
-				>
-			</form>
-		</div>
-	</div>
+	{/if}
 </div>
 
 <style lang="postcss">

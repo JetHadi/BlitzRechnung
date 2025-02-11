@@ -1,5 +1,5 @@
 <script>
-	import RegisterForm from './registerForm.svelte';
+	import RegisterForm from './PremiumAd.svelte';
 </script>
 
 <RegisterForm />

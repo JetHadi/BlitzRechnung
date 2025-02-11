@@ -37,7 +37,7 @@ export const load: PageServerLoad = async () => {
 
   const minWaitTime = 1700; 
   const maxWaitTime = 3000;
-  const amountWaiters = getRandomIntInclusive(2,9)
+  const amountWaiters = getRandomIntInclusive(3,9)
   const waitingTimes = []
   for (let i = 0; i < amountWaiters; i++) {
     waitingTimes.push(getRandomIntInclusive(minWaitTime,maxWaitTime))
