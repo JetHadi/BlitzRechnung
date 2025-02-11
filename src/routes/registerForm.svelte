@@ -71,12 +71,12 @@
 	use:enhance
 	class="mx-auto flex h-[400px] min-h-0 w-full flex-col overflow-hidden rounded-md border-2 border-brand-gray bg-white p-6"
 >
-	<div class="relative min-h-0 flex-1 overflow-hidden">
+	<div class="relative min-h-0 flex-1">
 		{#if current == 0}
 			<div
 				in:fly={{ x: 20 }}
 				out:fly={{ x: -20 }}
-				class="absolute grid h-full w-full grid-cols-2 gap-4 overflow-y-auto"
+				class="absolute grid h-full w-full grid-cols-2 gap-4 p-4"
 			>
 				<Form.Field {form} name="absender_kleinunternehmer" class="col-span-full hidden">
 					<Form.Control>
@@ -189,37 +189,52 @@
 					<Form.Description class="mt-1 text-sm text-muted-foreground" />
 					<Form.FieldErrors class="mt-1 text-sm text-destructive" />
 				</Form.Field>
-
-				<Form.Field {form} name="absender_email">
-					<Form.Control>
-						{#snippet children({ props })}
-							<Form.Label class="text-sm font-medium">Email*</Form.Label>
-							<Input
-								{...props}
-								bind:value={$formData.absender_email}
-								placeholder={defaultRechnungsSender.absender_email}
-								class="mt-1.5"
-							/>
-						{/snippet}
-					</Form.Control>
-					<Form.Description class="mt-1 text-sm text-muted-foreground" />
-					<Form.FieldErrors class="mt-1 text-sm text-destructive" />
-				</Form.Field>
 			</div>
 		{:else if current == 1}
 			<!-- FIXME: Hier Zahlungsoption einrichten -->
 			<div
 				in:fly={{ x: 20 }}
 				out:fly={{ x: -20 }}
-				class="absolute grid h-full w-full grid-cols-1 gap-4 overflow-y-auto md:grid-cols-2"
+				class="absolute grid h-full w-full grid-cols-1 overflow-y-auto md:grid-cols-2 gap-4 p-4"
 			>
-				Test
-			</div>
+			<Form.Field {form} name="absender_email">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label class="text-sm font-medium">Email*</Form.Label>
+						<Input
+							{...props}
+							bind:value={$formData.absender_email}
+							placeholder={defaultRechnungsSender.absender_email}
+							class="mt-1.5"
+						/>
+					{/snippet}
+				</Form.Control>
+				<Form.Description class="mt-1 text-sm text-muted-foreground" />
+				<Form.FieldErrors class="mt-1 text-sm text-destructive" />
+			</Form.Field>
+
+			<Form.Field {form} name="absender_password">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label class="text-sm font-medium">Passwort*</Form.Label>
+						<Input
+							{...props}
+							type="password"
+							bind:value={$formData.absender_email}
+							placeholder={defaultRechnungsSender.absender_email}
+							class="mt-1.5"
+						/>
+					{/snippet}
+				</Form.Control>
+				<Form.Description class="mt-1 text-sm text-muted-foreground" />
+				<Form.FieldErrors class="mt-1 text-sm text-destructive" />
+			</Form.Field>
+					</div>
 		{:else if current == 2}
 			<!-- FIXME: Hier Zahlungsoption einrichten -->
 			<div
 				transition:fly={{ x: 20 }}
-				class="absolute grid h-full w-full grid-cols-1 gap-4 overflow-y-auto md:grid-cols-2"
+				class="absolute grid h-full w-full grid-cols-1 gap-4 overflow-y-auto md:grid-cols-2 p-4"
 			>
 				Test
 			</div>
