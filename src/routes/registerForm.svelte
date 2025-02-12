@@ -170,7 +170,9 @@
 						<Form.Control>
 							{#snippet children({ props })}
 								<RadioGroup.Root>
-									<Form.Label class="text-sm font-medium mt-1 mb-3">Bist du Kleinunternehmer?*</Form.Label>
+									<Form.Label class="mb-3 mt-1 text-sm font-medium"
+										>Bist du Kleinunternehmer?*</Form.Label
+									>
 									<div class="flex gap-4">
 										<div class="hidden">
 											<RadioGroup.Item value="hidden" id="r3" />
@@ -253,7 +255,9 @@
 			onclick={() => {
 				current == 0 ? '' : prevPage();
 			}}
-			class="rounded-md p-2 text-gray-500 transition-colors hover:bg-brand-yellow/30"
+			class="rounded-md p-2 text-gray-500 transition-colors {current != 0
+				? 'hover:bg-brand-yellow/30'
+				: 'opacity-40'}"
 		/>
 
 		<!-- Page Indicators -->
@@ -270,8 +274,12 @@
 		<SquareChevronRight
 			size={40}
 			type="button"
-			onclick={nextPage}
-			class="rounded-md p-2 text-gray-500 transition-colors hover:bg-brand-yellow/30"
+			onclick={() => {
+				current == 0 ? '' : nextPage();
+			}}
+			class="rounded-md p-2 text-gray-500 transition-colors {current == totalPages
+				? 'hover:bg-brand-yellow/30'
+				: 'opacity-40'}"
 		/>
 	</div>
 </form>
