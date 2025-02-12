@@ -38,7 +38,8 @@
 		SPA: true,
 		invalidateAll: false, // Prevents full page reload
 		onSubmit({}) {
-			//console.log('from DialogHeader onSubmit:', $formData);
+			console.log('Premium');
+			console.log('from DialogHeader onSubmit:', $formData);
 			// if ($formData.absender_telefon == undefined) {
 			// 	$formData.absender_telefon = '';
 			// }
@@ -60,6 +61,12 @@
 	//$inspect(kleinunternehmerValue);
 	// $inspect(headerData.absender_kleinunternehmer)
 	$effect(() => {
+		if (current > totalPages) {
+			current = totalPages;
+		}
+		if (current < 0) {
+			current = 0;
+		}
 		// if (!headerData.absender_kleinunternehmer) {
 		// 	kleinunternehmerValue = 'hidden';
 		// }
@@ -69,174 +76,172 @@
 <form
 	method="POST"
 	use:enhance
-	class="mx-auto flex h-[400px] min-h-0 w-full flex-col overflow-hidden rounded-md border-2 border-brand-gray bg-white p-6"
+	class="mx-auto flex h-[530px] w-full flex-col overflow-hidden rounded-md border-2 border-brand-gray bg-white p-6"
 >
-	<div class="relative min-h-0 flex-1">
+	<div class="relative min-h-0 flex-1 p-4">
 		{#if current == 0}
-			<div
-				in:fly={{ x: 20 }}
-				out:fly={{ x: -20 }}
-				class="absolute grid h-full w-full grid-cols-2 gap-4 p-4"
-			>
-				<Form.Field {form} name="absender_kleinunternehmer" class="col-span-full hidden">
-					<Form.Control>
-						{#snippet children({ props })}
-							<RadioGroup.Root class="flex items-center gap-4">
-								<Form.Label class="text-sm font-medium">Bist du Kleinunternehmer?*</Form.Label>
-								<div class="flex gap-4">
-									<div class="hidden">
-										<RadioGroup.Item value="hidden" id="r3" />
-										<Label for="r3"></Label>
+			<div in:fly={{ x: 20 }} out:fly={{ x: -20 }}>
+				<div class="grid w-full grid-cols-2 gap-4">
+					<!-- Company Field -->
+					<Form.Field {form} name="absender_firma">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label class="text-sm font-medium">Firma*</Form.Label>
+								<Input
+									{...props}
+									bind:value={$formData.absender_firma}
+									placeholder={defaultRechnungsSender.absender_firma}
+									class="mt-1.5"
+								/>
+							{/snippet}
+						</Form.Control>
+						<Form.Description class="mt-1 text-sm text-muted-foreground" />
+						<Form.FieldErrors class="mt-1 text-sm text-destructive" />
+					</Form.Field>
+
+					<!-- Street Field -->
+					<Form.Field {form} name="absender_strasse">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label class="text-sm font-medium">Straße*</Form.Label>
+								<Input
+									{...props}
+									bind:value={$formData.absender_strasse}
+									placeholder={defaultRechnungsSender.absender_strasse}
+									class="mt-1.5"
+								/>
+							{/snippet}
+						</Form.Control>
+						<Form.Description class="mt-1 text-sm text-muted-foreground" />
+						<Form.FieldErrors class="mt-1 text-sm text-destructive" />
+					</Form.Field>
+
+					<!-- ZIP and City in one row on larger screens -->
+					<Form.Field {form} name="absender_plz">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label class="text-sm font-medium">PLZ*</Form.Label>
+								<Input
+									{...props}
+									bind:value={$formData.absender_plz}
+									placeholder={defaultRechnungsSender.absender_plz}
+									class="mt-1.5"
+								/>
+							{/snippet}
+						</Form.Control>
+						<Form.Description class="mt-1 text-sm text-muted-foreground" />
+						<Form.FieldErrors class="mt-1 text-sm text-destructive" />
+					</Form.Field>
+
+					<Form.Field {form} name="absender_ort">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label class="text-sm font-medium">Ort*</Form.Label>
+								<Input
+									{...props}
+									bind:value={$formData.absender_ort}
+									placeholder={defaultRechnungsSender.absender_ort}
+									class="mt-1.5"
+								/>
+							{/snippet}
+						</Form.Control>
+						<Form.Description class="mt-1 text-sm text-muted-foreground" />
+						<Form.FieldErrors class="mt-1 text-sm text-destructive" />
+					</Form.Field>
+
+					<!-- Contact Information -->
+					<Form.Field {form} name="absender_telefon">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label class="text-sm font-medium">Telefon</Form.Label>
+								<Input
+									{...props}
+									bind:value={$formData.absender_telefon}
+									placeholder={defaultRechnungsSender.absender_telefon}
+									class="mt-1.5"
+								/>
+							{/snippet}
+						</Form.Control>
+						<Form.Description class="mt-1 text-sm text-muted-foreground" />
+						<Form.FieldErrors class="mt-1 text-sm text-destructive" />
+					</Form.Field>
+
+					<Form.Field {form} name="absender_kleinunternehmer">
+						<Form.Control>
+							{#snippet children({ props })}
+								<RadioGroup.Root>
+									<Form.Label class="text-sm font-medium mt-1 mb-3">Bist du Kleinunternehmer?*</Form.Label>
+									<div class="flex gap-4">
+										<div class="hidden">
+											<RadioGroup.Item value="hidden" id="r3" />
+											<Label for="r3"></Label>
+										</div>
+										<div class="flex items-center space-x-2">
+											<RadioGroup.Item value="false" id="r2" />
+											<Label for="r2">Nein</Label>
+										</div>
+										<div class="flex items-center space-x-2">
+											<RadioGroup.Item value="true" id="r1" />
+											<Label for="r1">Ja</Label>
+										</div>
 									</div>
-									<div class="flex items-center space-x-2">
-										<RadioGroup.Item value="false" id="r2" />
-										<Label for="r2">Nein</Label>
-									</div>
-									<div class="flex items-center space-x-2">
-										<RadioGroup.Item value="true" id="r1" />
-										<Label for="r1">Ja</Label>
-									</div>
-								</div>
-							</RadioGroup.Root>
+								</RadioGroup.Root>
 
-							<!-- <Checkbox {...props} bind:checked={$formData.absender_kleinunternehmer} class="mt-1.5" /> -->
-						{/snippet}
-					</Form.Control>
-					<Form.Description class="mt-1 text-sm text-muted-foreground" />
-					<Form.FieldErrors class="mt-1 text-sm text-destructive" />
-				</Form.Field>
+								<!-- <Checkbox {...props} bind:checked={$formData.absender_kleinunternehmer} class="mt-1.5" /> -->
+							{/snippet}
+						</Form.Control>
+						<Form.Description class="mt-1 text-sm text-muted-foreground" />
+						<Form.FieldErrors class="mt-1 text-sm text-destructive" />
+					</Form.Field>
+				</div>
+				<h4 class="mt-4">Login Informationen</h4>
+				<div class="grid grid-cols-2 gap-4 border-t-2 py-2">
+					<Form.Field {form} name="absender_email">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label class="text-sm font-medium">Email*</Form.Label>
+								<Input
+									{...props}
+									bind:value={$formData.absender_email}
+									placeholder={defaultRechnungsSender.absender_email}
+									class="mt-1.5"
+								/>
+							{/snippet}
+						</Form.Control>
+						<Form.Description class="mt-1 text-sm text-muted-foreground" />
+						<Form.FieldErrors class="mt-1 text-sm text-destructive" />
+					</Form.Field>
 
-				<!-- Company Field -->
-				<Form.Field {form} name="absender_firma">
-					<Form.Control>
-						{#snippet children({ props })}
-							<Form.Label class="text-sm font-medium">Firma*</Form.Label>
-							<Input
-								{...props}
-								bind:value={$formData.absender_firma}
-								placeholder={defaultRechnungsSender.absender_firma}
-								class="mt-1.5"
-							/>
-						{/snippet}
-					</Form.Control>
-					<Form.Description class="mt-1 text-sm text-muted-foreground" />
-					<Form.FieldErrors class="mt-1 text-sm text-destructive" />
-				</Form.Field>
-
-				<!-- Street Field -->
-				<Form.Field {form} name="absender_strasse">
-					<Form.Control>
-						{#snippet children({ props })}
-							<Form.Label class="text-sm font-medium">Straße*</Form.Label>
-							<Input
-								{...props}
-								bind:value={$formData.absender_strasse}
-								placeholder={defaultRechnungsSender.absender_strasse}
-								class="mt-1.5"
-							/>
-						{/snippet}
-					</Form.Control>
-					<Form.Description class="mt-1 text-sm text-muted-foreground" />
-					<Form.FieldErrors class="mt-1 text-sm text-destructive" />
-				</Form.Field>
-
-				<!-- ZIP and City in one row on larger screens -->
-				<Form.Field {form} name="absender_plz">
-					<Form.Control>
-						{#snippet children({ props })}
-							<Form.Label class="text-sm font-medium">PLZ*</Form.Label>
-							<Input
-								{...props}
-								bind:value={$formData.absender_plz}
-								placeholder={defaultRechnungsSender.absender_plz}
-								class="mt-1.5"
-							/>
-						{/snippet}
-					</Form.Control>
-					<Form.Description class="mt-1 text-sm text-muted-foreground" />
-					<Form.FieldErrors class="mt-1 text-sm text-destructive" />
-				</Form.Field>
-
-				<Form.Field {form} name="absender_ort">
-					<Form.Control>
-						{#snippet children({ props })}
-							<Form.Label class="text-sm font-medium">Ort*</Form.Label>
-							<Input
-								{...props}
-								bind:value={$formData.absender_ort}
-								placeholder={defaultRechnungsSender.absender_ort}
-								class="mt-1.5"
-							/>
-						{/snippet}
-					</Form.Control>
-					<Form.Description class="mt-1 text-sm text-muted-foreground" />
-					<Form.FieldErrors class="mt-1 text-sm text-destructive" />
-				</Form.Field>
-
-				<!-- Contact Information -->
-				<Form.Field {form} name="absender_telefon">
-					<Form.Control>
-						{#snippet children({ props })}
-							<Form.Label class="text-sm font-medium">Telefon</Form.Label>
-							<Input
-								{...props}
-								bind:value={$formData.absender_telefon}
-								placeholder={defaultRechnungsSender.absender_telefon}
-								class="mt-1.5"
-							/>
-						{/snippet}
-					</Form.Control>
-					<Form.Description class="mt-1 text-sm text-muted-foreground" />
-					<Form.FieldErrors class="mt-1 text-sm text-destructive" />
-				</Form.Field>
+					<Form.Field {form} name="absender_password">
+						<Form.Control>
+							{#snippet children({ props })}
+								<Form.Label class="text-sm font-medium">Passwort*</Form.Label>
+								<Input
+									{...props}
+									type="password"
+									bind:value={$formData.absender_password}
+									class="mt-1.5"
+								/>
+							{/snippet}
+						</Form.Control>
+						<Form.Description class="mt-1 text-sm text-muted-foreground" />
+						<Form.FieldErrors class="mt-1 text-sm text-destructive" />
+					</Form.Field>
+				</div>
 			</div>
 		{:else if current == 1}
 			<!-- FIXME: Hier Zahlungsoption einrichten -->
 			<div
 				in:fly={{ x: 20 }}
 				out:fly={{ x: -20 }}
-				class="absolute grid h-full w-full grid-cols-1 overflow-y-auto md:grid-cols-2 gap-4 p-4"
-			>
-			<Form.Field {form} name="absender_email">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label class="text-sm font-medium">Email*</Form.Label>
-						<Input
-							{...props}
-							bind:value={$formData.absender_email}
-							placeholder={defaultRechnungsSender.absender_email}
-							class="mt-1.5"
-						/>
-					{/snippet}
-				</Form.Control>
-				<Form.Description class="mt-1 text-sm text-muted-foreground" />
-				<Form.FieldErrors class="mt-1 text-sm text-destructive" />
-			</Form.Field>
-
-			<Form.Field {form} name="absender_password">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label class="text-sm font-medium">Passwort*</Form.Label>
-						<Input
-							{...props}
-							type="password"
-							bind:value={$formData.absender_email}
-							placeholder={defaultRechnungsSender.absender_email}
-							class="mt-1.5"
-						/>
-					{/snippet}
-				</Form.Control>
-				<Form.Description class="mt-1 text-sm text-muted-foreground" />
-				<Form.FieldErrors class="mt-1 text-sm text-destructive" />
-			</Form.Field>
-					</div>
+				class="absolute grid h-full w-full grid-cols-1 grid-cols-2 gap-4 overflow-y-auto p-4"
+			></div>
 		{:else if current == 2}
 			<!-- FIXME: Hier Zahlungsoption einrichten -->
-			<div
-				transition:fly={{ x: 20 }}
-				class="absolute grid h-full w-full grid-cols-1 gap-4 overflow-y-auto md:grid-cols-2 p-4"
-			>
-				Test
+			<div transition:fly={{ x: 20 }} class="absolute grid h-full w-full gap-4 overflow-y-auto p-4">
+				<Form.Button class="bg-brand-blue hover:bg-brand-blue/80"
+					>Abschließen und als Premium-Kunde registrieren
+				</Form.Button>
 			</div>
 		{/if}
 	</div>
@@ -245,7 +250,9 @@
 		<SquareChevronLeft
 			size={40}
 			type="button"
-			onclick={prevPage}
+			onclick={() => {
+				current == 0 ? '' : prevPage();
+			}}
 			class="rounded-md p-2 text-gray-500 transition-colors hover:bg-brand-yellow/30"
 		/>
 

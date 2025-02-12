@@ -8,6 +8,7 @@ export const defaultRechnungsSender: RechnungsAbsenderType = {
     absender_telefon: '+49 (0)123 456789',
     absender_email: 'blitz-rechnung@info.de',
     absender_name: "", //TODO: AbsenderName ggf hier hinzufügen
+    absender_password: "passwort1234",
     absender_kleinunternehmer: undefined //TODO: fix type error in schema
 };
 
